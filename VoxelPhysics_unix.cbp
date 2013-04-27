@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="VoxelPhysics" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/VoxelPhysics" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Code/VoxelPhysics/VoxelPhysics" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++0x" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/VoxelPhysics" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:/Code/VoxelPhysics" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++0x" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../../Libs/GLFW276/include" />
+			<Add directory="../../Libs/glew-1.9.0/include" />
+			<Add directory="include" />
+			<Add directory="../../Libs/boost_1_53_0" />
+			<Add directory="../../Libs/bullet-2.81-rev2613/src" />
+			<Add directory="../VoxelPhysics" />
+		</Compiler>
+		<Linker>
+			<Add library="GLEW" />
+			<Add library="glfw" />
+			<Add library="GL" />
+			<Add library="GLU" />
+			<Add library="BulletDynamics" />
+			<Add library="BulletCollision" />
+			<Add library="LinearMath" />
+			<Add directory="../../Libs/GLFW276/lib/x11" />
+			<Add directory="../../Libs/glew-1.9.0/lib" />
+			<Add directory="../../Libs/boost_1_53_0/libs" />
+			<Add directory="../../Libs/bullet-2.81-rev2613/lib" />
+		</Linker>
+		<Unit filename="console.cpp" />
+		<Unit filename="console.h" />
+		<Unit filename="gen_vertices.geom" />
+		<Unit filename="gen_vertices.vert" />
+		<Unit filename="include/App.h" />
+		<Unit filename="include/Buffer.h" />
+		<Unit filename="include/CameraNode.h" />
+		<Unit filename="include/DestructionEngine.h" />
+		<Unit filename="include/DrawCall.h" />
+		<Unit filename="include/EnergyGrid.h" />
+		<Unit filename="include/FloatingCamera.h" />
+		<Unit filename="include/Material.h" />
+		<Unit filename="include/Matrix4D.h" />
+		<Unit filename="include/Matter.h" />
+		<Unit filename="include/MatterCollision.h" />
+		<Unit filename="include/MatterCollisionSet.h" />
+		<Unit filename="include/MatterMotionState.h" />
+		<Unit filename="include/MatterNode.h" />
+		<Unit filename="include/Mesh.h" />
+		<Unit filename="include/MeshNode.h" />
+		<Unit filename="include/PhysicsManager.h" />
+		<Unit filename="include/Renderer.h" />
+		<Unit filename="include/ResourceManager.h" />
+		<Unit filename="include/RigidBody.h" />
+		<Unit filename="include/SceneGraph.h" />
+		<Unit filename="include/SceneNode.h" />
+		<Unit filename="include/Shader.h" />
+		<Unit filename="include/ShaderProgram.h" />
+		<Unit filename="include/VP.h" />
+		<Unit filename="include/Vector3.h" />
+		<Unit filename="include/VertexShell.h" />
+		<Unit filename="include/VoxelConverter.h" />
+		<Unit filename="include/VoxelDecomposer.h" />
+		<Unit filename="include/VoxelField.h" />
+		<Unit filename="list_triangles.geom" />
+		<Unit filename="list_triangles.vert" />
+		<Unit filename="main.cpp" />
+		<Unit filename="src/App.cpp" />
+		<Unit filename="src/Buffer.cpp" />
+		<Unit filename="src/CameraNode.cpp" />
+		<Unit filename="src/DestructionEngine.cpp" />
+		<Unit filename="src/DrawCall.cpp" />
+		<Unit filename="src/EnergyGrid.cpp" />
+		<Unit filename="src/FloatingCamera.cpp" />
+		<Unit filename="src/Material.cpp" />
+		<Unit filename="src/Matrix4D.cpp" />
+		<Unit filename="src/Matter.cpp" />
+		<Unit filename="src/MatterCollision.cpp" />
+		<Unit filename="src/MatterCollisionSet.cpp" />
+		<Unit filename="src/MatterMotionState.cpp" />
+		<Unit filename="src/MatterNode.cpp" />
+		<Unit filename="src/Mesh.cpp" />
+		<Unit filename="src/MeshNode.cpp" />
+		<Unit filename="src/PhysicsManager.cpp" />
+		<Unit filename="src/Renderer.cpp" />
+		<Unit filename="src/ResourceManager.cpp" />
+		<Unit filename="src/RigidBody.cpp" />
+		<Unit filename="src/SceneGraph.cpp" />
+		<Unit filename="src/SceneNode.cpp" />
+		<Unit filename="src/Shader.cpp" />
+		<Unit filename="src/ShaderProgram.cpp" />
+		<Unit filename="src/Vector3.cpp" />
+		<Unit filename="src/VertexShell.cpp" />
+		<Unit filename="src/VoxelConverter.cpp" />
+		<Unit filename="src/VoxelDecomposer.cpp" />
+		<Unit filename="src/VoxelField.cpp" />
+		<Unit filename="test.vox" />
+		<Unit filename="test_flat.vox" />
+		<Unit filename="test_slope.vox" />
+		<Unit filename="world_light.frag" />
+		<Unit filename="world_light.vert" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

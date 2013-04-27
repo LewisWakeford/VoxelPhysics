@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="console.cpp" open="0" top="0" tabpos="13">
+		<Cursor position="24" topLine="0" />
+	</File>
+	<File name="console.h" open="0" top="0" tabpos="11">
+		<Cursor position="177" topLine="0" />
+	</File>
+	<File name="include/App.h" open="0" top="0" tabpos="5">
+		<Cursor position="2071" topLine="54" />
+	</File>
+	<File name="include/Buffer.h" open="0" top="0" tabpos="8">
+		<Cursor position="1405" topLine="13" />
+	</File>
+	<File name="include/CameraNode.h" open="0" top="0" tabpos="2">
+		<Cursor position="1125" topLine="6" />
+	</File>
+	<File name="include/DestructionEngine.h" open="1" top="0" tabpos="3">
+		<Cursor position="278" topLine="0" />
+	</File>
+	<File name="include/DrawCall.h" open="0" top="0" tabpos="6">
+		<Cursor position="155" topLine="5" />
+	</File>
+	<File name="include/FloatingCamera.h" open="0" top="0" tabpos="1">
+		<Cursor position="388" topLine="0" />
+	</File>
+	<File name="include/Material.h" open="0" top="0" tabpos="14">
+		<Cursor position="674" topLine="8" />
+	</File>
+	<File name="include/Matrix4D.h" open="0" top="0" tabpos="8">
+		<Cursor position="1043" topLine="9" />
+	</File>
+	<File name="include/Matter.h" open="1" top="0" tabpos="2">
+		<Cursor position="2007" topLine="64" />
+	</File>
+	<File name="include/MatterCollisionSet.h" open="0" top="0" tabpos="0">
+		<Cursor position="1089" topLine="0" />
+	</File>
+	<File name="include/MatterNode.h" open="0" top="0" tabpos="9">
+		<Cursor position="221" topLine="0" />
+	</File>
+	<File name="include/PhysicsManager.h" open="0" top="0" tabpos="1">
+		<Cursor position="124" topLine="4" />
+	</File>
+	<File name="include/Renderer.h" open="0" top="0" tabpos="12">
+		<Cursor position="190" topLine="0" />
+	</File>
+	<File name="include/ResourceManager.h" open="0" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="include/RigidBody.h" open="0" top="0" tabpos="5">
+		<Cursor position="428" topLine="0" />
+	</File>
+	<File name="include/SceneNode.h" open="0" top="0" tabpos="0">
+		<Cursor position="490" topLine="10" />
+	</File>
+	<File name="include/Shader.h" open="0" top="0" tabpos="6">
+		<Cursor position="274" topLine="0" />
+	</File>
+	<File name="include/ShaderProgram.h" open="0" top="0" tabpos="8">
+		<Cursor position="291" topLine="0" />
+	</File>
+	<File name="include/VP.h" open="0" top="0" tabpos="5">
+		<Cursor position="91" topLine="0" />
+	</File>
+	<File name="include/Vector3.h" open="0" top="0" tabpos="6">
+		<Cursor position="330" topLine="0" />
+	</File>
+	<File name="include/VertexShell.h" open="0" top="0" tabpos="5">
+		<Cursor position="636" topLine="8" />
+	</File>
+	<File name="include/VoxelConverter.h" open="0" top="0" tabpos="3">
+		<Cursor position="2495" topLine="66" />
+	</File>
+	<File name="include/VoxelDecomposer.h" open="0" top="0" tabpos="7">
+		<Cursor position="1992" topLine="40" />
+	</File>
+	<File name="include/VoxelField.h" open="0" top="0" tabpos="1">
+		<Cursor position="780" topLine="11" />
+	</File>
+	<File name="list_triangles.vert" open="0" top="0" tabpos="0">
+		<Cursor position="343" topLine="0" />
+	</File>
+	<File name="main.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="9477" topLine="331" />
+	</File>
+	<File name="src/App.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="2545" topLine="124" />
+	</File>
+	<File name="src/Buffer.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="2454" topLine="87" />
+	</File>
+	<File name="src/CameraNode.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="2481" topLine="97" />
+	</File>
+	<File name="src/DestructionEngine.cpp" open="1" top="1" tabpos="4">
+		<Cursor position="1731" topLine="31" />
+	</File>
+	<File name="src/DrawCall.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="1038" topLine="15" />
+	</File>
+	<File name="src/FloatingCamera.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="647" topLine="49" />
+	</File>
+	<File name="src/Material.cpp" open="0" top="0" tabpos="10">
+		<Cursor position="863" topLine="0" />
+	</File>
+	<File name="src/Matrix4D.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="806" topLine="39" />
+	</File>
+	<File name="src/Matter.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="7073" topLine="204" />
+	</File>
+	<File name="src/MatterCollision.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="670" topLine="5" />
+	</File>
+	<File name="src/MatterMotionState.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="32" topLine="0" />
+	</File>
+	<File name="src/MatterNode.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="680" topLine="5" />
+	</File>
+	<File name="src/Mesh.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="src/MeshNode.cpp" open="0" top="0" tabpos="10">
+		<Cursor position="381" topLine="0" />
+	</File>
+	<File name="src/PhysicsManager.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="5637" topLine="132" />
+	</File>
+	<File name="src/Renderer.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="3527" topLine="128" />
+	</File>
+	<File name="src/ResourceManager.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="src/RigidBody.cpp" open="1" top="0" tabpos="9">
+		<Cursor position="1601" topLine="32" />
+	</File>
+	<File name="src/SceneGraph.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="311" topLine="0" />
+	</File>
+	<File name="src/SceneNode.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1258" topLine="39" />
+	</File>
+	<File name="src/Shader.cpp" open="0" top="0" tabpos="13">
+		<Cursor position="1063" topLine="0" />
+	</File>
+	<File name="src/ShaderProgram.cpp" open="0" top="0" tabpos="11">
+		<Cursor position="260" topLine="0" />
+	</File>
+	<File name="src/Vector3.cpp" open="0" top="0" tabpos="12">
+		<Cursor position="367" topLine="4" />
+	</File>
+	<File name="src/VertexShell.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="1456" topLine="25" />
+	</File>
+	<File name="src/VoxelConverter.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="37286" topLine="548" />
+	</File>
+	<File name="src/VoxelDecomposer.cpp" open="0" top="0" tabpos="11">
+		<Cursor position="14608" topLine="656" />
+	</File>
+	<File name="src/VoxelField.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="353" topLine="3" />
+	</File>
+	<File name="test.vox" open="1" top="0" tabpos="9">
+		<Cursor position="31180" topLine="0" />
+	</File>
+	<File name="test_slope.vox" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="1010" />
+	</File>
+	<File name="world_light.vert" open="0" top="0" tabpos="0">
+		<Cursor position="291" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

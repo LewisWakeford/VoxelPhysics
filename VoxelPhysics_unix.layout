@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="include/DestructionEngine.h" open="0" top="0" tabpos="6">
+		<Cursor position="416" topLine="0" />
+	</File>
+	<File name="include/EnergyGrid.h" open="0" top="0" tabpos="7">
+		<Cursor position="1661" topLine="50" />
+	</File>
+	<File name="include/Material.h" open="0" top="0" tabpos="3">
+		<Cursor position="402" topLine="4" />
+	</File>
+	<File name="include/Matrix4D.h" open="0" top="0" tabpos="5">
+		<Cursor position="2226" topLine="43" />
+	</File>
+	<File name="include/Matter.h" open="0" top="0" tabpos="9">
+		<Cursor position="518" topLine="66" />
+	</File>
+	<File name="include/MatterCollision.h" open="0" top="0" tabpos="11">
+		<Cursor position="189" topLine="0" />
+	</File>
+	<File name="include/MatterCollisionSet.h" open="0" top="0" tabpos="0">
+		<Cursor position="1120" topLine="0" />
+	</File>
+	<File name="include/MatterNode.h" open="0" top="0" tabpos="10">
+		<Cursor position="358" topLine="0" />
+	</File>
+	<File name="include/PhysicsManager.h" open="0" top="0" tabpos="13">
+		<Cursor position="598" topLine="0" />
+	</File>
+	<File name="include/RigidBody.h" open="0" top="0" tabpos="14">
+		<Cursor position="843" topLine="0" />
+	</File>
+	<File name="include/Vector3.h" open="0" top="0" tabpos="6">
+		<Cursor position="821" topLine="0" />
+	</File>
+	<File name="include/VoxelField.h" open="0" top="0" tabpos="2">
+		<Cursor position="1536" topLine="30" />
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="8">
+		<Cursor position="9298" topLine="335" />
+	</File>
+	<File name="src/DestructionEngine.cpp" open="1" top="0" tabpos="9">
+		<Cursor position="9927" topLine="236" />
+	</File>
+	<File name="src/EnergyGrid.cpp" open="1" top="1" tabpos="12">
+		<Cursor position="15644" topLine="535" />
+	</File>
+	<File name="src/Material.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="391" topLine="0" />
+	</File>
+	<File name="src/Matrix4D.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="1486" topLine="45" />
+	</File>
+	<File name="src/Matter.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="9332" topLine="268" />
+	</File>
+	<File name="src/MatterCollisionSet.cpp" open="0" top="0" tabpos="13">
+		<Cursor position="684" topLine="11" />
+	</File>
+	<File name="src/MatterNode.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="964" topLine="15" />
+	</File>
+	<File name="src/PhysicsManager.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="3037" topLine="97" />
+	</File>
+	<File name="src/RigidBody.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="953" topLine="14" />
+	</File>
+	<File name="src/SceneGraph.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="223" topLine="0" />
+	</File>
+	<File name="src/SceneNode.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="762" topLine="36" />
+	</File>
+	<File name="src/Vector3.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="2396" topLine="118" />
+	</File>
+	<File name="src/VoxelConverter.cpp" open="1" top="0" tabpos="11">
+		<Cursor position="36874" topLine="554" />
+	</File>
+	<File name="src/VoxelField.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="433" topLine="2" />
+	</File>
+</CodeBlocks_layout_file>

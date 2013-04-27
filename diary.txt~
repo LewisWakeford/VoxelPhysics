@@ -1,0 +1,21 @@
+----PROJECT NOTES----
+
+21/02/2012
+
+First entry so going to sum up everything so far...
+
+Implemented an Adaptation of the GPU Marching cubes algorithm found in GPU gems. Discarded the bit about random generation and used reference tables originally from Eric Lengyel's Transvoxel Algorithm.
+
+Disabled the GPU conversion for now, however, as it is a pain to maintain as I adapt the algorithm for better intergration with the physics side of the project. Will come back to it during the optimization phase.
+
+CPU version of the algorithm is used instead. Not noticably slower, but then again I'm only converting 3 or 4 objects.
+
+Voxel Conversion is working well, however normals always F*** up for some reason.
+
+Bullet Physics is somewhat intergrated. Though it can only handle convex shapes. For GPU processing mode, must keep in mind that I need to pull data back off the GPU so keep an eye on that performance hit.
+
+Need to think of a solution to the following issues:
+
+> Creating MatterNodes of Arbitrary Size. For GPU processing to remain viable they will have to be chunked, probably stick with the 32x32x32 blocks. CPU is less limited but may be an idea to chunk it anyway.
+> Decomposing the Matter into convex shapes so they can be convertex to valid rigid bodies.
+> Start testing algorithms for the breaking etc.
