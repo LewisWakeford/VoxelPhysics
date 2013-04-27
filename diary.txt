@@ -172,3 +172,7 @@ while(oldSize != newSize) //End if no new voxels are added to graph.
 
 
 }
+
+27/04/2013
+
+Had an idea to speed up the direct transfer algortihm. Just do something similar to external transfer where it's more a beam than a iterated thing.

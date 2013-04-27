@@ -233,7 +233,7 @@ class EnergyGrid
         //void transferEnergy(Vector3i sourceVoxel, Vector3f direction, float energy);
 
         float transferEnergyFrom(Vector3i sourceVoxel, char direction);
-        float transferEnergyFrom(Vector3i sourceVoxel);
+        float transferEnergyFrom(Vector3i sourceVoxel, float energy);
 
         void transferEnergyTo(Vector3i targetVoxel, char direction, float energy);
         void transferEnergyTo(Vector3i targetVoxel, Vector3f direction, float energy);

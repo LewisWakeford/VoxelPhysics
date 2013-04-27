@@ -4286,3 +4286,322 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
+1367055966 source:c:\code\voxelphysics_git\console.cpp
+	"console.h"
+
+1367055971 c:\code\voxelphysics_git\console.h
+	"VP.h"
+	<iostream>
+	<string>
+
+1367055973 c:\code\voxelphysics_git\include\vp.h
+	<GL/glew.h>
+	<GL/glfw.h>
+
+1367058993 source:c:\code\voxelphysics_git\main.cpp
+	"VP.h"
+	<iostream>
+	<exception>
+	"console.h"
+	"Shader.h"
+	"App.h"
+	"VoxelField.h"
+	"VertexShell.h"
+	"ShaderProgram.h"
+	"VoxelConverter.h"
+	"PhysicsManager.h"
+	"Renderer.h"
+	"FloatingCamera.h"
+	"SceneNode.h"
+	"SceneGraph.h"
+	"MatterNode.h"
+
+1367055975 c:\code\voxelphysics_git\include\shader.h
+	"VP.h"
+	<iostream>
+	<fstream>
+	<string>
+
+1367055974 c:\code\voxelphysics_git\include\app.h
+	"VP.h"
+
+1367055975 c:\code\voxelphysics_git\include\voxelfield.h
+	"VP.h"
+	"Vector3.h"
+	"Matrix4D.h"
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+
+1367055974 c:\code\voxelphysics_git\include\vector3.h
+
+1367055974 c:\code\voxelphysics_git\include\matrix4d.h
+	"VP.h"
+	<boost/shared_ptr.hpp>
+	"Vector3.h"
+
+1367055973 c:\code\voxelphysics_git\include\vertexshell.h
+	"VP.h"
+	"Vector3.h"
+	<vector>
+	"Buffer.h"
+	"RigidBody.h"
+
+1367055975 c:\code\voxelphysics_git\include\buffer.h
+	<vector>
+	"VP.h"
+
+1367055974 c:\code\voxelphysics_git\include\rigidbody.h
+	"Matrix4D.h"
+	"btBulletDynamicsCommon.h"
+	<vector>
+
+1367055975 c:\code\voxelphysics_git\include\shaderprogram.h
+	"VP.h"
+	"Shader.h"
+
+1367055974 c:\code\voxelphysics_git\include\voxelconverter.h
+	<vector>
+	<initializer_list>
+	"VP.h"
+	"ShaderProgram.h"
+	"Buffer.h"
+	"Vector3.h"
+
+1367055973 c:\code\voxelphysics_git\include\physicsmanager.h
+	"btBulletDynamicsCommon.h"
+	"MatterCollisionSet.h"
+
+1367055975 c:\code\voxelphysics_git\include\mattercollisionset.h
+	<vector>
+	"MatterCollision.h"
+
+1367055973 c:\code\voxelphysics_git\include\mattercollision.h
+	"VP.h"
+	"btBulletDynamicsCommon.h"
+
+1367055975 c:\code\voxelphysics_git\include\renderer.h
+	"VP.h"
+	<vector>
+	"Matrix4D.h"
+
+1367055973 c:\code\voxelphysics_git\include\floatingcamera.h
+	<CameraNode.h>
+
+1367055974 c:\code\voxelphysics_git\include\cameranode.h
+	"SceneNode.h"
+	"Vector3.h"
+
+1367055976 c:\code\voxelphysics_git\include\scenenode.h
+	"VP.h"
+	<vector>
+	<boost/shared_ptr.hpp>
+	"Matrix4D.h"
+
+1367055975 c:\code\voxelphysics_git\include\scenegraph.h
+	"VP.h"
+	<boost/shared_ptr.hpp>
+
+1367055974 c:\code\voxelphysics_git\include\matternode.h
+	"SceneNode.h"
+	"Matter.h"
+
+1367055975 c:\code\voxelphysics_git\include\matter.h
+	"VP.h"
+	"VoxelField.h"
+	"VertexShell.h"
+	"RigidBody.h"
+	"Material.h"
+
+1367055974 c:\code\voxelphysics_git\include\material.h
+	"VP.h"
+	<string>
+
+1367055992 source:c:\code\voxelphysics_git\src\app.cpp
+	"App.h"
+	"Renderer.h"
+	"ResourceManager.h"
+	"PhysicsManager.h"
+	"SceneGraph.h"
+	"DestructionEngine.h"
+	"VoxelConverter.h"
+	"console.h"
+
+1367055972 c:\code\voxelphysics_git\include\resourcemanager.h
+	<string>
+	<vector>
+	"Mesh.h"
+
+1367055973 c:\code\voxelphysics_git\include\mesh.h
+	"VP.h"
+	<vector>
+
+1367055973 c:\code\voxelphysics_git\include\destructionengine.h
+	"MatterCollisionSet.h"
+	"EnergyGrid.h"
+
+1367099363 c:\code\voxelphysics_git\include\energygrid.h
+	"Vector3.h"
+	"VoxelField.h"
+	<vector>
+	<unordered_map>
+
+1367055990 source:c:\code\voxelphysics_git\src\buffer.cpp
+	"Buffer.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\cameranode.cpp
+	"CameraNode.h"
+	"App.h"
+	"Renderer.h"
+
+1367095698 source:c:\code\voxelphysics_git\src\destructionengine.cpp
+	"DestructionEngine.h"
+	"Matter.h"
+	"MatterNode.h"
+	"App.h"
+	"SceneGraph.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\drawcall.cpp
+	"DrawCall.h"
+	"App.h"
+	"ResourceManager.h"
+	"Material.h"
+
+1367055972 c:\code\voxelphysics_git\include\drawcall.h
+	"VP.h"
+	<vector>
+
+1367055994 source:c:\code\voxelphysics_git\src\energygrid.cpp
+	"EnergyGrid.h"
+	"Matter.h"
+	"MatterNode.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\floatingcamera.cpp
+	"FloatingCamera.h"
+	"App.h"
+	<cmath>
+	"console.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\material.cpp
+	"Material.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
+	"Matrix4D.h"
+	<math.h>
+
+1367055992 source:c:\code\voxelphysics_git\src\matter.cpp
+	"Matter.h"
+	"App.h"
+	"Material.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\mattercollision.cpp
+	"MatterCollision.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\mattercollisionset.cpp
+	"MatterCollisionSet.h"
+	"Matter.h"
+	"MatterNode.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\matternode.cpp
+	"MatterNode.h"
+	"App.h"
+	"Renderer.h"
+	"VoxelConverter.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\mesh.cpp
+	"Mesh.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\meshnode.cpp
+	"MeshNode.h"
+	"App.h"
+	"Renderer.h"
+	"ResourceManager.h"
+
+1367055973 c:\code\voxelphysics_git\include\meshnode.h
+	"SceneNode.h"
+
+1367058751 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
+	"PhysicsManager.h"
+	"console.h"
+	"Matter.h"
+	"MatterNode.h"
+	"App.h"
+	"DestructionEngine.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\renderer.cpp
+	"Renderer.h"
+	"Matrix4D.h"
+	"Mesh.h"
+	"CameraNode.h"
+	"VertexShell.h"
+	"Buffer.h"
+	"Matter.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\resourcemanager.cpp
+	"ResourceManager.h"
+	"VoxelField.h"
+	<fstream>
+
+1367055991 source:c:\code\voxelphysics_git\src\rigidbody.cpp
+	"RigidBody.h"
+	"App.h"
+	"PhysicsManager.h"
+	"Matter.h"
+	"VoxelField.h"
+	"MatterMotionState.h"
+	"console.h"
+
+1367055974 c:\code\voxelphysics_git\include\mattermotionstate.h
+	"Matter.h"
+
+1367055992 source:c:\code\voxelphysics_git\src\scenegraph.cpp
+	"SceneGraph.h"
+	"SceneNode.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\scenenode.cpp
+	"SceneNode.h"
+	"Renderer.h"
+	"App.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\shader.cpp
+	"Shader.h"
+	"console.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\shaderprogram.cpp
+	"ShaderProgram.h"
+	"Shader.h"
+	"console.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\vector3.cpp
+	"Vector3.h"
+	<cmath>
+
+1367055992 source:c:\code\voxelphysics_git\src\vertexshell.cpp
+	"VertexShell.h"
+	"App.h"
+
+1367055993 source:c:\code\voxelphysics_git\src\voxelconverter.cpp
+	"VoxelConverter.h"
+	"console.h"
+	"Matter.h"
+	"MatterNode.h"
+	"VoxelDecomposer.h"
+	"VoxelField.h"
+	"VertexShell.h"
+	<string.h>
+
+1367055975 c:\code\voxelphysics_git\include\voxeldecomposer.h
+	"VoxelField.h"
+
+1367055991 source:c:\code\voxelphysics_git\src\voxeldecomposer.cpp
+	"VoxelDecomposer.h"
+	<vector>
+
+1367055990 source:c:\code\voxelphysics_git\src\voxelfield.cpp
+	"VoxelField.h"
+	"console.h"
+	<math.h>
+	<string.h>
+	<stdlib.h>
+

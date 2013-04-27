@@ -165,7 +165,7 @@ void PhysicsManager::tickCallback(btDynamicsWorld *world, btScalar timeStep)
                     {
                         btVector3 velA = rbA->getLinearVelocity();
                         btVector3 velB = rbB->getLinearVelocity();
-//mPhysics = false;
+mPhysics = false;
                         //For some reason z is the wrong way around.
                         velA.setZ( -velA.z());
                         velB.setZ( -velB.z());

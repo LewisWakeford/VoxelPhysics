@@ -378,8 +378,8 @@ void EnergyGrid::transferEnergy(Vector3i sourceVoxel, char direction, float ener
 }
 */
 
-//Used in external transfer, sucks out all free energy
-float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel)
+//Used in external transfer, sucks out some free energy
+float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel, float energy)
 {
     if(validCoord(sourceVoxel))
     {
@@ -387,8 +387,22 @@ float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel)
 
         float energyToTransfer = source.getEnergy(mIsReciever) - mEnergyPerVoxel;
 
+        //Take all energy
+        if(energy >= energyToTransfer && energyToTransfer >= 0)
+        {
+            pressureVoxel(sourceVoxel, energyToTransfer);
+            source.setEnergy(mIsReciever, mEnergyPerVoxel);
+        }
+        //Only take some
+        else if(energyToTransfer >= 0)
+        {
+            pressureVoxel(sourceVoxel, energy);
+            source.setEnergy(mIsReciever, energyToTransfer-energy+mEnergyPerVoxel);
+        }
+
         if(energyToTransfer >= 0)
         {
+
             pressureVoxel(sourceVoxel, energyToTransfer);
             source.setEnergy(mIsReciever, mEnergyPerVoxel);
             return energyToTransfer;
@@ -539,6 +553,7 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
     float energyPool = energy;
 
     Vector3i* previousVoxels = 0;
+    float* previousEnergy = 0;
 
     unsigned int start = 0;
     unsigned int end = 32;
@@ -642,16 +657,18 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
 
         }
 
-        if(previousVoxels)
+        if(previousVoxels && previousEnergy)
         {
-            energyPool += transferEnergyFrom(previousVoxels[0]);
-            energyPool += transferEnergyFrom(previousVoxels[1]);
-            energyPool += transferEnergyFrom(previousVoxels[2]);
-            energyPool += transferEnergyFrom(previousVoxels[3]);
+            energyPool += transferEnergyFrom(previousVoxels[0], previousEnergy[0]);
+            energyPool += transferEnergyFrom(previousVoxels[1], previousEnergy[1]);
+            energyPool += transferEnergyFrom(previousVoxels[2], previousEnergy[2]);
+            energyPool += transferEnergyFrom(previousVoxels[3], previousEnergy[3]);
             delete[] previousVoxels;
+            delete[] previousEnergy;
         }
 
         previousVoxels = new Vector3i[4];
+        previousEnergy = new float[4];
         previousVoxels[0] = closestVoxels[0];
         previousVoxels[1] = closestVoxels[1];
         previousVoxels[2] = closestVoxels[2];
@@ -663,8 +680,19 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
             {
                 float energyToTransfer = energyPool*voxelWeights[k];
                 directTransferTo(closestVoxels[k], energyToTransfer);
+                previousEnergy[k] = energyToTransfer;
                 energyPool -= energyToTransfer;
             }
+            else
+            {
+                previousEnergy[k] = 0.0f;
+            }
+        }
+
+        if(i == end-1)
+        {
+            delete[] previousVoxels;
+            delete[] previousEnergy;
         }
     }
 
