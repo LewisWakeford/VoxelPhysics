@@ -18,12 +18,15 @@ class MatterNode : public SceneNode
 
         Matter* getMatter();
 
+        Matrix4D getTransform();
+        void setTransform(const Matrix4D& transform);
+
     protected:
         Matter mMatter;
         virtual void renderSelf();
         virtual void simulateSelf(GLdouble deltaTime);
 
-        Matrix4D getTransform();
+
 
         GLboolean mUpToDate;
 

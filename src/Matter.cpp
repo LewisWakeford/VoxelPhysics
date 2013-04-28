@@ -24,6 +24,7 @@ Matter::Matter(App* app, const Material* material, bool floating) : mVertexShell
 
 Matter::~Matter()
 {
+    std::cout << "Matter being deleted..." << std::endl;
 }
 
 void Matter::setVoxelField(VoxelField voxelField)
@@ -126,19 +127,19 @@ void Matter::addVoxelVertex(unsigned int hullIndex, Vector3f vertex)
     m_debug_VoxelVertexArrays[hullIndex].push_back(vertex.z);
 }
 
-void Matter::addPressureVertex(float pressure, float stress, Vector3f vertex)
+void Matter::addPressureVertex(float pressure, float stress, float strength, Vector3f vertex)
 {
     Vector3f cOfm = mVoxelField.getCenterOfMass();
     m_debug_PressureVertexArray.push_back(vertex.x - cOfm.x);
     m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y);
     m_debug_PressureVertexArray.push_back(vertex.z - cOfm.z);
 
-    float red = (pressure) / mMaterial->getPressureLimit();
+    float red = (pressure) / (mMaterial->getPressureLimit() * strength);
     //if(pressure >= mMaterial->getPressureLimit()) red = 1.0f;
     if(red > 1.0f) red = 1.0f;
     if(red < 0.0f) red = 0.0f;
 
-    float blue = stress / mMaterial->getStressLimit();
+    float blue = stress / (mMaterial->getStressLimit() * strength);
     if(blue > 1.0f) blue = 1.0f;
     if(blue < 0.0f) blue = 0.0f;
 

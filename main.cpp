@@ -304,13 +304,16 @@ int main()
 
         Material* testMaterial = new Material();
 
-        SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/ledge.vox"));
-        ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
-        sceneGraph->getRoot()->addChild(matterNode1);
+        {
+            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
+            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
+            sceneGraph->getRoot()->addChild(matterNode1);
 
-        SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_small_cube.vox"));
-        ((MatterNode*)matterNode2.get())->setOffset(20.0f, 0.0f, 200.0f);
-        sceneGraph->getRoot()->addChild(matterNode2);
+            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
+            ((MatterNode*)matterNode2.get())->setOffset(0.0f, 0.0f, 200.0f);
+            sceneGraph->getRoot()->addChild(matterNode2);
+        }
+
 
         //SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, &blue[0], false, "vox/atom.vox"));
         //((MatterNode*)matterNode3.get())->setOffset(0.0f, 0.0f, 60.0f);

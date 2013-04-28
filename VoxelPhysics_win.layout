@@ -1,118 +1,169 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="console.cpp" open="0" top="0" tabpos="11">
-		<Cursor position="421" topLine="0" />
+	<File name="src\VoxelConverter.cpp" open="0" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\CameraNode.h" open="0" top="0" tabpos="12">
-		<Cursor position="0" topLine="0" />
+	<File name="src\VoxelDecomposer.cpp" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\DestructionEngine.h" open="0" top="0" tabpos="10">
-		<Cursor position="620" topLine="0" />
+	<File name="src\VoxelField.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6299" topLine="207" />
+		</Cursor>
 	</File>
-	<File name="include\EnergyGrid.h" open="1" top="0" tabpos="5">
-		<Cursor position="1768" topLine="35" />
+	<File name="include\VP.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\Material.h" open="0" top="0" tabpos="10">
-		<Cursor position="476" topLine="0" />
+	<File name="include\Vector3.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\Matrix4D.h" open="0" top="0" tabpos="0">
-		<Cursor position="790" topLine="0" />
+	<File name="include\VoxelConverter.h" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\Matter.h" open="1" top="0" tabpos="10">
-		<Cursor position="1883" topLine="44" />
+	<File name="include\VoxelField.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\MatterCollision.h" open="0" top="0" tabpos="7">
-		<Cursor position="442" topLine="3" />
+	<File name="include\DestructionEngine.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\MatterMotionState.h" open="0" top="0" tabpos="9">
-		<Cursor position="299" topLine="0" />
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4980" topLine="224" />
+		</Cursor>
 	</File>
-	<File name="include\MatterNode.h" open="0" top="0" tabpos="9">
-		<Cursor position="883" topLine="0" />
+	<File name="include\EnergyGrid.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\PhysicsManager.h" open="0" top="0" tabpos="0">
-		<Cursor position="751" topLine="0" />
+	<File name="src\App.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="604" topLine="15" />
+		</Cursor>
 	</File>
-	<File name="include\RigidBody.h" open="1" top="0" tabpos="12">
-		<Cursor position="481" topLine="0" />
+	<File name="src\Buffer.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\VP.h" open="0" top="0" tabpos="9">
-		<Cursor position="759" topLine="24" />
+	<File name="src\MatterCollision.cpp" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\Vector3.h" open="0" top="0" tabpos="6">
-		<Cursor position="837" topLine="0" />
+	<File name="include\Material.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\VoxelConverter.h" open="0" top="0" tabpos="18">
-		<Cursor position="2111" topLine="60" />
+	<File name="src\CameraNode.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="include\VoxelField.h" open="0" top="0" tabpos="2">
-		<Cursor position="2219" topLine="20" />
+	<File name="src\MatterCollisionSet.cpp" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="6">
-		<Cursor position="7722" topLine="290" />
+	<File name="src\DestructionEngine.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\App.cpp" open="0" top="0" tabpos="9">
-		<Cursor position="329" topLine="1" />
+	<File name="src\MatterNode.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\Buffer.cpp" open="0" top="0" tabpos="10">
-		<Cursor position="501" topLine="13" />
+	<File name="include\Matter.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\CameraNode.cpp" open="0" top="0" tabpos="10">
-		<Cursor position="0" topLine="0" />
+	<File name="include\MatterCollision.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\DestructionEngine.cpp" open="1" top="1" tabpos="11">
-		<Cursor position="8463" topLine="200" />
+	<File name="src\EnergyGrid.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="295" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\EnergyGrid.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="49226" topLine="1429" />
+	<File name="src\PhysicsManager.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\Material.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="227" topLine="0" />
+	<File name="include\MatterMotionState.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\Matrix4D.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="0" topLine="0" />
+	<File name="src\Material.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\Matter.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="1571" topLine="54" />
+	<File name="src\Renderer.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\MatterCollision.cpp" open="0" top="0" tabpos="11">
-		<Cursor position="593" topLine="6" />
+	<File name="include\MatterNode.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\MatterCollisionSet.cpp" open="0" top="0" tabpos="12">
-		<Cursor position="61" topLine="0" />
+	<File name="src\Matrix4D.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\MatterNode.cpp" open="1" top="0" tabpos="8">
-		<Cursor position="297" topLine="0" />
+	<File name="src\Matter.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\PhysicsManager.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="3942" topLine="197" />
+	<File name="include\CameraNode.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\Renderer.cpp" open="0" top="0" tabpos="9">
-		<Cursor position="3048" topLine="116" />
+	<File name="src\RigidBody.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\ResourceManager.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="260" topLine="0" />
+	<File name="console.cpp" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\RigidBody.cpp" open="1" top="0" tabpos="7">
-		<Cursor position="619" topLine="19" />
+	<File name="include\RigidBody.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
-	<File name="src\SceneGraph.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="139" topLine="0" />
-	</File>
-	<File name="src\SceneNode.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="283" topLine="9" />
-	</File>
-	<File name="src\Vector3.cpp" open="0" top="0" tabpos="10">
-		<Cursor position="3011" topLine="142" />
-	</File>
-	<File name="src\VoxelConverter.cpp" open="0" top="0" tabpos="17">
-		<Cursor position="49403" topLine="900" />
-	</File>
-	<File name="src\VoxelDecomposer.cpp" open="0" top="0" tabpos="14">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="src\VoxelField.cpp" open="1" top="0" tabpos="9">
-		<Cursor position="13447" topLine="535" />
+	<File name="src\Vector3.cpp" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

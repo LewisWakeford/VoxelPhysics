@@ -53,6 +53,7 @@ class VoxelField
         int hullAt(Vector3i coordinates) const;
         int getNumHulls();
         Vector3i getFirstFree();
+        Vector3i getMinPoint();
 
         //Return the coordinate in voxel space of the voxel closest to the point.
         Vector3i getVoxelClosestTo(const Matrix4D& worldToObject, Vector3f point);

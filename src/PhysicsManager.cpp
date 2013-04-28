@@ -190,7 +190,7 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
                     {
                         btVector3 velA = matterA->getLinearVelocity();
                         btVector3 velB = matterB->getLinearVelocity();
-mPhysics = false;
+//mPhysics = false;
 
                         //Build collision object.
                         MatterCollision collision(matterA, matterB, velA, velB, pt, timeStep);

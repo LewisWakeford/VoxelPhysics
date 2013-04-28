@@ -264,6 +264,7 @@ void DestructionEngine::checkForSeparation()
     for(unsigned int i = 0; i < mEnergyGrids.size(); i++)
     {
         MatterNode* original = mEnergyGrids[i].getMatterNode();
+        Vector3f originalCofM = original->getMatter()->getVoxelField()->getCenterOfMass();
         std::vector<VoxelField> voxArray;
         if(mEnergyGrids[i].separate(voxArray))
         {
@@ -272,15 +273,20 @@ void DestructionEngine::checkForSeparation()
 
            for(unsigned int k = 0; k < voxArray.size(); k++)
            {
-               /*
+               //Get posistion of new voxel field.
+               Vector3f CofM = voxArray[k].getCenterOfMass();
+               Vector3f offset = CofM - originalCofM;
+               Matrix4D transform = original->getTransform();
+               transform.translate(offset.x, offset.y, offset.z);
+
                SceneNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, original->getMatter()->getMaterial(), false, voxArray[k]));
-                ((MatterNode*)matterNode.get())->setOffset(i*50.0f, k*50.0f, 0.0f);
+                ((MatterNode*)matterNode.get())->setTransform(transform);
                 mApp->getSceneGraph()->getRoot()->addChild(matterNode);
-                */
+
            }
 
            //Delete old one.
-           //original->deleteNode();
+           original->deleteNode();
         }
     }
 

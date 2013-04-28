@@ -3,6 +3,10 @@
 #include "Matter.h"
 #include "MatterNode.h"
 
+std::mt19937 generator;
+std::uniform_int_distribution<int> distribution(0, 100);
+auto rand100 = std::bind ( distribution, generator );
+
 EnergyGrid::eDirection EnergyGrid::DIRECTION_START = DOWN;
 
 EnergyGrid::EnergyGrid(MatterNode* matterNode) :
@@ -20,7 +24,7 @@ EnergyGrid::EnergyGrid(MatterNode* matterNode) :
                 if(getMatter()->getVoxelField()->get(x, y, z) == 1)
                 {
                     mVoxelData[x][y][z].mFull = true;
-                    mVoxelData[x][y][z].mStrength = 1.0f;
+                    mVoxelData[x][y][z].mStrength = getStrength(x, y, z);
                 }
             }
         }
@@ -32,6 +36,26 @@ EnergyGrid::EnergyGrid(MatterNode* matterNode) :
 EnergyGrid::~EnergyGrid()
 {
     //dtor
+}
+
+float EnergyGrid::getStrength(int x, int y, int z)
+{
+    int adjanctVoxels = 0;
+    Vector3i coord(x,y,z);
+    for(int i = DIRECTION_START; i < INVALID_DIR; i++)
+    {
+        const Vector3i& directionVector = getDirectionVector(i);
+        Vector3i adjanctCoord = coord + directionVector;
+        if(getMatter()->getVoxelField()->get(adjanctCoord.x, adjanctCoord.y, adjanctCoord.z) == 1) adjanctVoxels++;
+    }
+    bool random = rand100() > getMatter()->getMaterial()->getRandomChance()*100;
+    float strength = 1.0f;
+    if(random)
+    {
+        strength = (float(rand100())/100.0f*(getMatter()->getMaterial()->getMaxStrength() - getMatter()->getMaterial()->getMinStrength()))
+                    + getMatter()->getMaterial()->getMinStrength();
+    }
+    return strength;
 }
 
 void EnergyGrid::setEnergy(const Vector3f& energy)
@@ -1219,7 +1243,7 @@ void EnergyGrid::pressureVoxel(Vector3i voxelCoord, float pressure)
     {
         VoxelData& voxel = mVoxelData[voxelCoord.x][voxelCoord.y][voxelCoord.z];
         voxel.mPressure += pressure;
-        float pressureLimit = getMatter()->getMaterial()->getPressureLimit();
+        float pressureLimit = getMatter()->getMaterial()->getPressureLimit()*voxel.mStrength;
         if(voxel.mPressure > pressureLimit)
         {
             voxel.mDestroyed = true;
@@ -1234,7 +1258,7 @@ void EnergyGrid::stressVoxel(Vector3i voxelCoord, float stress)
     {
         VoxelData& voxel = mVoxelData[voxelCoord.x][voxelCoord.y][voxelCoord.z];
         voxel.mStress += stress;
-        float stressLimit = getMatter()->getMaterial()->getStressLimit();
+        float stressLimit = getMatter()->getMaterial()->getStressLimit()*voxel.mStrength;
         if(voxel.mStress > stressLimit)
         {
             voxel.mSnapped = true;
@@ -1439,7 +1463,7 @@ void EnergyGrid::updateRenderData()
                 VoxelData& voxel = mVoxelData[x][y][z];
                 if(voxel.mFull)
                 {
-                    getMatter()->addPressureVertex(voxel.mPressure, voxel.mStress, Vector3f(x, y, z));
+                    getMatter()->addPressureVertex(voxel.mPressure, voxel.mStress, voxel.mStrength, Vector3f(x, y, z));
                 }
             }
         }

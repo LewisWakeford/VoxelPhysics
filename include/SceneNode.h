@@ -30,7 +30,7 @@ class SceneNode
         virtual void renderSelf();
         virtual void onCleanup();   //Perform before destroying the actual object.
 
-        void setTransform(Matrix4D transform);
+        void setTransform(const Matrix4D& transform);
         virtual Matrix4D getTransform();
 
         void addChild(SceneNodePtr child);

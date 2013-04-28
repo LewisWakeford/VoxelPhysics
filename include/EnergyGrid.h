@@ -5,6 +5,9 @@
 #include "VoxelField.h"
 #include <vector>
 #include <unordered_map>
+#include <random>
+#include <iostream>
+
 /*
     During the simulation of a collision, each Matter is represented by an energy grid.
 */
@@ -55,6 +58,8 @@ class EnergyGrid
         void updateRenderData();
 
         bool validCoord(Vector3i target);
+
+        float getStrength(int x, int y, int z);
 
     protected:
 

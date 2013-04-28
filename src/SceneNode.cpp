@@ -81,7 +81,7 @@ void SceneNode::onCleanup()
 
 }
 
-void SceneNode::setTransform(Matrix4D transform)
+void SceneNode::setTransform(const Matrix4D& transform)
 {
     mTransform = transform;
 }

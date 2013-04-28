@@ -20,7 +20,7 @@ MatterNode::MatterNode(App* app, GLenum renderPass, const Material* material, bo
 
 MatterNode::~MatterNode()
 {
-    //dtor
+    std::cout << "Matter Node being deleted..." << std::endl;
 }
 
 void MatterNode::renderSelf()
@@ -40,6 +40,11 @@ void MatterNode::simulateSelf(GLdouble deltaTime)
 Matrix4D MatterNode::getTransform()
 {
     return mMatter.getRigidBody()->getTransform();
+}
+
+void MatterNode::setTransform(const Matrix4D& transform)
+{
+    mMatter.getRigidBody()->setTransform(transform);
 }
 
 Matter* MatterNode::getMatter()

@@ -691,3 +691,8 @@ bool BoundingBox::pointInside(Vector3f point)
         return false;
     }
 }
+
+Vector3i VoxelField::getMinPoint()
+{
+    return Vector3i(mMinX, mMinY, mMinZ);
+}

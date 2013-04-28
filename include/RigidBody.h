@@ -29,6 +29,7 @@ class RigidBody
 
         Matrix4D mTransform;
         Matrix4D mInvertedTransform;
+        btTransform* mPreparedTransform;
 
         bool mTransformOutdated;
         bool mInverseTransformOutdated;

@@ -15,10 +15,12 @@ RigidBody::RigidBody(App* app)
     mShapeIndex = 0;
     mTransformOutdated = true;
     mInverseTransformOutdated = true;
+    mPreparedTransform = 0;
 }
 
 RigidBody::~RigidBody()
 {
+    std::cout << "RB being deleted..." << std::endl;
     if(mRigidBody)
     {
         mApp->getPhysicsManager()->removeRigidBody(mRigidBody, mShapeIndex);
@@ -48,8 +50,17 @@ void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHull
 
     //Attach the actual Rigid body
     btTransform rbTransform;
-	rbTransform.setIdentity();
-	rbTransform.setOrigin(btVector3(offset.x, offset.y, offset.z));
+    if(!mPreparedTransform )
+    {
+        rbTransform.setIdentity();
+        rbTransform.setOrigin(btVector3(offset.x, offset.y, offset.z));
+    }
+    else
+    {
+        rbTransform = *mPreparedTransform;
+        delete mPreparedTransform;
+        mPreparedTransform = 0;
+    }
 
 
     btScalar rbMass(mass);
@@ -75,11 +86,22 @@ void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHull
 
 void RigidBody::setTransform(Matrix4D transform)
 {
-    /*
-    btMatrix3x3 rbBasis(xx)
-    btTransform rbTransform;
-    rbTransform.
-    */
+    if(mRigidBody)
+    {
+        btTransform rbTransform;
+        rbTransform.setIdentity();
+        rbTransform.setFromOpenGLMatrix(transform.getValues());
+
+        MatterMotionState* mtst = (MatterMotionState*)mRigidBody->getMotionState();
+        mtst->setWorldTransform(rbTransform);
+    }
+    else
+    {
+        mPreparedTransform = new btTransform();
+        mPreparedTransform->setIdentity();
+        mPreparedTransform->setFromOpenGLMatrix(transform.getValues());
+    }
+
 }
 
 const Matrix4D& RigidBody::getTransform()
