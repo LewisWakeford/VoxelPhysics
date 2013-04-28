@@ -266,13 +266,15 @@ void DestructionEngine::checkForSeparation()
 
            for(unsigned int k = 0; k < voxArray.size(); k++)
            {
+               /*
                SceneNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, original->getMatter()->getMaterial(), false, voxArray[k]));
                 ((MatterNode*)matterNode.get())->setOffset(i*50.0f, k*50.0f, 0.0f);
                 mApp->getSceneGraph()->getRoot()->addChild(matterNode);
+                */
            }
 
            //Delete old one.
-           original->deleteNode();
+           //original->deleteNode();
         }
     }
 

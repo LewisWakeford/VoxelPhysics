@@ -13,6 +13,8 @@ class MatterNode : public SceneNode
 
         void setOffset(GLfloat x, GLfloat y, GLfloat z);
         void setOffset(Vector3 offset);
+        void setLinearVelocity(btVector3 vel);
+        btVector3 getLinearVelocity();
 
         Matter* getMatter();
 
@@ -26,6 +28,7 @@ class MatterNode : public SceneNode
         GLboolean mUpToDate;
 
         Vector3 mOffset;
+        btVector3 mLinearVelocity;
 
     private:
 };

@@ -58,3 +58,13 @@ void MatterNode::setOffset(Vector3 offset)
     mOffset = offset;
     mMatter.setStartingPosition(offset);
 }
+
+void MatterNode::setLinearVelocity(btVector3 vel)
+{
+    mLinearVelocity = vel;
+}
+
+btVector3 MatterNode::getLinearVelocity()
+{
+    return mLinearVelocity;
+}

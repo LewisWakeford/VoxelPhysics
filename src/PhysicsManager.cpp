@@ -6,11 +6,18 @@
 #include "App.h"
 #include "DestructionEngine.h"
 
-void physicsTickCallback(btDynamicsWorld *world, btScalar timeStep)
+void prePhysicsTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
     PhysicsManager* man = static_cast<PhysicsManager*>(world->getWorldUserInfo());
-    man->tickCallback(world, timeStep);
+    man->preTickCallback(world, timeStep);
 }
+
+void postPhysicsTickCallback(btDynamicsWorld *world, btScalar timeStep)
+{
+    PhysicsManager* man = static_cast<PhysicsManager*>(world->getWorldUserInfo());
+    man->postTickCallback(world, timeStep);
+}
+
 
 PhysicsManager::PhysicsManager(App* app)
 {
@@ -25,7 +32,8 @@ PhysicsManager::PhysicsManager(App* app)
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphaseInterface, mSolver, mCollisionConfiguration);
 
     //Set callback.
-    mDynamicsWorld->setInternalTickCallback(physicsTickCallback, static_cast<void *>(this));
+    mDynamicsWorld->setInternalTickCallback(prePhysicsTickCallback, static_cast<void *>(this), true);
+    mDynamicsWorld->setInternalTickCallback(postPhysicsTickCallback, static_cast<void *>(this), false);
     mDynamicsWorld->setGravity(btVector3(0.0f, 0.0f, -10.0f));
 
     //Create "Floor"
@@ -131,7 +139,24 @@ void PhysicsManager::removeRigidBody(btRigidBody* rigidbody, unsigned int shapeI
     delete rigidbody;
 }
 
-void PhysicsManager::tickCallback(btDynamicsWorld *world, btScalar timeStep)
+void PhysicsManager::preTickCallback(btDynamicsWorld *world, btScalar timeStep)
+{
+    btCollisionObjectArray objects = world->getCollisionObjectArray();
+    for (int i = 0; i < objects.size(); i++)
+    {
+        btRigidBody *rigidBody = btRigidBody::upcast(objects[i]);
+        if (!rigidBody)
+        {
+            continue;
+        }
+        btVector3 rbVelocity = rigidBody->getLinearVelocity();
+        MatterNode* matter = (MatterNode*)rigidBody->getUserPointer();
+        if(matter)
+            matter->setLinearVelocity(rbVelocity);
+    }
+}
+
+void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
     int numManifolds = mDynamicsWorld->getDispatcher()->getNumManifolds();
     mCollisionSets.clear();
@@ -149,8 +174,8 @@ void PhysicsManager::tickCallback(btDynamicsWorld *world, btScalar timeStep)
 
         if(rbA != 0 && rbB != 0)
         {
-            MatterNode* matterA = (MatterNode*)obA->getUserPointer();
-            MatterNode* matterB = (MatterNode*)obB->getUserPointer();
+            MatterNode* matterA = (MatterNode*)rbA->getUserPointer();
+            MatterNode* matterB = (MatterNode*)rbB->getUserPointer();
 
             if(matterA != 0) matterA->getMatter()->setCollided(true);
             if(matterB != 0) matterB->getMatter()->setCollided(true);
@@ -163,12 +188,9 @@ void PhysicsManager::tickCallback(btDynamicsWorld *world, btScalar timeStep)
                     btManifoldPoint& pt = contactManifold->getContactPoint(j);
                     if (pt.getDistance()<0.f)
                     {
-                        btVector3 velA = rbA->getLinearVelocity();
-                        btVector3 velB = rbB->getLinearVelocity();
+                        btVector3 velA = matterA->getLinearVelocity();
+                        btVector3 velB = matterB->getLinearVelocity();
 mPhysics = false;
-                        //For some reason z is the wrong way around.
-                        velA.setZ( -velA.z());
-                        velB.setZ( -velB.z());
 
                         //Build collision object.
                         MatterCollision collision(matterA, matterB, velA, velB, pt, timeStep);

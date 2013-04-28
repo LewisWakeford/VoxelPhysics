@@ -113,8 +113,9 @@ class EnergyGrid
             This bridge is reperesented by a virtual voxel in the home shape and a point on the other one.
         */
         std::unordered_map<int, Vector3f> mBridges;
-        int getBridgeKey(Vector3i voxelCoord);
-        bool getBridge(int key, Vector3f& rBridgePoint); //Returns true if bridge exists with it's point in rBridgePoint.
+        int getBridgeKey(const Vector3i& voxelCoord);
+        Vector3i getBridgeVector(int key);
+        bool getBridge(int key, Vector3f& ret_BridgePoint); //Returns true if bridge exists with it's point in rBridgePoint.
 
         bool mIsReciever; //False if projector
 
@@ -240,6 +241,9 @@ class EnergyGrid
 
         void directTransferTo(Vector3i targetVoxel, float energy);
 
+        /* Move from a bridge backwards until the edge of the voxel field is reached, then return the total energy along that path and the point where the path ends */
+        void transferInternalEnergyThroughBridge(std::unordered_map<int, Vector3f>::const_iterator bridgeIterator);
+
         void transferExternalEnergyTo(Vector3f pointCoord, float energy);
 
         bool mDestructionOccured; //Is true if there was any breakage during energy transfer.
@@ -248,6 +252,7 @@ class EnergyGrid
         MatterNode* mMatterNode;
 
         float mEnergyPerVoxel;
+        float mStartingEnergy;
 
         Vector3f mEnergyVector;
         Vector3f mEnergyVectorLocal;

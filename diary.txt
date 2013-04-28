@@ -176,3 +176,90 @@ while(oldSize != newSize) //End if no new voxels are added to graph.
 27/04/2013
 
 Had an idea to speed up the direct transfer algortihm. Just do something similar to external transfer where it's more a beam than a iterated thing.
+
+Going to start, here is old code:
+
+//MANDATORY OPTIMISATION:
+    //Start at back of shape and work forward, as this may result in energy transfer in a single pass.
+
+    int zStart = 0;
+    int zEnd = 31;
+    int zDirection = 1;
+
+    int yStart = 0;
+    int yEnd = 31;
+    int yDirection = 1;
+
+    int xStart = 0;
+    int xEnd = 31;
+    int xDirection = 1;
+
+    if(mEnergyVectorLocal.x < 0)
+    {
+        xStart = 31;
+        xEnd = 0;
+        xDirection = -1;
+    }
+    if(mEnergyVectorLocal.y < 0)
+    {
+        yStart = 31;
+        yEnd = 0;
+        yDirection = -1;
+    }
+    if(mEnergyVectorLocal.z < 0)
+    {
+        zStart = 31;
+        zEnd = 0;
+        zDirection = -1;
+    }
+
+    //Create two lists of voxels, swap between them each pass.
+    std::vector<Vector3i> voxelListA;
+    std::vector<Vector3i> voxelListB;
+    std::vector<Vector3i>* currentList = &voxelListA;
+    std::vector<Vector3i>* otherList = &voxelListB;
+    bool listIsA = true;
+
+    std::cout << "    Building Initial List..." << std::endl;
+    for(int z = zStart; z != zEnd; z += zDirection)
+    {
+        for(int y = yStart; y != yEnd; y += yDirection)
+        {
+            for(int x = xStart; x != xEnd; x += xDirection)
+            {
+                if(mVoxelData[x][y][z].mFull)
+                {
+                    //Already done else where
+                    //mVoxelData[x][y][z].addEnergy(mIsReciever, startingEnergyPerVoxel);
+                    currentList->push_back(Vector3i(x, y, z));
+                }
+            }
+        }
+    }
+
+
+    while(currentList->size() > 0)
+    {
+        std::cout << "    Transfer Step..." << std::endl;
+        //Transfer energy from all voxels.
+        for(unsigned int i = 0; i < currentList->size(); i++)
+        {
+            directTransferVoxel(currentList->at(i));
+        }
+        std::cout << "    Rebuilding List..." << std::endl;
+        //Check if energy can be transferred again.
+        for(unsigned int i = 0; i < currentList->size(); i++)
+        {
+            Vector3i coord = currentList->at(i);
+            VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
+            if(voxel.getEnergy(mIsReciever) > mEnergyPerVoxel)
+            {
+                otherList->push_back(coord);
+            }
+        }
+        //Swap lists
+        std::vector<Vector3i>* temp = currentList;
+        currentList = otherList;
+        otherList = temp;
+        otherList->clear();
+    }

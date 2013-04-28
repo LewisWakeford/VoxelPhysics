@@ -136,7 +136,7 @@ void Matter::addPressureVertex(float pressure, float stress, Vector3f vertex)
     if(red > 1.0f) red = 1.0f;
     if(red < 0.0f) red = 0.0f;
 
-    float blue = stress / mMaterial->getStressLimit();
+    float blue = 0.0f; //stress / mMaterial->getStressLimit();
     if(blue > 1.0f) blue = 1.0f;
     if(blue < 0.0f) blue = 0.0f;
 

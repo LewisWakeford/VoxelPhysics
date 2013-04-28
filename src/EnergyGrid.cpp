@@ -102,6 +102,8 @@ void EnergyGrid::setInitialEnergy(float energy)
     unsigned int totalVoxels = getMatter()->getVoxelField()->getNumVoxels();
     float energyPerVoxel = energy / totalVoxels;
 
+    mStartingEnergy = energyPerVoxel;
+
     for(int z = 0; z < 32; z++)
     {
         for(int y = 0; y < 32; y++)
@@ -119,91 +121,10 @@ void EnergyGrid::setInitialEnergy(float energy)
 
 void EnergyGrid::directTransfer()
 {
-    //MANDATORY OPTIMISATION:
-    //Start at back of shape and work forward, as this may result in energy transfer in a single pass.
-
-    int zStart = 0;
-    int zEnd = 31;
-    int zDirection = 1;
-
-    int yStart = 0;
-    int yEnd = 31;
-    int yDirection = 1;
-
-    int xStart = 0;
-    int xEnd = 31;
-    int xDirection = 1;
-
-    if(mEnergyVectorLocal.x < 0)
+    for(auto i = mBridges.begin(); i != mBridges.end(); i++)
     {
-        xStart = 31;
-        xEnd = 0;
-        xDirection = -1;
+        transferInternalEnergyThroughBridge(i);
     }
-    if(mEnergyVectorLocal.y < 0)
-    {
-        yStart = 31;
-        yEnd = 0;
-        yDirection = -1;
-    }
-    if(mEnergyVectorLocal.z < 0)
-    {
-        zStart = 31;
-        zEnd = 0;
-        zDirection = -1;
-    }
-
-    //Create two lists of voxels, swap between them each pass.
-    std::vector<Vector3i> voxelListA;
-    std::vector<Vector3i> voxelListB;
-    std::vector<Vector3i>* currentList = &voxelListA;
-    std::vector<Vector3i>* otherList = &voxelListB;
-    bool listIsA = true;
-
-    std::cout << "    Building Initial List..." << std::endl;
-    for(int z = zStart; z != zEnd; z += zDirection)
-    {
-        for(int y = yStart; y != yEnd; y += yDirection)
-        {
-            for(int x = xStart; x != xEnd; x += xDirection)
-            {
-                if(mVoxelData[x][y][z].mFull)
-                {
-                    //Already done else where
-                    //mVoxelData[x][y][z].addEnergy(mIsReciever, startingEnergyPerVoxel);
-                    currentList->push_back(Vector3i(x, y, z));
-                }
-            }
-        }
-    }
-
-
-    while(currentList->size() > 0)
-    {
-        std::cout << "    Transfer Step..." << std::endl;
-        //Transfer energy from all voxels.
-        for(unsigned int i = 0; i < currentList->size(); i++)
-        {
-            directTransferVoxel(currentList->at(i));
-        }
-        std::cout << "    Rebuilding List..." << std::endl;
-        //Check if energy can be transferred again.
-        for(unsigned int i = 0; i < currentList->size(); i++)
-        {
-            Vector3i coord = currentList->at(i);
-            VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
-            if(voxel.getEnergy(mIsReciever) > mEnergyPerVoxel)
-            {
-                otherList->push_back(coord);
-            }
-        }
-        //Swap lists
-        std::vector<Vector3i>* temp = currentList;
-        currentList = otherList;
-        otherList = temp;
-        otherList->clear();
-    }
-
 }
 
 //There is an issue I need to solve with indirect transfer:
@@ -247,6 +168,292 @@ void EnergyGrid::indirectTransfer()
         }
     }
 }
+
+void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vector3f>::const_iterator bridgeIterator)
+{
+    int key = bridgeIterator->first;
+    Vector3i bridgePoint = getBridgeVector(key);
+
+    //Quick bit of setup
+    unsigned int x = 0;
+    unsigned int y = 1;
+    unsigned int z = 2;
+
+    Vector3f energyDirection = getEnergyVector();
+
+
+    const Matrix4D& worldToLocal = getMatter()->getRigidBody()->getInvertedTransform();
+    energyDirection = worldToLocal.rotateVector(energyDirection);
+    energyDirection.normalize();
+
+    Vector3f reverseDirection = -(energyDirection);
+
+    //Keep a track record of voxels weights and such
+    std::vector<Vector3i> voxelsInPath;
+    std::vector<float> voxelWeights;
+    std::vector<int> voxelDistance;
+
+    //The energy vector starts at pointCoord and travels along reverseDirection
+    //P = pointCoord + t * reverseDirection where P is the point on the line and t is some number
+
+    //The most significant direction of the vector will give us the idea as to which plane to divide the energy along.
+    unsigned int sig;
+    int direction;
+    unsigned int up;
+    unsigned int left;
+
+    if(fabs(reverseDirection.x) >= fabs(reverseDirection.y) && fabs(reverseDirection.x) >= fabs(reverseDirection.z))
+    {
+        //Most significant direction is X
+        if(reverseDirection.x > 0)
+        {
+            sig = x;
+            direction = 1;
+        }
+        else
+        {
+            sig = x;
+            direction  = -1;
+        }
+        up = y;
+        left = z;
+    }
+    else if(fabs(reverseDirection.y) >= fabs(reverseDirection.x) && fabs(reverseDirection.y) >= fabs(reverseDirection.z))
+    {
+        //...is Y
+        if(reverseDirection.y > 0)
+        {
+            sig = y;
+            direction = 1;
+        }
+        else
+        {
+            sig = y;
+            direction  = -1;
+        }
+        up = x;
+        left = z;
+    }
+    else
+    {
+        //...is Z
+        if(reverseDirection.z > 0)
+        {
+            sig = z;
+            direction = 1;
+        }
+        else
+        {
+            sig = z;
+            direction  = -1;
+        }
+        up = y;
+        left = x;
+    }
+
+    //Find where the energy vector intersects each of the 32 planes in the significant direction.
+    //At each intersection find the four closest voxels in that plane to the intersection point.
+    //Spread energy between them based on distance from point of intersection.
+
+    float energyPool = 0.0f;
+
+    unsigned int start = 0;
+    unsigned int end = 32;
+
+    if(direction < 0)
+    {
+        start = 31;
+        end = -1;
+    }
+
+    int maxDistance = 0;
+
+    for(unsigned int i = start; i != end; i += direction)
+    {
+        //NOTE: We can assume that the line is not parrallel to the plane as we change the plane we intersect with based on direction of energy.
+        Vector3f pointOfIntersection;
+
+        //Equation of plane is sig = pointInPlane.sig
+
+        //Equation of line is:
+        // sig = pointCoord.sig + (partnerDirection.sig * t)
+        // up = pointCoord.up + (partnerDirection.up * t)
+        // left = pointCoord.left + (partnerDirection.left * t)
+
+        //Recreate plane with t and solve for t
+        // pointCoord.sig + (partnerDirection.sig * t) = pointInPlane.sig
+        // partnerDirection.sig * t = pointInPlane.sig - pointCoord.sig
+        // t = (pointInPlane.sig - pointCoord.sig) / partnerDirection.sig
+
+
+        float t = (float(i) - bridgePoint.get(sig)) / reverseDirection.get(sig);
+
+        pointOfIntersection.set(sig, float(i));
+        pointOfIntersection.set(up, bridgePoint.get(up) + (reverseDirection.get(up) * t));
+        pointOfIntersection.set(left, bridgePoint.get(left) + (reverseDirection.get(left) * t));
+
+        std::vector<Vector3i> closestVoxels;
+        std::vector<float> closestVoxelWeights;
+        std::vector<bool> voxelValid;
+        int validVoxels = 4;
+
+        int upCoord = ceilf(pointOfIntersection.get(up));
+        int downCoord = floorf(pointOfIntersection.get(up));
+        int leftCoord = ceilf(pointOfIntersection.get(left));
+        int rightCoord = floorf(pointOfIntersection.get(left));
+
+        int numCloseVoxels = 0;
+
+        if(sig == x)
+        {
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, rightCoord));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+            }
+        }
+        else if(sig == y)
+        {
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, rightCoord));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+            }
+        }
+        else
+        {
+            //closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, downCoord, i));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+            }
+        }
+
+        for(int k = 0; k < closestVoxels.size(); k++)
+        {
+            float verticalDistance = closestVoxels[k].get(up) - pointOfIntersection.get(up);
+            float horizontalDistance = closestVoxels[k].get(left) - pointOfIntersection.get(left);
+
+            float weight = (1 - fabs(verticalDistance)) * (1 - fabs(horizontalDistance));
+            closestVoxelWeights.push_back(weight);
+        }
+
+        //Check for validity
+        for(int k = 0; k < closestVoxels.size(); k++)
+        {
+            voxelValid.push_back(validCoord(closestVoxels[k]));
+
+            if(!voxelValid[k])
+            {
+                validVoxels -= 1;
+                //If invalid, redistribute weight
+                if(validVoxels > 0)
+                {
+
+                    float shareRatio = 1.0f / validVoxels;
+                    for(int j = 0; j < 4; j++)
+                    {
+                        if(!voxelValid[j])
+                        {
+                            closestVoxelWeights[j] += closestVoxelWeights[k] * shareRatio;
+                        }
+
+                    }
+            }
+
+            closestVoxelWeights[k] = 0.0f;
+            }
+
+        }
+
+        //Add valid voxels to path.
+        for(int k = 0; k < closestVoxels.size(); k++)
+        {
+            if(voxelValid[k])
+            {
+                VoxelData& voxel = mVoxelData[closestVoxels[k].x][closestVoxels[k].y][closestVoxels[k].z];
+                float freeEnergyInVoxel = (voxel.getEnergy(mIsReciever)-mEnergyPerVoxel)*closestVoxelWeights[k];
+                energyPool += freeEnergyInVoxel;
+                voxel.setEnergy(mIsReciever, voxel.getEnergy(mIsReciever) - freeEnergyInVoxel);
+                voxelsInPath.push_back(closestVoxels[k]);
+                voxelWeights.push_back(closestVoxelWeights[k]);
+                voxelDistance.push_back(i);
+            }
+        }
+
+        maxDistance = i;
+
+        if(validVoxels <= 0)
+        {
+            i = end-direction;
+        }
+
+    }
+
+    //Apply pressure to voxels in path.
+    for(unsigned int i = 0; i < voxelsInPath.size(); i++)
+    {
+        int pressuringLayers = 1 + ((maxDistance - voxelDistance[i])*2); //How many layers of voxels are applying pressure to this one.
+        float pressure = pressuringLayers * (mStartingEnergy-mEnergyPerVoxel) * voxelWeights[i];
+        pressureVoxel(voxelsInPath[i], pressure);
+    }
+
+    Vector3f bridgePoint3f = bridgeIterator->second;
+    mCollisionPartner->transferExternalEnergyTo(bridgePoint3f, energyPool);
+
+
+}
+
+
 
 void EnergyGrid::buildTransferGraph()
 {
@@ -392,23 +599,25 @@ float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel, float energy)
         {
             pressureVoxel(sourceVoxel, energyToTransfer);
             source.setEnergy(mIsReciever, mEnergyPerVoxel);
+            return energyToTransfer;
         }
         //Only take some
         else if(energyToTransfer >= 0)
         {
             pressureVoxel(sourceVoxel, energy);
             source.setEnergy(mIsReciever, energyToTransfer-energy+mEnergyPerVoxel);
-        }
-
-        if(energyToTransfer >= 0)
-        {
-
-            pressureVoxel(sourceVoxel, energyToTransfer);
-            source.setEnergy(mIsReciever, mEnergyPerVoxel);
-            return energyToTransfer;
+            return energy;
         }
     }
     return 0.0f;
+}
+
+//Returns the key to the bridge.
+//Which is the x-y-z coords compressed into an int.
+int EnergyGrid::getBridgeKey(const Vector3i& voxelCoord)
+{
+    //Max value, 33 so 6 bit ints.
+    return voxelCoord.x << 12 | voxelCoord.y << 6 | voxelCoord.z;
 }
 
 bool EnergyGrid::getBridge(int key, Vector3f& rBridgePoint)
@@ -423,6 +632,14 @@ bool EnergyGrid::getBridge(int key, Vector3f& rBridgePoint)
         rBridgePoint = it->second;
         return true;
     }
+}
+
+Vector3i EnergyGrid::getBridgeVector(int key)
+{
+    int x = key >> 12;
+    int y = key >> 6 & 63; //Mask with 111111 which is 63
+    int z = key & 63;
+    return Vector3i(x, y, z);
 }
 
 void EnergyGrid::transferEnergyTo(Vector3i targetVoxel, char direction, float energy)
@@ -465,14 +682,6 @@ void EnergyGrid::directTransferTo(Vector3i targetVoxel, float energy)
         voxel.addEnergy(mIsReciever, energy);
         pressureVoxel(targetVoxel, energy);
     }
-}
-
-//Returns the key to the bridge.
-//Which is the x-y-z coords compressed into an int.
-int EnergyGrid::getBridgeKey(Vector3i voxelCoord)
-{
-    //Max value, 33 so 6 bit ints.
-    return voxelCoord.x << 12 | voxelCoord.y << 6 | voxelCoord.z;
 }
 
 void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
@@ -555,13 +764,13 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
     Vector3i* previousVoxels = 0;
     float* previousEnergy = 0;
 
-    unsigned int start = 0;
-    unsigned int end = 32;
+    int start = 0;
+    int end = 32;
 
     if(direction < 0)
     {
-        start = 32;
-        end = 0;
+        start = 31;
+        end = -1;
     }
 
     for(unsigned int i = start; i != end; i += direction)
@@ -588,9 +797,9 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
         pointOfIntersection.set(up, pointCoord.get(up) + (partnerDirection.get(up) * t));
         pointOfIntersection.set(left, pointCoord.get(left) + (partnerDirection.get(left) * t));
 
-        Vector3i closestVoxels[4];
-        float voxelWeights[4];
-        bool voxelValid[4];
+        std::vector<Vector3i> closestVoxels;
+        std::vector<float> closestVoxelWeights;
+        std::vector<bool> voxelValid;
         int validVoxels = 4;
 
         int upCoord = ceilf(pointOfIntersection.get(up));
@@ -598,41 +807,95 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
         int leftCoord = ceilf(pointOfIntersection.get(left));
         int rightCoord = floorf(pointOfIntersection.get(left));
 
+        int numCloseVoxels = 0;
+
         if(sig == x)
         {
-            closestVoxels[0].set(i, upCoord, leftCoord);
-            closestVoxels[1].set(i, downCoord, leftCoord);
-            closestVoxels[2].set(i, upCoord, rightCoord);
-            closestVoxels[3].set(i, downCoord, rightCoord);
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, rightCoord));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+            }
         }
         else if(sig == y)
         {
-            closestVoxels[0].set(upCoord, i, leftCoord);
-            closestVoxels[1].set(downCoord, i, leftCoord);
-            closestVoxels[2].set(upCoord, i, rightCoord);
-            closestVoxels[3].set(downCoord, i, rightCoord);
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, rightCoord));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+            }
         }
         else
         {
-            closestVoxels[0].set(leftCoord, upCoord, i);
-            closestVoxels[1].set(leftCoord, downCoord, i);
-            closestVoxels[2].set(rightCoord, upCoord, i);
-            closestVoxels[3].set(rightCoord, downCoord, i);
+            //closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+            if(upCoord != downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, downCoord, i));
+            }
+            else if(upCoord == downCoord && leftCoord != rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+            }
+            else if(upCoord != downCoord && leftCoord == rightCoord)
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+            }
+            else
+            {
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+            }
         }
 
-        for(int k = 0; k < 4; k++)
+        for(int k = 0; k < closestVoxels.size(); k++)
         {
             float verticalDistance = closestVoxels[k].get(up) - pointOfIntersection.get(up);
             float horizontalDistance = closestVoxels[k].get(left) - pointOfIntersection.get(left);
 
-            float weight = fabs(verticalDistance) * fabs(horizontalDistance);
-            voxelWeights[k] = weight;
+            float weight = (1-fabs(verticalDistance)) * (1-fabs(horizontalDistance));
+            closestVoxelWeights.push_back(weight);
         }
 
         //Check for validity
-        for(int k = 0; k < 4; k++)
+        for(int k = 0; k < closestVoxels.size(); k++)
         {
-            voxelValid[k] = validCoord(closestVoxels[k]);
+            voxelValid.push_back(validCoord(closestVoxels[k]));
 
             if(!voxelValid[k])
             {
@@ -646,16 +909,18 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
                     {
                         if(!voxelValid[j])
                         {
-                            voxelWeights[j] += voxelWeights[k] * shareRatio;
+                            closestVoxelWeights[j] += closestVoxelWeights[k] * shareRatio;
                         }
 
                     }
             }
 
-            voxelWeights[k] = 0.0f;
+            closestVoxelWeights[k] = 0.0f;
             }
 
         }
+
+
 
         if(previousVoxels && previousEnergy)
         {
@@ -674,26 +939,32 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
         previousVoxels[2] = closestVoxels[2];
         previousVoxels[3] = closestVoxels[3];
 
-        for(int k = 0; k < 4; k++)
+        for(int k = 0; k < closestVoxels.size(); k++)
         {
             if(voxelValid[k])
             {
-                float energyToTransfer = energyPool*voxelWeights[k];
+                float energyToTransfer = energyPool*closestVoxelWeights[k];
                 directTransferTo(closestVoxels[k], energyToTransfer);
                 previousEnergy[k] = energyToTransfer;
-                energyPool -= energyToTransfer;
             }
             else
             {
                 previousEnergy[k] = 0.0f;
             }
         }
+        energyPool = 0;
 
-        if(i == end-1)
+        if(validVoxels <= 0)
+        {
+            i = end - direction;
+        }
+
+        if(i >= end-1)
         {
             delete[] previousVoxels;
             delete[] previousEnergy;
         }
+
     }
 
 }

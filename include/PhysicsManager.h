@@ -7,7 +7,8 @@
 
 class App;
 
-void physicsTickCallback(btDynamicsWorld *world, btScalar timeStep);
+void prePhysicsTickCallback(btDynamicsWorld* world, btScalar timeStep);
+void postPhysicsTickCallback(btDynamicsWorld* world, btScalar timeStep);
 
 class PhysicsManager
 {
@@ -20,7 +21,8 @@ class PhysicsManager
         unsigned int addRigidBody(btRigidBody* rigidbody, btCollisionShape* shape);
         void removeRigidBody(btRigidBody* rigidbody, unsigned int shapeIndex);
 
-        void tickCallback(btDynamicsWorld *world, btScalar timeStep);
+        void preTickCallback(btDynamicsWorld *world, btScalar timeStep);
+        void postTickCallback(btDynamicsWorld *world, btScalar timeStep);
 
     protected:
 

@@ -4369,7 +4369,7 @@
 	"Buffer.h"
 	"Vector3.h"
 
-1367055973 c:\code\voxelphysics_git\include\physicsmanager.h
+1367110373 c:\code\voxelphysics_git\include\physicsmanager.h
 	"btBulletDynamicsCommon.h"
 	"MatterCollisionSet.h"
 
@@ -4403,7 +4403,7 @@
 	"VP.h"
 	<boost/shared_ptr.hpp>
 
-1367055974 c:\code\voxelphysics_git\include\matternode.h
+1367111431 c:\code\voxelphysics_git\include\matternode.h
 	"SceneNode.h"
 	"Matter.h"
 
@@ -4441,7 +4441,7 @@
 	"MatterCollisionSet.h"
 	"EnergyGrid.h"
 
-1367099363 c:\code\voxelphysics_git\include\energygrid.h
+1367109567 c:\code\voxelphysics_git\include\energygrid.h
 	"Vector3.h"
 	"VoxelField.h"
 	<vector>
@@ -4455,7 +4455,7 @@
 	"App.h"
 	"Renderer.h"
 
-1367095698 source:c:\code\voxelphysics_git\src\destructionengine.cpp
+1367114864 source:c:\code\voxelphysics_git\src\destructionengine.cpp
 	"DestructionEngine.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4472,7 +4472,7 @@
 	"VP.h"
 	<vector>
 
-1367055994 source:c:\code\voxelphysics_git\src\energygrid.cpp
+1367117733 source:c:\code\voxelphysics_git\src\energygrid.cpp
 	"EnergyGrid.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4483,14 +4483,14 @@
 	<cmath>
 	"console.h"
 
-1367055993 source:c:\code\voxelphysics_git\src\material.cpp
+1367116589 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
 	"Matrix4D.h"
 	<math.h>
 
-1367055992 source:c:\code\voxelphysics_git\src\matter.cpp
+1367116505 source:c:\code\voxelphysics_git\src\matter.cpp
 	"Matter.h"
 	"App.h"
 	"Material.h"
@@ -4503,7 +4503,7 @@
 	"Matter.h"
 	"MatterNode.h"
 
-1367055992 source:c:\code\voxelphysics_git\src\matternode.cpp
+1367111447 source:c:\code\voxelphysics_git\src\matternode.cpp
 	"MatterNode.h"
 	"App.h"
 	"Renderer.h"
@@ -4521,7 +4521,7 @@
 1367055973 c:\code\voxelphysics_git\include\meshnode.h
 	"SceneNode.h"
 
-1367058751 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
+1367111593 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
 	"PhysicsManager.h"
 	"console.h"
 	"Matter.h"
