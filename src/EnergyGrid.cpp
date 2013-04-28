@@ -171,6 +171,9 @@ void EnergyGrid::indirectTransfer()
 
 void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vector3f>::const_iterator bridgeIterator)
 {
+    //Possible optimisation, convert vector to 3 delta values, where the value in sig is always 1.
+    //Just add those each step instead of recalulating everything.
+
     int key = bridgeIterator->first;
     Vector3i bridgePoint = getBridgeVector(key);
 

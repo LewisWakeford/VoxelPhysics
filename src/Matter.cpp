@@ -132,7 +132,8 @@ void Matter::addPressureVertex(float pressure, float stress, Vector3f vertex)
     m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y);
     m_debug_PressureVertexArray.push_back(vertex.z - cOfm.z);
 
-    float red = (pressure) / mMaterial->getPressureLimit();
+    float red = 0.0f;//(pressure) / mMaterial->getPressureLimit();
+    if(pressure >= mMaterial->getPressureLimit()) red = 1.0f;
     if(red > 1.0f) red = 1.0f;
     if(red < 0.0f) red = 0.0f;
 

@@ -16,8 +16,8 @@ App::~App()
 {
     delete mRenderer;
     delete mResourceManager;
+    delete mSceneGraph; //Must delete before physics manager.
     delete mPhysicsManager;
-    delete mSceneGraph;
     delete mVoxelConverter;
     delete mDestructionEngine;
 }
