@@ -58,7 +58,8 @@ class EnergyGrid
 
     protected:
 
-        enum mDirection
+
+        enum eDirection
         {
             DOWN,
             UP,
@@ -85,12 +86,15 @@ class EnergyGrid
             DOWN_LEFT_FRONT,
             DOWN_LEFT_BACK,
             DOWN_RIGHT_FRONT,
-            DOWN_RIGHT_BACK
+            DOWN_RIGHT_BACK,
+            INVALID_DIR
         };
+
+        static eDirection DIRECTION_START;
 
         static Vector3i getDirectionVector(char direction);
         static Vector3f getDirectionVectorF(char direction);
-        static char getReverseDirection(char direction);
+        static eDirection getReverseDirection(char direction);
 
         float mRecieverMap[26]; //Each direction is given a code from 0 - 25.
                                 //Depending on the direction, a different amount of stress or pressure is generated.
@@ -210,7 +214,7 @@ class EnergyGrid
                     mSource = isSource;
                     mVoxelCoord = coord;
                     mFeeder = -1;
-                    mFeederDirection = 30;
+                    mFeederDirection = INVALID_DIR;
                     mDeadEnd = false;
                 }
         };
@@ -259,7 +263,7 @@ class EnergyGrid
 
         EnergyGrid* mCollisionPartner; //The current other grid this grid is involved with.
 
-        static const Vector3i mDirectionVectors[26];
+        static const Vector3i mDirectionVectors[27];
 
     private:
 };

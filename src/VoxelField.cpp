@@ -53,6 +53,11 @@ GLubyte VoxelField::get(Vector3i coords) const
     return get(coords.x,coords.y,coords.z);
 }
 
+GLubyte VoxelField::getValue(Vector3i coords) const
+{
+    return getValue(coords.x,coords.y,coords.z);
+}
+
 GLubyte VoxelField::get(GLuint x, GLuint y, GLuint z) const
 {
     if(x < 0)
@@ -80,6 +85,37 @@ GLubyte VoxelField::get(GLuint x, GLuint y, GLuint z) const
     else if(z > 31)
     {
         z = 31;
+    }
+    return mData[z][y][x];
+}
+
+GLubyte VoxelField::getValue(GLuint x, GLuint y, GLuint z) const
+{
+    if(x < 0)
+    {
+        return 0;
+    }
+    else if(x > 31)
+    {
+        return 0;
+    }
+
+    if(y < 0)
+    {
+        return 0;
+    }
+    else if(y > 31)
+    {
+        return 0;
+    }
+
+    if(z < 0)
+    {
+        return 0;
+    }
+    else if(z > 31)
+    {
+        return 0;
     }
     return mData[z][y][x];
 }
@@ -227,11 +263,11 @@ void VoxelField::import(const char* filename)
         {
             fileStream.get(currentByte);
             GLubyte value = 2;
-            if((GLubyte)currentByte == 48)
+            if(currentByte == '0') // 0
             {
                 value = 0;
             }
-            else if((GLubyte)currentByte == 49)
+            else if(currentByte == '1') // 1
             {
                 value = 1;
                 sumX += x;
@@ -266,20 +302,40 @@ void VoxelField::import(const char* filename)
 
                 sum++;
             }
-            if(value != 2)
+            else if(currentByte == 'x') //X
+            {
+                x++;
+                value = 2;
+            }
+            else if(currentByte == 'y') //Y
+            {
+                x = 0;
+                y++;
+                value = 2;
+            }
+            else if(currentByte == 'z') //Z
+            {
+                x = 0;
+                y = 0;
+                z++;
+                value = 2;
+            }
+
+            if(value < 2)
             {
                 mData[z][y][x] = value;
                 x++;
-                if(x > 31)
-                {
-                    x = 0;
-                    y++;
-                }
-                if(y > 31)
-                {
-                    y = 0;
-                    z++;
-                }
+            }
+
+            if(x > 31)
+            {
+                x = 0;
+                y++;
+            }
+            if(y > 31)
+            {
+                y = 0;
+                z++;
             }
         }
         mCenterOfMass.x = sumX/sum;
@@ -494,7 +550,7 @@ void VoxelField::getPotentialBridges(const Matrix4D& worldToObject, Vector3f dir
                 {
                     if(get(x, y, z) == 1)
                     {
-                        potentialBridges.push_back(Vector3i(x-xDir, y, z));
+                        potentialBridges.push_back(Vector3i(x, y, z));
                         found = true;
                     }
                 }
@@ -528,7 +584,7 @@ void VoxelField::getPotentialBridges(const Matrix4D& worldToObject, Vector3f dir
                 {
                     if(get(x, y, z) == 1)
                     {
-                        potentialBridges.push_back(Vector3i(x, y-yDir, z));
+                        potentialBridges.push_back(Vector3i(x, y, z));
                         found = true;
                     }
                 }
@@ -562,7 +618,7 @@ void VoxelField::getPotentialBridges(const Matrix4D& worldToObject, Vector3f dir
                 {
                     if(get(x, y, z) == 1)
                     {
-                        potentialBridges.push_back(Vector3i(x, y, z-zDir));
+                        potentialBridges.push_back(Vector3i(x, y, z));
                         found = true;
                     }
                 }

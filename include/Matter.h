@@ -35,6 +35,7 @@ class Matter
         void addHullVertex(unsigned int hullIndex, Vector3f vertex); //Add a hull point to be drawn in debug rendering
         void addVoxelVertex(unsigned int hullIndex, Vector3f vertex); //Add a voxel point to be drawn in debug rendering
         void addPressureVertex(float pressure, float stress, Vector3f vertex); //Add a pressure point to be drawn in debug rendering
+        void addEnergyBridge(Vector3f vertex, bool local);
 
         void hullsDone();
         btConvexHullShape* getHull(int index);
@@ -65,6 +66,8 @@ class Matter
 
         void setCollided(bool value);
         bool hasCollided();
+
+        std::string mFilename;
 
         void processCollision(const btVector3& point, const btVector3& normal, const btScalar force);
 

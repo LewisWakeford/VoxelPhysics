@@ -70,6 +70,7 @@ bool Matter::nonTrivial(float energy)
 void Matter::import(const char* voxelFilename)
 {
     mVoxelField.import(voxelFilename);
+    mFilename = voxelFilename;
 }
 
 unsigned int Matter::getID()
@@ -132,12 +133,12 @@ void Matter::addPressureVertex(float pressure, float stress, Vector3f vertex)
     m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y);
     m_debug_PressureVertexArray.push_back(vertex.z - cOfm.z);
 
-    float red = 0.0f;//(pressure) / mMaterial->getPressureLimit();
-    if(pressure >= mMaterial->getPressureLimit()) red = 1.0f;
+    float red = (pressure) / mMaterial->getPressureLimit();
+    //if(pressure >= mMaterial->getPressureLimit()) red = 1.0f;
     if(red > 1.0f) red = 1.0f;
     if(red < 0.0f) red = 0.0f;
 
-    float blue = 0.0f; //stress / mMaterial->getStressLimit();
+    float blue = stress / mMaterial->getStressLimit();
     if(blue > 1.0f) blue = 1.0f;
     if(blue < 0.0f) blue = 0.0f;
 
@@ -147,6 +148,31 @@ void Matter::addPressureVertex(float pressure, float stress, Vector3f vertex)
     m_debug_PressureVertexArray.push_back(red); //High pressure = Red.
     m_debug_PressureVertexArray.push_back(green); //Low pressure = Green.
     m_debug_PressureVertexArray.push_back(blue);
+}
+
+void Matter::addEnergyBridge(Vector3f vertex, bool local)
+{
+    Vector3f cOfm = mVoxelField.getCenterOfMass();
+    m_debug_PressureVertexArray.push_back(vertex.x - cOfm.x
+                                          );
+    m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y
+                                          );
+    m_debug_PressureVertexArray.push_back(vertex.z - cOfm.z
+                                          );
+
+    if(local)
+    {
+        m_debug_PressureVertexArray.push_back(1.0f); //Draw Bridge as White
+        m_debug_PressureVertexArray.push_back(1.0f);
+        m_debug_PressureVertexArray.push_back(1.0f);
+    }
+    else
+    {
+        m_debug_PressureVertexArray.push_back(0.0f); //Draw Bridge as Black
+        m_debug_PressureVertexArray.push_back(0.0f);
+        m_debug_PressureVertexArray.push_back(0.0f);
+    }
+
 }
 
 void Matter::hullsDone()

@@ -43,7 +43,9 @@ class VoxelField
 
         GLfloat sample(GLfloat x, GLfloat y, GLfloat z);
         GLubyte get(Vector3i coordinates) const;
+        GLubyte getValue(Vector3i coordinates) const;
         GLubyte get(GLuint x, GLuint y, GLuint z) const;
+        GLubyte getValue(GLuint x, GLuint y, GLuint z) const;
 
         unsigned int getNumVoxels();
 

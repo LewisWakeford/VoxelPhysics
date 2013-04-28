@@ -617,14 +617,14 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
 
                 GLuint corners = 0;
 
-                GLubyte sample0 = vox->get(corner0);
-                GLubyte sample1 = vox->get(corner1);
-                GLubyte sample2 = vox->get(corner2);
-                GLubyte sample3 = vox->get(corner3);
-                GLubyte sample4 = vox->get(corner4);
-                GLubyte sample5 = vox->get(corner5);
-                GLubyte sample6 = vox->get(corner6);
-                GLubyte sample7 = vox->get(corner7);
+                GLubyte sample0 = vox->getValue(corner0);
+                GLubyte sample1 = vox->getValue(corner1);
+                GLubyte sample2 = vox->getValue(corner2);
+                GLubyte sample3 = vox->getValue(corner3);
+                GLubyte sample4 = vox->getValue(corner4);
+                GLubyte sample5 = vox->getValue(corner5);
+                GLubyte sample6 = vox->getValue(corner6);
+                GLubyte sample7 = vox->getValue(corner7);
 
                 int fullVoxels = 0;
                 Vector3f cubeNormal(0.0f, 0.0f, 0.0f);

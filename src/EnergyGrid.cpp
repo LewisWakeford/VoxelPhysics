@@ -3,6 +3,8 @@
 #include "Matter.h"
 #include "MatterNode.h"
 
+EnergyGrid::eDirection EnergyGrid::DIRECTION_START = DOWN;
+
 EnergyGrid::EnergyGrid(MatterNode* matterNode) :
     mTransferMap(32, std::vector<std::vector<int>>(32, std::vector<int>(32, -1))),
     mVoxelData(32, std::vector<std::vector<VoxelData>>(32, std::vector<VoxelData>(32)))
@@ -61,7 +63,7 @@ void EnergyGrid::buildMaps(const Vector3f& otherEnergy)
 
     //Projector.
     float totalPressure = 0.0f;
-    for(unsigned int i = 0; i < 26; i++)
+    for(unsigned int i = DIRECTION_START; i < INVALID_DIR; ++i)
     {
         Vector3f directionVector = getDirectionVectorF(i);
         float pressure = directionVector.dot(myDirection);
@@ -163,7 +165,7 @@ void EnergyGrid::indirectTransfer()
             VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
 
             float requiredEnergy = mEnergyPerVoxel - voxel.getEnergy(mIsReciever);
-            if(requiredEnergy > 0) pullEnergy(i, requiredEnergy, 30);
+            if(requiredEnergy > 0) pullEnergy(i, requiredEnergy, INVALID_DIR);
             voxel.setEnergy(mIsReciever, mEnergyPerVoxel);
         }
     }
@@ -476,7 +478,8 @@ void EnergyGrid::buildTransferGraph()
             for(unsigned int z = 0; z < 32; z++)
             {
                 VoxelData& voxel = mVoxelData[x][y][z];
-                if(voxel.mFull && !voxel.mDestroyed && voxel.getEnergy(mIsReciever) >= mEnergyPerVoxel)
+                if(//voxel.mFull && !voxel.mDestroyed &&
+                   voxel.getEnergy(mIsReciever) >= mEnergyPerVoxel)
                 {
                     mTransferGraph.push_back(TransferNode(true, Vector3i(x, y, z)));
                     mTransferGraph.back().mGeneration = 0;
@@ -505,7 +508,7 @@ void EnergyGrid::buildTransferGraph()
             const Vector3i coord = currentNode.mVoxelCoord;
 
             //Get coords of adjanct nodes
-            for(unsigned int k = 0; k < 26; k++)
+            for(unsigned int k = 0; k < 27; k++)
             {
                 Vector3i adjanctCoord = coord + getDirectionVector(k);
                 if(validCoord(adjanctCoord))
@@ -516,7 +519,7 @@ void EnergyGrid::buildTransferGraph()
                     if(nodeIndex >= 0 && nodeIndex > endOfStep)
                     {
                         TransferNode& adjanctNode = mTransferGraph[nodeIndex];
-                        char previousFeederDirection = getReverseDirection(adjanctNode.mFeederDirection);
+                        eDirection previousFeederDirection = getReverseDirection(adjanctNode.mFeederDirection);
                         float previousFeederStress = 1.0f - fabs(mCurrentMap[previousFeederDirection]);
                         float stress = 1.0f - fabs(mCurrentMap[k]);
 
@@ -767,14 +770,16 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
     Vector3i* previousVoxels = 0;
     float* previousEnergy = 0;
 
-    int start = 0;
+    int start = ceilf(pointCoord.get(sig));
     int end = 32;
 
     if(direction < 0)
     {
-        start = 31;
+        start = floorf(pointCoord.get(sig));
         end = -1;
     }
+
+    pointCoord.get(sig);
 
     for(unsigned int i = start; i != end; i += direction)
     {
@@ -972,7 +977,7 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
 
 }
 
-char EnergyGrid::getReverseDirection(char direction)
+EnergyGrid::eDirection EnergyGrid::getReverseDirection(char direction)
 {
     switch(direction)
     {
@@ -1055,7 +1060,7 @@ char EnergyGrid::getReverseDirection(char direction)
             return UP_LEFT_FRONT;
         break;
         default:
-            return 0xFF;
+            return INVALID_DIR;
         break;
     }
 }
@@ -1075,19 +1080,26 @@ Vector3i EnergyGrid::getDirectionVector(char direction)
 
 bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction)
 {
+
     TransferNode& node = mTransferGraph[nodeIndex];
     Vector3i& coord = node.mVoxelCoord;
     VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
 
-    if(voxel.mDestroyed || voxel.mSnapped) return false; //No longer valid for transfer.
+    //std::cout << "Pulling Energy from (" << coord.x << ", " << coord.y << ", " << coord.z << ")" << std::endl;
+
+    if(//voxel.mDestroyed ||
+       voxel.mSnapped)
+       {
+           return false; //No longer valid for transfer.
+       }
 
     if(!node.mSource)
     {
 
-        VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
+
 
         //Stress and pressure due to pulling the energy.
-        if(direction < 26) //if above 26 this is the first voxel in the proccess.
+        if(direction != INVALID_DIR) //this is not the first voxel in the proccess.
         {
             float pressureFactor = mCurrentMap[direction];
             float stressFactor = 1.0f - pressureFactor;
@@ -1096,25 +1108,11 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
         }
 
         //Pull energy from feeder
-        if(node.mFeeder >= 0)
+
+
+        if(node.mFeeder < 0)
         {
-            char transferDirection = getReverseDirection(node.mFeederDirection);
-
-            //Apply stress and pressure from feeder
-            float pressureFactor = mCurrentMap[transferDirection];
-            float stressFactor = 1.0f - pressureFactor;
-
-            pressureVoxel(coord, energy * stressFactor);
-            stressVoxel(coord, energy * pressureFactor);
-
-            if(!pullEnergy(node.mFeeder, energy, transferDirection))
-            {
-                //Node not valid any more so remove from feeders.
-                node.mFeeder = -1;
-            }
-        }
-        else
-        {
+            //std::cout << "Seperated!" << std::endl;
             //Has been seperated, so repair feeders.
 
             std::vector<unsigned int> potentialFeeders;
@@ -1125,7 +1123,7 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
             float highestStress = 0.0f;
             float previousStress = 1.0f - fabs(mCurrentMap[node.mFeederDirection]);
 
-            for(unsigned int i = 0; i < 26; i++)
+            for(unsigned int i = DIRECTION_START; i < INVALID_DIR; i++)
             {
                 Vector3i adjanctCoord = coord + getDirectionVector(i);
                 int nodeIndex = mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
@@ -1142,7 +1140,8 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
 
                     if(adjanctNode.mFeederDirection == adjanctToMe || adjanctNode.mDeadEnd) valid = false;
 
-                    if(!(adjanctVoxel.mDestroyed || adjanctVoxel.mSnapped) && valid)
+                    if(!(//adjanctVoxel.mDestroyed ||
+                         adjanctVoxel.mSnapped) && valid)
                     {
                         potentialFeeders.push_back(nodeIndex);
                         potentialFeederDirections.push_back(i);
@@ -1168,21 +1167,55 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
                 }
             }
 
+            if(node.mFeeder = -1)
+            {
+                node.mDeadEnd = true;
+                return false; //Could not get any more feeders, so this node is a dead end.
+            }
         }
-        if(node.mFeeder = -1)
-        {
-            node.mDeadEnd = true;
-            return false; //Could not get any more feeders, so this node is a dead end.
-        }
-    }
 
-    if(voxel.mDestroyed || voxel.mSnapped) return false; //No longer valid for transfer.
+        if(node.mFeeder >= 0)
+        {
+            char transferDirection = getReverseDirection(node.mFeederDirection);
+
+            //Apply stress and pressure from feeder
+            float pressureFactor = mCurrentMap[transferDirection];
+            float stressFactor = 1.0f - pressureFactor;
+
+            pressureVoxel(coord, energy * pressureFactor);
+            stressVoxel(coord, energy * stressFactor);
+
+            //std::cout << "Pulling Energy from neighbour in direction: " << (int)transferDirection << std::endl;
+
+            if(!pullEnergy(node.mFeeder, energy, transferDirection))
+            {
+                //std::cout << "Neighbour not valid." << std::endl;
+                //Node not valid any more so remove from feeders.
+                node.mFeeder = -1;
+            }
+            else
+            {
+                //std::cout << "Got Energy" << std::endl;
+            }
+        }
+
+
+    }
+    else
+    {
+        //std::cout << "Is Source" << std::endl;
+    }
+    if(//voxel.mDestroyed ||
+       voxel.mSnapped)
+    {
+        return false; //No longer valid for transfer.
+    }
     else return true;
 }
 
 void EnergyGrid::pressureVoxel(Vector3i voxelCoord, float pressure)
 {
-    if(validCoord(voxelCoord))
+    if(validCoord(voxelCoord) && pressure > 0)
     {
         VoxelData& voxel = mVoxelData[voxelCoord.x][voxelCoord.y][voxelCoord.z];
         voxel.mPressure += pressure;
@@ -1197,7 +1230,7 @@ void EnergyGrid::pressureVoxel(Vector3i voxelCoord, float pressure)
 
 void EnergyGrid::stressVoxel(Vector3i voxelCoord, float stress)
 {
-    if(validCoord(voxelCoord))
+    if(validCoord(voxelCoord) && stress > 0)
     {
         VoxelData& voxel = mVoxelData[voxelCoord.x][voxelCoord.y][voxelCoord.z];
         voxel.mStress += stress;
@@ -1396,7 +1429,7 @@ void EnergyGrid::addBridge(Vector3i voxel, Vector3f point)
 
 void EnergyGrid::updateRenderData()
 {
-    getMatter()->clearPressureRendering();
+
     for(unsigned int x = 0; x < 32; x++)
     {
         for(unsigned int y = 0; y < 32; y++)
@@ -1411,14 +1444,22 @@ void EnergyGrid::updateRenderData()
             }
         }
     }
-    getMatter()->setupPressureRendering();
+    for(auto i = mBridges.begin(); i != mBridges.end(); i++)
+    {
+        const Vector3f& localInPartner = i->second;
+        mCollisionPartner->getMatter()->addEnergyBridge(localInPartner, false);
+
+        Vector3i localInMe = getBridgeVector(i->first);
+        getMatter()->addEnergyBridge(Vector3f(localInMe.x, localInMe.y, localInMe.z), true);
+    }
+
 }
 
 //Constant Direction Vectors:
 
-const Vector3i EnergyGrid::mDirectionVectors[26] = {
-    Vector3i(0,0,1), //UP
+const Vector3i EnergyGrid::mDirectionVectors[27] = {
     Vector3i(0,0,-1), //DOWN
+    Vector3i(0,0,1), //UP
     Vector3i(-1,0,0), //LEFT
     Vector3i(1,0,0), //RIGHT
     Vector3i(0,1,0), //FRONT
@@ -1442,5 +1483,6 @@ const Vector3i EnergyGrid::mDirectionVectors[26] = {
     Vector3i(-1,1,-1), //DOWN_LEFT_FRONT
     Vector3i(-1,-1,-1), //DOWN_LEFT_BACK
     Vector3i(1,1,-1), //DOWN_RIGHT_FRONT
-    Vector3i(1,-1,-1) //DOWN_RIGHT_BACK
+    Vector3i(1,-1,-1), //DOWN_RIGHT_BACK
+    Vector3i(0,0,0) //INVALID_DIR
 };

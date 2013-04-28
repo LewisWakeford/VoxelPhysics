@@ -35,7 +35,7 @@ void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHull
     btCompoundShape* rbShape = new btCompoundShape();
 
     //Attach clusters (Possible memory leak with children not being deleted?)
-    for(int i = 0; i < 1; i++)
+    for(int i = 0; i < hulls.size(); i++)
     {
         btConvexHullShape* chShape = hulls[i];
 

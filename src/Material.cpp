@@ -6,7 +6,7 @@ Material::Material()
     mColor[0] = 1.0f; mColor[1] = 1.0f; mColor[2] = 1.0f; //Red
     mDensity = 1.0f;
     mPressureLimit =    70000.0f;
-    mStressLimit =      150.0f;
+    mStressLimit =      30000.0f;
     mMinStrength = 0.5f;
     mMaxStrength = 1.5f;
     mRandomChance = 0.0f;

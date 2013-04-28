@@ -166,8 +166,12 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     std::cout << "First: " << firstEnergyScalar << std::endl;
     std::cout << "Second: " << secondEnergyRelative << std::endl;
 
+    first.getMatter()->clearPressureRendering();
+    second.getMatter()->clearPressureRendering();
     first.updateRenderData();
     second.updateRenderData();
+    first.getMatter()->setupPressureRendering();
+    second.getMatter()->setupPressureRendering();
 }
 
 void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secondIndex, const MatterCollision& collision)
@@ -212,6 +216,7 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
     {
         //Transform each voxel into world space.
         Vector3f voxel = firstTransform.transformVertex(Vector3f(potentialBridgesFirst[i].x-cOfMF.x, potentialBridgesFirst[i].y-cOfMF.y, potentialBridgesFirst[i].z-cOfMF.z));
+        //voxel.add((first.getEnergyVector().normalized()).mult(0.5));
 
         //Test if voxel is within bounding box of the other matter.
         if(secondBB.pointInside(voxel))
@@ -221,11 +226,12 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
         }
     }
 
-    Vector3f cOfMS = first.getMatter()->getVoxelField()->getCenterOfMass();
+    Vector3f cOfMS = second.getMatter()->getVoxelField()->getCenterOfMass();
     for(int i = 0; i < potentialBridgesSecond.size(); i++)
     {
         //Transform each voxel into world space.
         Vector3f voxel = secondTransform.transformVertex(Vector3f(potentialBridgesSecond[i].x-cOfMS.x, potentialBridgesSecond[i].y-cOfMS.y, potentialBridgesSecond[i].z-cOfMS.z));
+        //voxel.add((-(first.getEnergyVector()).normalized()).mult(0.5));
 
         //Test if voxel is within bounding box of the other matter.
         if(firstBB.pointInside(voxel))
@@ -235,7 +241,7 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
         }
     }
 
-    float closeRadius = 2.0f;
+    float closeRadius = 1.0f;
 
     //Perform more advanced tests.
     for(int i = 0; i < closeBridgesFirst.size(); i++)
