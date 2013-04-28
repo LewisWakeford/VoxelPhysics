@@ -1345,7 +1345,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 
                 if(!currentVoxel.mSnapped)
                 {
-                    for(unsigned int k = 0; k < 26; k++)
+                    for(unsigned int k = DIRECTION_START; k < LEFT_FRONT; k++)
                     {
                         Vector3i adjanctCoord = currentCoord + getDirectionVector(k);
                         if(validCoord(adjanctCoord))
