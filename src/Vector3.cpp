@@ -119,14 +119,26 @@ Vector3f Vector3f::operator - () const
     return Vector3f(-x, -y, -z);
 }
 
-Vector3f Vector3f::operator - (Vector3f other) const
+Vector3f Vector3f::operator - (const Vector3f& other) const
 {
     return Vector3f(x-other.x, y-other.y, z-other.z);
 }
 
-Vector3f Vector3f::operator + (Vector3f other) const
+Vector3f Vector3f::operator + (const Vector3f& other) const
 {
     return Vector3f(x+other.x, y+other.y, z+other.z);
+}
+
+void Vector3f::operator += (const Vector3f& other)
+{
+    x += other.x;
+    y += other.y;
+    z += other.z;
+}
+
+Vector3f Vector3f::operator * (const float& ratio) const
+{
+    return Vector3f(x*ratio, y*ratio, z*ratio);
 }
 
 Vector3i::Vector3i()
@@ -176,12 +188,12 @@ int Vector3i::get(unsigned int index)
     }
 }
 
-Vector3i Vector3i::operator + (Vector3i other) const
+Vector3i Vector3i::operator + (const Vector3i& other) const
 {
     return Vector3i(x+other.x, y+other.y, z+other.z);
 }
 
-bool Vector3i::operator == (Vector3i other) const
+bool Vector3i::operator == (const Vector3i& other) const
 {
     return (x == other.x && y == other.y && z == other.z);
 }

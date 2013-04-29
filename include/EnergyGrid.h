@@ -190,6 +190,21 @@ class EnergyGrid
                 }
         };
 
+        Vector3f mExternalTransferDelta;
+        int mExternalTransferSig;
+        int mExternalTransferLeft;
+        int mExternalTransferUp;
+        bool mFirstExternalTransfer;
+
+        Vector3f mInternalTransferDelta;
+        int mInternalTransferSig;
+        int mInternalTransferLeft;
+        int mInternalTransferUp;
+        bool mFirstInternalTransfer;
+
+        const Vector3f& getExternalTransferDelta();
+        const Vector3f& getInternalTransferDelta();
+
         //Apply pressure to a voxel and automatically destroy it if needed.
         void pressureVoxel(Vector3i voxelCoord, float pressure);
         //Apply stress to a voxel and automatically snap it if needed.

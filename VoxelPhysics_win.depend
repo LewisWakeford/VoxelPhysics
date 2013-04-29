@@ -4298,7 +4298,7 @@
 	<GL/glew.h>
 	<GL/glfw.h>
 
-1367180924 source:c:\code\voxelphysics_git\main.cpp
+1367234429 source:c:\code\voxelphysics_git\main.cpp
 	"VP.h"
 	<iostream>
 	<exception>
@@ -4334,7 +4334,7 @@
 	<string>
 	<vector>
 
-1367163402 c:\code\voxelphysics_git\include\vector3.h
+1367230397 c:\code\voxelphysics_git\include\vector3.h
 
 1367055974 c:\code\voxelphysics_git\include\matrix4d.h
 	"VP.h"
@@ -4414,7 +4414,7 @@
 	"RigidBody.h"
 	"Material.h"
 
-1367055974 c:\code\voxelphysics_git\include\material.h
+1367229164 c:\code\voxelphysics_git\include\material.h
 	"VP.h"
 	<string>
 
@@ -4441,7 +4441,7 @@
 	"MatterCollisionSet.h"
 	"EnergyGrid.h"
 
-1367175448 c:\code\voxelphysics_git\include\energygrid.h
+1367226731 c:\code\voxelphysics_git\include\energygrid.h
 	"Vector3.h"
 	"VoxelField.h"
 	<vector>
@@ -4474,7 +4474,7 @@
 	"VP.h"
 	<vector>
 
-1367177674 source:c:\code\voxelphysics_git\src\energygrid.cpp
+1367232215 source:c:\code\voxelphysics_git\src\energygrid.cpp
 	"EnergyGrid.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4485,7 +4485,7 @@
 	<cmath>
 	"console.h"
 
-1367177960 source:c:\code\voxelphysics_git\src\material.cpp
+1367229437 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
@@ -4523,7 +4523,7 @@
 1367055973 c:\code\voxelphysics_git\include\meshnode.h
 	"SceneNode.h"
 
-1367179964 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
+1367232375 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
 	"PhysicsManager.h"
 	"console.h"
 	"Matter.h"
@@ -4531,7 +4531,7 @@
 	"App.h"
 	"DestructionEngine.h"
 
-1367168637 source:c:\code\voxelphysics_git\src\renderer.cpp
+1367233977 source:c:\code\voxelphysics_git\src\renderer.cpp
 	"Renderer.h"
 	"Matrix4D.h"
 	"Mesh.h"
@@ -4575,7 +4575,7 @@
 	"Shader.h"
 	"console.h"
 
-1367055991 source:c:\code\voxelphysics_git\src\vector3.cpp
+1367230411 source:c:\code\voxelphysics_git\src\vector3.cpp
 	"Vector3.h"
 	<cmath>
 

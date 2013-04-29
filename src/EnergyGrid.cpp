@@ -31,6 +31,9 @@ EnergyGrid::EnergyGrid(MatterNode* matterNode) :
     }
     mDestructionOccured = false;
     mSnappingOccured = false;
+
+    bool mFirstExternalTransfer = true;
+    bool mFirstInternalTransfer = true;
 }
 
 EnergyGrid::~EnergyGrid()
@@ -62,6 +65,7 @@ void EnergyGrid::setEnergy(const Vector3f& energy)
 {
     mEnergyVector = energy;
     mEnergyVectorLocal = getMatter()->getRigidBody()->getInvertedTransform().rotateVector(energy);
+    mFirstInternalTransfer = true;
 }
 
 Vector3f EnergyGrid::getEnergyVector()
@@ -72,6 +76,7 @@ Vector3f EnergyGrid::getEnergyVector()
 void EnergyGrid::setCollisionPartner(EnergyGrid* energyGrid)
 {
     mCollisionPartner = energyGrid;
+    mFirstExternalTransfer = true;
 }
 
 void EnergyGrid::buildMaps(const Vector3f& otherEnergy)
@@ -208,99 +213,30 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
     unsigned int y = 1;
     unsigned int z = 2;
 
-    Vector3f energyDirection = getEnergyVector();
-
-
-    const Matrix4D& worldToLocal = getMatter()->getRigidBody()->getInvertedTransform();
-    energyDirection = worldToLocal.rotateVector(energyDirection);
-    energyDirection.normalize();
-
-    Vector3f reverseDirection = -(energyDirection);
+    const Vector3f internalDelta = getInternalTransferDelta();
 
     //Keep a track record of voxels weights and such
     std::vector<Vector3i> voxelsInPath;
     std::vector<float> voxelWeights;
     std::vector<int> voxelDistance;
 
-    //The energy vector starts at pointCoord and travels along reverseDirection
-    //P = pointCoord + t * reverseDirection where P is the point on the line and t is some number
-
-    //The most significant direction of the vector will give us the idea as to which plane to divide the energy along.
-    unsigned int sig;
-    int direction;
-    unsigned int up;
-    unsigned int left;
-
-    if(fabs(reverseDirection.x) >= fabs(reverseDirection.y) && fabs(reverseDirection.x) >= fabs(reverseDirection.z))
-    {
-        //Most significant direction is X
-        if(reverseDirection.x > 0)
-        {
-            sig = x;
-            direction = 1;
-        }
-        else
-        {
-            sig = x;
-            direction  = -1;
-        }
-        up = y;
-        left = z;
-    }
-    else if(fabs(reverseDirection.y) >= fabs(reverseDirection.x) && fabs(reverseDirection.y) >= fabs(reverseDirection.z))
-    {
-        //...is Y
-        if(reverseDirection.y > 0)
-        {
-            sig = y;
-            direction = 1;
-        }
-        else
-        {
-            sig = y;
-            direction  = -1;
-        }
-        up = x;
-        left = z;
-    }
-    else
-    {
-        //...is Z
-        if(reverseDirection.z > 0)
-        {
-            sig = z;
-            direction = 1;
-        }
-        else
-        {
-            sig = z;
-            direction  = -1;
-        }
-        up = y;
-        left = x;
-    }
-
     //Find where the energy vector intersects each of the 32 planes in the significant direction.
     //At each intersection find the four closest voxels in that plane to the intersection point.
     //Spread energy between them based on distance from point of intersection.
 
+    //Bridges local coord is awlays grid aligned.
+    Vector3f pointOfIntersection = Vector3f(bridgePoint.x, bridgePoint.y, bridgePoint.z);
+
     float energyPool = 0.0f;
-
-    unsigned int start = 0;
-    unsigned int end = 32;
-
-    if(direction < 0)
-    {
-        start = 31;
-        end = -1;
-    }
 
     int maxDistance = 0;
 
-    for(unsigned int i = start; i != end; i += direction)
+    bool intersectValid = true;
+
+    while(intersectValid)
     {
         //NOTE: We can assume that the line is not parrallel to the plane as we change the plane we intersect with based on direction of energy.
-        Vector3f pointOfIntersection;
+
 
         //Equation of plane is sig = pointInPlane.sig
 
@@ -314,103 +250,97 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
         // partnerDirection.sig * t = pointInPlane.sig - pointCoord.sig
         // t = (pointInPlane.sig - pointCoord.sig) / partnerDirection.sig
 
-
-        float t = (float(i) - bridgePoint.get(sig)) / reverseDirection.get(sig);
-
-        pointOfIntersection.set(sig, float(i));
-        pointOfIntersection.set(up, bridgePoint.get(up) + (reverseDirection.get(up) * t));
-        pointOfIntersection.set(left, bridgePoint.get(left) + (reverseDirection.get(left) * t));
-
         std::vector<Vector3i> closestVoxels;
         std::vector<float> closestVoxelWeights;
         std::vector<bool> voxelValid;
-        int validVoxels = 4;
+        int validVoxels = 0;
 
-        int upCoord = ceilf(pointOfIntersection.get(up));
-        int downCoord = floorf(pointOfIntersection.get(up));
-        int leftCoord = ceilf(pointOfIntersection.get(left));
-        int rightCoord = floorf(pointOfIntersection.get(left));
+        int upCoord = ceilf(pointOfIntersection.get(mInternalTransferUp));
+        int downCoord = floorf(pointOfIntersection.get(mInternalTransferUp));
+        int leftCoord = ceilf(pointOfIntersection.get(mInternalTransferLeft));
+        int rightCoord = floorf(pointOfIntersection.get(mInternalTransferLeft));
+        int sigCoord = roundf(pointOfIntersection.get(mInternalTransferSig));
 
         int numCloseVoxels = 0;
 
-        if(sig == x)
+        if(mInternalTransferSig == x)
         {
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, rightCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, rightCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, leftCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
             }
         }
-        else if(sig == y)
+        else if(mInternalTransferSig == y)
         {
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, rightCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, rightCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, leftCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
             }
         }
         else
         {
-            //closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+            //closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, downCoord, sigCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, sigCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, sigCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
             }
         }
 
         for(int k = 0; k < closestVoxels.size(); k++)
         {
-            float verticalDistance = closestVoxels[k].get(up) - pointOfIntersection.get(up);
-            float horizontalDistance = closestVoxels[k].get(left) - pointOfIntersection.get(left);
+            float verticalDistance = closestVoxels[k].get(mInternalTransferUp) - pointOfIntersection.get(mInternalTransferUp);
+            float horizontalDistance = closestVoxels[k].get(mInternalTransferLeft) - pointOfIntersection.get(mInternalTransferLeft);
 
             float weight = (1 - fabs(verticalDistance)) * (1 - fabs(horizontalDistance));
             closestVoxelWeights.push_back(weight);
@@ -423,7 +353,6 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
 
             if(!voxelValid[k])
             {
-                validVoxels -= 1;
                 //If invalid, redistribute weight
                 if(validVoxels > 0)
                 {
@@ -437,9 +366,13 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
                         }
 
                     }
-            }
+                }
 
             closestVoxelWeights[k] = 0.0f;
+            }
+            else
+            {
+                validVoxels++;
             }
 
         }
@@ -455,15 +388,20 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
                 voxel.setEnergy(mIsReciever, voxel.getEnergy(mIsReciever) - freeEnergyInVoxel);
                 voxelsInPath.push_back(closestVoxels[k]);
                 voxelWeights.push_back(closestVoxelWeights[k]);
-                voxelDistance.push_back(i);
+                voxelDistance.push_back(maxDistance);
             }
         }
 
-        maxDistance = i;
+
 
         if(validVoxels <= 0)
         {
-            i = end-direction;
+            intersectValid = false;
+        }
+        else
+        {
+            maxDistance++;
+            pointOfIntersection += internalDelta;
         }
 
     }
@@ -721,172 +659,81 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
     unsigned int y = 1;
     unsigned int z = 2;
 
-    //Find the direction our partners energy is travelling in.
-    Vector3f partnerDirection = mCollisionPartner->getEnergyVector();
-    const Matrix4D& worldToLocal = mCollisionPartner->getMatter()->getRigidBody()->getInvertedTransform();
-    partnerDirection = worldToLocal.rotateVector(partnerDirection);
-    partnerDirection.normalize();
+    const Vector3f& externalDelta = getExternalTransferDelta();
 
-    //The energy vector starts at pointCoord and travels along partnerDirection
-    //P = pointCoord + t * partnerDirection where P is the point on the line and t is some number
+    float sigIntersect = floorf(pointCoord.get(mExternalTransferSig) + externalDelta.get(mExternalTransferSig));
+    float distanceFirst = sigIntersect - pointCoord.get(mExternalTransferSig);
 
-    //The most significant direction of the vector will give us the idea as to which plane to divide the energy along.
-    unsigned int sig;
-    int direction;
-    unsigned int up;
-    unsigned int left;
-
-    if(fabs(partnerDirection.x) >= fabs(partnerDirection.y) && fabs(partnerDirection.x) >= fabs(partnerDirection.z))
-    {
-        //Most significant direction is X
-        if(partnerDirection.x > 0)
-        {
-            sig = x;
-            direction = 1;
-        }
-        else
-        {
-            sig = x;
-            direction  = -1;
-        }
-        up = y;
-        left = z;
-    }
-    else if(fabs(partnerDirection.y) >= fabs(partnerDirection.x) && fabs(partnerDirection.y) >= fabs(partnerDirection.z))
-    {
-        //...is Y
-        if(partnerDirection.y > 0)
-        {
-            sig = y;
-            direction = 1;
-        }
-        else
-        {
-            sig = y;
-            direction  = -1;
-        }
-        up = x;
-        left = z;
-    }
-    else
-    {
-        //...is Z
-        if(partnerDirection.z > 0)
-        {
-            sig = z;
-            direction = 1;
-        }
-        else
-        {
-            sig = z;
-            direction  = -1;
-        }
-        up = y;
-        left = x;
-    }
-
-    //Find where the energy vector intersects each of the 32 planes in the significant direction.
-    //At each intersection find the four closest voxels in that plane to the intersection point.
-    //Spread energy between them based on distance from point of intersection.
+    Vector3f pointOfIntersection = pointCoord + (externalDelta * distanceFirst);
 
     float energyPool = energy;
 
     Vector3i* previousVoxels = 0;
     float* previousEnergy = 0;
 
-    int start = ceilf(pointCoord.get(sig));
-    int end = 32;
+    bool intersectValid = true;
 
-    if(direction < 0)
+    while(intersectValid)
     {
-        start = floorf(pointCoord.get(sig));
-        end = -1;
-    }
-
-    pointCoord.get(sig);
-
-    for(unsigned int i = start; i != end; i += direction)
-    {
-        //NOTE: We can assume that the line is not parrallel to the plane as we change the plane we intersect with based on direction of energy.
-        Vector3f pointOfIntersection;
-
-        //Equation of plane is sig = pointInPlane.sig
-
-        //Equation of line is:
-        // sig = pointCoord.sig + (partnerDirection.sig * t)
-        // up = pointCoord.up + (partnerDirection.up * t)
-        // left = pointCoord.left + (partnerDirection.left * t)
-
-        //Recreate plane with t and solve for t
-        // pointCoord.sig + (partnerDirection.sig * t) = pointInPlane.sig
-        // partnerDirection.sig * t = pointInPlane.sig - pointCoord.sig
-        // t = (pointInPlane.sig - pointCoord.sig) / partnerDirection.sig
-
-
-        float t = (float(i) - pointCoord.get(sig)) / partnerDirection.get(sig);
-
-        pointOfIntersection.set(sig, float(i));
-        pointOfIntersection.set(up, pointCoord.get(up) + (partnerDirection.get(up) * t));
-        pointOfIntersection.set(left, pointCoord.get(left) + (partnerDirection.get(left) * t));
-
         std::vector<Vector3i> closestVoxels;
         std::vector<float> closestVoxelWeights;
         std::vector<bool> voxelValid;
-        int validVoxels = 4;
+        int validVoxels = 0;
 
-        int upCoord = ceilf(pointOfIntersection.get(up));
-        int downCoord = floorf(pointOfIntersection.get(up));
-        int leftCoord = ceilf(pointOfIntersection.get(left));
-        int rightCoord = floorf(pointOfIntersection.get(left));
+        int upCoord = ceilf(pointOfIntersection.get(mExternalTransferUp));
+        int downCoord = floorf(pointOfIntersection.get(mExternalTransferUp));
+        int leftCoord = ceilf(pointOfIntersection.get(mExternalTransferLeft));
+        int rightCoord = floorf(pointOfIntersection.get(mExternalTransferLeft));
+        int sigCoord = roundf(pointOfIntersection.get(mExternalTransferSig));
 
         int numCloseVoxels = 0;
 
-        if(sig == x)
+        if(mExternalTransferSig == x)
         {
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, rightCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, upCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, rightCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
-                closestVoxels.push_back(Vector3i(i, downCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, downCoord, leftCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(i, upCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(sigCoord, upCoord, leftCoord));
             }
         }
-        else if(sig == y)
+        else if(mExternalTransferSig == y)
         {
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, rightCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, rightCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(upCoord, i, rightCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, rightCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
-                closestVoxels.push_back(Vector3i(downCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
+                closestVoxels.push_back(Vector3i(downCoord, sigCoord, leftCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(upCoord, i, leftCoord));
+                closestVoxels.push_back(Vector3i(upCoord, sigCoord, leftCoord));
             }
         }
         else
@@ -894,31 +741,31 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
             //closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
             if(upCoord != downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, downCoord, sigCoord));
             }
             else if(upCoord == downCoord && leftCoord != rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(rightCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(rightCoord, upCoord, sigCoord));
             }
             else if(upCoord != downCoord && leftCoord == rightCoord)
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
-                closestVoxels.push_back(Vector3i(leftCoord, downCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
+                closestVoxels.push_back(Vector3i(leftCoord, downCoord, sigCoord));
             }
             else
             {
-                closestVoxels.push_back(Vector3i(leftCoord, upCoord, i));
+                closestVoxels.push_back(Vector3i(leftCoord, upCoord, sigCoord));
             }
         }
 
         for(int k = 0; k < closestVoxels.size(); k++)
         {
-            float verticalDistance = closestVoxels[k].get(up) - pointOfIntersection.get(up);
-            float horizontalDistance = closestVoxels[k].get(left) - pointOfIntersection.get(left);
+            float verticalDistance = closestVoxels[k].get(mExternalTransferUp) - pointOfIntersection.get(mExternalTransferUp);
+            float horizontalDistance = closestVoxels[k].get(mExternalTransferLeft) - pointOfIntersection.get(mExternalTransferLeft);
 
             float weight = (1-fabs(verticalDistance)) * (1-fabs(horizontalDistance));
             closestVoxelWeights.push_back(weight);
@@ -931,7 +778,6 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
 
             if(!voxelValid[k])
             {
-                validVoxels -= 1;
                 //If invalid, redistribute weight
                 if(validVoxels > 0)
                 {
@@ -945,9 +791,13 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
                         }
 
                     }
-            }
+                }
 
             closestVoxelWeights[k] = 0.0f;
+            }
+            else
+            {
+                validVoxels++;
             }
 
         }
@@ -988,10 +838,14 @@ void EnergyGrid::transferExternalEnergyTo(Vector3f pointCoord, float energy)
 
         if(validVoxels <= 0)
         {
-            i = end - direction;
+            intersectValid = false;
+        }
+        else
+        {
+            pointOfIntersection += externalDelta;
         }
 
-        if(i >= end-1)
+        if(!intersectValid)
         {
             delete[] previousVoxels;
             delete[] previousEnergy;
@@ -1274,8 +1128,14 @@ void EnergyGrid::stressVoxel(Vector3i voxelCoord, float stress)
 */
 bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 {
+    try
+    {
+
+
     if(!mDestructionOccured && !mSnappingOccured)
     return false;
+
+    std::cout << "Starting Breakage: ";
 
     //Similar to building the transfer graph, we need to have a map and a vector
     bool noShapesLeft = false;
@@ -1340,7 +1200,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 
             for(unsigned int i = startOfStep; i < endOfStep; i++)
             {
-                const Vector3i& currentCoord = voxelsInShapes[shapeCount][i];
+                Vector3i currentCoord = voxelsInShapes[shapeCount][i];
                 const VoxelData& currentVoxel = mVoxelData[currentCoord.x][currentCoord.y][currentCoord.z];
 
                 if(!currentVoxel.mSnapped)
@@ -1375,6 +1235,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 
             startOfStep = endOfStep;
             newSize = voxelsInShapes[shapeCount].size();
+            std::cout << newSize << std::endl;
         }
 
         shapesTotalEnergyP.push_back(totalEnergyProjecting);
@@ -1413,7 +1274,11 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
         }
         return true;
     }
-
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
 
 bool EnergyGrid::validCoord(Vector3i target)
@@ -1510,3 +1375,181 @@ const Vector3i EnergyGrid::mDirectionVectors[27] = {
     Vector3i(1,-1,-1), //DOWN_RIGHT_BACK
     Vector3i(0,0,0) //INVALID_DIR
 };
+
+const Vector3f& EnergyGrid::getExternalTransferDelta()
+{
+    if(mFirstExternalTransfer)
+    {
+
+        //Quick bit of setup
+        unsigned int x = 0;
+        unsigned int y = 1;
+        unsigned int z = 2;
+
+        //Find the direction our partners energy is travelling in.
+        Vector3f partnerDirection = mCollisionPartner->getEnergyVector();
+        const Matrix4D& worldToLocal = mCollisionPartner->getMatter()->getRigidBody()->getInvertedTransform();
+        partnerDirection = worldToLocal.rotateVector(partnerDirection);
+        partnerDirection.normalize();
+
+        //The energy vector starts at pointCoord and travels along partnerDirection
+        //P = pointCoord + t * partnerDirection where P is the point on the line and t is some number
+
+        //The most significant direction of the vector will give us the idea as to which plane to divide the energy along.
+        unsigned int sig;
+        int direction;
+        unsigned int up;
+        unsigned int left;
+
+        if(fabs(partnerDirection.x) >= fabs(partnerDirection.y) && fabs(partnerDirection.x) >= fabs(partnerDirection.z))
+        {
+            //Most significant direction is X
+            if(partnerDirection.x > 0)
+            {
+                sig = x;
+                direction = 1;
+            }
+            else
+            {
+                sig = x;
+                direction  = -1;
+            }
+            up = y;
+            left = z;
+        }
+        else if(fabs(partnerDirection.y) >= fabs(partnerDirection.x) && fabs(partnerDirection.y) >= fabs(partnerDirection.z))
+        {
+            //...is Y
+            if(partnerDirection.y > 0)
+            {
+                sig = y;
+                direction = 1;
+            }
+            else
+            {
+                sig = y;
+                direction  = -1;
+            }
+            up = x;
+            left = z;
+        }
+        else
+        {
+            //...is Z
+            if(partnerDirection.z > 0)
+            {
+                sig = z;
+                direction = 1;
+            }
+            else
+            {
+                sig = z;
+                direction  = -1;
+            }
+            up = y;
+            left = x;
+        }
+
+        float ratio = 1.0f/fabs(partnerDirection.get(sig));
+        mExternalTransferDelta.set(sig, ratio*partnerDirection.get(sig));
+        mExternalTransferDelta.set(left, ratio*partnerDirection.get(left));
+        mExternalTransferDelta.set(up, ratio*partnerDirection.get(up));
+
+        mFirstExternalTransfer = false;
+        mExternalTransferSig = sig;
+        mExternalTransferLeft = left;
+        mExternalTransferUp = up;
+    }
+
+    return mExternalTransferDelta;
+
+}
+
+const Vector3f& EnergyGrid::getInternalTransferDelta()
+{
+    if(mFirstInternalTransfer)
+    {
+
+        //Quick bit of setup
+        unsigned int x = 0;
+        unsigned int y = 1;
+        unsigned int z = 2;
+
+        //Find the direction our partners energy is travelling in.
+        Vector3f myDirection = -getEnergyVector();
+        const Matrix4D& worldToLocal = getMatter()->getRigidBody()->getInvertedTransform();
+        myDirection = worldToLocal.rotateVector(myDirection);
+        myDirection.normalize();
+
+        //The energy vector starts at pointCoord and travels along partnerDirection
+        //P = pointCoord + t * partnerDirection where P is the point on the line and t is some number
+
+        //The most significant direction of the vector will give us the idea as to which plane to divide the energy along.
+        unsigned int sig;
+        int direction;
+        unsigned int up;
+        unsigned int left;
+
+        if(fabs(myDirection.x) >= fabs(myDirection.y) && fabs(myDirection.x) >= fabs(myDirection.z))
+        {
+            //Most significant direction is X
+            if(myDirection.x > 0)
+            {
+                sig = x;
+                direction = 1;
+            }
+            else
+            {
+                sig = x;
+                direction  = -1;
+            }
+            up = y;
+            left = z;
+        }
+        else if(fabs(myDirection.y) >= fabs(myDirection.x) && fabs(myDirection.y) >= fabs(myDirection.z))
+        {
+            //...is Y
+            if(myDirection.y > 0)
+            {
+                sig = y;
+                direction = 1;
+            }
+            else
+            {
+                sig = y;
+                direction  = -1;
+            }
+            up = x;
+            left = z;
+        }
+        else
+        {
+            //...is Z
+            if(myDirection.z > 0)
+            {
+                sig = z;
+                direction = 1;
+            }
+            else
+            {
+                sig = z;
+                direction  = -1;
+            }
+            up = y;
+            left = x;
+        }
+
+        float ratio = 1.0f/fabs(myDirection.get(sig));
+        mInternalTransferDelta.set(sig, ratio*myDirection.get(sig));
+        mInternalTransferDelta.set(left, ratio*myDirection.get(left));
+        mInternalTransferDelta.set(up, ratio*myDirection.get(up));
+
+        mFirstExternalTransfer = false;
+        mInternalTransferSig = sig;
+        mInternalTransferLeft = left;
+        mInternalTransferUp = up;
+    }
+
+    return mInternalTransferDelta;
+}
+

@@ -43,6 +43,8 @@ class Material
         float mMaxStrength; //The maximum amount of strength a particular voxel can be randomly assigned. Should be 1 or more.
         float mRandomChance; //The percentage chance that a particular voxel will use a random value between min and max strength instead of 1.
 
+        float mTrivialThreshold;
+
     private:
 };
 

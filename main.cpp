@@ -220,7 +220,7 @@ int main()
 
         consolePrint("Creating Window");
 
-        if( !glfwOpenWindow(1028, 768, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
+        if( !glfwOpenWindow(1920, 1080, 0, 0, 0, 0, 0, 0, GLFW_FULLSCREEN ) )
         {
             consolePrint("ERROR: Window Creation Failed.");
             glfwTerminate();
@@ -305,13 +305,13 @@ int main()
         Material* testMaterial = new Material();
 
         {
-            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
+            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/house.vox"));
             ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
             sceneGraph->getRoot()->addChild(matterNode1);
 
             SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
-            ((MatterNode*)matterNode2.get())->setOffset(0.0f, 0.0f, 200.0f);
-            sceneGraph->getRoot()->addChild(matterNode2);
+            ((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
+            //sceneGraph->getRoot()->addChild(matterNode2);
         }
 
 

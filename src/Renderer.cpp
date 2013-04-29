@@ -150,7 +150,7 @@ GLboolean Renderer::renderMatter(Matter& matter)
     matter.getVertexShell()->getBuffer()->render();
     //matter.debugRenderVoxels();
     //matter.debugRenderHulls();
-    matter.debugRenderPressure();
+    //matter.debugRenderPressure();
 }
 
 void Renderer::render()

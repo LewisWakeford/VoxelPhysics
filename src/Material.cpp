@@ -10,6 +10,7 @@ Material::Material()
     mMinStrength = 0.5f;
     mMaxStrength = 1.5f;
     mRandomChance = 0.5f;
+    mTrivialThreshold = 10000.0f;
 }
 
 Material::~Material()
@@ -52,8 +53,5 @@ float Material::getRandomChance() const
 
 bool Material::nonTrivial(float energy) const
 {
-    float lowestPressure = mMinStrength * mPressureLimit;
-    float lowestStress = mMinStrength * mStressLimit;
-
-    return (energy > lowestPressure || energy > lowestStress);
+    return energy > mTrivialThreshold;
 }

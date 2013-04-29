@@ -23,8 +23,10 @@ class Vector3f
         float distance(const Vector3f& other);
 
         Vector3f operator - () const;
-        Vector3f operator - (Vector3f other) const;
-        Vector3f operator + (Vector3f other) const;
+        Vector3f operator - (const Vector3f& other) const;
+        Vector3f operator + (const Vector3f& other) const;
+        void operator += (const Vector3f& other);
+        Vector3f operator * (const float& ratio) const;
 
     protected:
 
@@ -45,8 +47,8 @@ class Vector3i
         int get(unsigned int index);
         void normalize();
 
-        Vector3i operator + (Vector3i other) const;
-        bool operator == (Vector3i other) const;
+        Vector3i operator + (const Vector3i& other) const;
+        bool operator == (const Vector3i& other) const;
 
     protected:
 
