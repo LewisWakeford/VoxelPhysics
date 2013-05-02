@@ -267,3 +267,14 @@ Going to start, here is old code:
 28/04/2013
 	
 Pressure still creates a bit too much of a "blocky" effect on collison. I want to to be more of a cone, can't spend too long thinking though so just move on. Need to test stress is working well now.
+
+2/05/2013
+
+Deadline Approaching! OMG BAILOUT! Nah, just kidding. Shit to do before 10th, in order of importance:
+
+	- Fix circle jerk bug when many different objects collide. (dunno)
+	- Inherit momentum from parent object(s). (easy-ish)
+	- Optimize so it isn't shit. (hard?)
+		- Including Reimplement GPU stuff, with Convex Decomp integrated.
+	- Add debugging tools. (hard.)
+	
