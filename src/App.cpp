@@ -7,6 +7,12 @@
 #include "VoxelConverter.h"
 #include "console.h"
 
+bool App::DEBUG_PHYSICS = false;
+bool App::DEBUG_INTERAL_SIMULATION = false;
+bool App::DEBUG_MARCHING_CUBES = false;
+bool App::DEBUG_VOX_DECOMP = false;
+bool App::DEBUG_BREAKING = false;
+
 App::App()
 {
     mVoxelConversionCPU = false;
@@ -32,7 +38,7 @@ void App::init()
     mResourceManager = new ResourceManager();
     mPhysicsManager = new PhysicsManager(this);
     mSceneGraph = new SceneGraph();
-    mVoxelConverter = new VoxelConverter();
+    mVoxelConverter = new VoxelConverter(this);
     mDestructionEngine = new DestructionEngine(this);
 
     if(mVoxelConversionCPU)
@@ -167,4 +173,24 @@ void App::clockFrame()
 {
     mLastFrameTime += mFrameFreq;
     mFrameCount++;
+}
+
+void App::debugPrint(bool notMuted, const std::string& message)
+{
+    if(notMuted) std::cout << "D: " << message << std::endl;
+}
+
+void App::debugPrint(bool notMuted, const std::string& message, int value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
+}
+
+void App::debugPrint(bool notMuted, const std::string& message, float value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
+}
+
+void App::debugPrint(bool notMuted, const std::string& message, double value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
 }

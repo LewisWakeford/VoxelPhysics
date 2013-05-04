@@ -21,14 +21,13 @@ class MatterCollisionSet
         virtual ~MatterCollisionSet();
 
         //Returns -1 if the collision should be discarded (IE duplicate exists), 0 if collision is not accepted and 1 if this set will accept the collision.
-        int offer(MatterCollision collision);
-        void merge(MatterCollisionSet& other);
+        void offer(MatterCollision collision);
         void add(MatterCollision collision);
 
         unsigned int numCollisions() const;
         MatterCollision get(unsigned int index) const;
+
     protected:
-        bool mValid;
         std::vector<MatterCollision> mMatterSet;
 
 

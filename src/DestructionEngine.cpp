@@ -8,6 +8,7 @@
 DestructionEngine::DestructionEngine(App* app)
 {
     mApp = app;
+    mDestructionsPerformed = 0;
 }
 
 DestructionEngine::~DestructionEngine()
@@ -17,10 +18,12 @@ DestructionEngine::~DestructionEngine()
 
 void DestructionEngine::processSet(const MatterCollisionSet& set)
 {
+    mNumberOfNonTrivialCollisions = 0;
     for(int i = 0; i < set.numCollisions(); i++)
     {
         processCollision(set.get(i));
     }
+    std::cout << "   NONTRIVIAL: " << mNumberOfNonTrivialCollisions << std::endl;
 }
 
 unsigned int DestructionEngine::getGridIndex(MatterNode* matterNode)
@@ -60,7 +63,7 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
     if(first->nonTrivial(energyFirstScalar + energySecondScalar) ||
         second->nonTrivial(energyFirstScalar + energySecondScalar))
     {
-        std::cout << "\n\n****NON TRIVIAL***" << std::endl;
+        //mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "\n\n****NON TRIVIAL***");
         unsigned int firstIndex = getGridIndex(collision.getFirst());
         unsigned int secondIndex = getGridIndex(collision.getSecond());
 
@@ -69,8 +72,6 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
 
         mEnergyGrids[firstIndex].setEnergy(myEnergyFirst);
         mEnergyGrids[secondIndex].setEnergy(myEnergySecond);
-
-
 
         if(firstSpeed >= secondSpeed)
         {
@@ -82,19 +83,20 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
             buildBridges(secondIndex, firstIndex, collision);
             transferEnergy(mEnergyGrids[secondIndex], mEnergyGrids[firstIndex]);
         }
+        mNumberOfNonTrivialCollisions++;
     }
 }
 
 void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
 {
-    std::cout << "Starting Transfer..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Starting Transfer...");
     first.setCollisionPartner(&second);
     second.setCollisionPartner(&first);
 
     const Vector3f& firstEnergy = first.getEnergyVector();
     const Vector3f& secondEnergy = second.getEnergyVector();
 
-    std::cout << "Building Maps..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Building Maps...");
     first.buildMaps(secondEnergy);
     second.buildMaps(firstEnergy);
 
@@ -102,7 +104,7 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     //Perform First's transfer into Second.
 
     //Calculate seconds energy in terms of first
-    std::cout << "Performing setup..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing setup...");
     Vector3f directionFirst = firstEnergy.normalized();
     float secondEnergyRelative = directionFirst.dot(secondEnergy);
     float firstEnergyScalar = firstEnergy.length();
@@ -122,17 +124,17 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     first.setInitialEnergy(firstEnergyScalar);
     second.setInitialEnergy(secondEnergyRelative);
 
-    std::cout << "Performing direct transfer..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
     first.directTransfer();
 
-    std::cout << "Performing indirect transfer..." << std::endl;
-    first.indirectTransfer();
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+    //first.indirectTransfer();
 
-    std::cout << "Performing indirect transfer..." << std::endl;
-    second.indirectTransfer();
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+    //second.indirectTransfer();
 
 
-    std::cout << "Performing setup..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing setup...");
     //Do the same for second
 
     float remainingEnergyRatio = secondEnergyRelative / secondEnergy.length();
@@ -153,18 +155,18 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     first.setInitialEnergy(0.0f);
     second.setInitialEnergy(remainingEnergyScalar);
 
-    std::cout << "Performing direct transfer..." << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
     second.directTransfer();
 
-    std::cout << "Performing indirect transfer..." << std::endl;
-    second.indirectTransfer();
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+    //second.indirectTransfer();
 
-    std::cout << "Performing indirect transfer..." << std::endl;
-    first.indirectTransfer();
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+    //first.indirectTransfer();
 
-    std::cout << "---SET---" << std::endl;
-    std::cout << "First: " << firstEnergyScalar << std::endl;
-    std::cout << "Second: " << secondEnergyRelative << std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "---SET---");
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "First: ", firstEnergyScalar);
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Second: ", secondEnergyRelative);
 
     first.getMatter()->clearPressureRendering();
     second.getMatter()->clearPressureRendering();
@@ -176,7 +178,7 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
 
 void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secondIndex, const MatterCollision& collision)
 {
-    std::cout << "Building Bridges..." <<std::endl;
+    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Building Bridges...");
 
     //Get collision bounding boxes for each matter.
     EnergyGrid& first = mEnergyGrids[firstIndex];
@@ -266,13 +268,19 @@ void DestructionEngine::checkForSeparation()
         MatterNode* original = mEnergyGrids[i].getMatterNode();
         Vector3f originalCofM = original->getMatter()->getVoxelField()->getCenterOfMass();
         std::vector<VoxelField> voxArray;
-        if(mEnergyGrids[i].separate(voxArray))
-        {
-           //Create new matter nodes.
-           std::cout << "BREAK!" << std::endl;
+        double startDestruction = glfwGetTime();
+        bool breakage = mEnergyGrids[i].separate(voxArray);
+        double endDestruction = glfwGetTime();
+        mApp->debugPrint(App::DEBUG_BREAKING, "Time to destroy: ", (endDestruction - startDestruction));
 
-           for(unsigned int k = 0; k < voxArray.size(); k++)
-           {
+        if(breakage)
+        {
+            mDestructionsPerformed++;
+            //Create new matter nodes.
+            mApp->debugPrint(App::DEBUG_BREAKING, "BREAK!");
+
+            for(unsigned int k = 0; k < voxArray.size(); k++)
+            {
                //Get posistion of new voxel field.
                Vector3f CofM = voxArray[k].getCenterOfMass();
                Vector3f offset = CofM - originalCofM;
@@ -283,11 +291,14 @@ void DestructionEngine::checkForSeparation()
                 ((MatterNode*)matterNode.get())->setTransform(transform);
                 mApp->getSceneGraph()->getRoot()->addChild(matterNode);
 
-           }
+            }
 
-           //Delete old one.
-           original->deleteNode();
+            //Delete old one.
+            original->deleteNode();
+            double processing = glfwGetTime();
+            mApp->debugPrint(App::DEBUG_BREAKING, "Time to process: ", (processing - endDestruction));
         }
+
     }
 
     //Finished

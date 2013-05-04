@@ -6,6 +6,8 @@
 #include "App.h"
 #include "DestructionEngine.h"
 
+
+
 void prePhysicsTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
     PhysicsManager* man = static_cast<PhysicsManager*>(world->getWorldUserInfo());
@@ -159,7 +161,8 @@ void PhysicsManager::preTickCallback(btDynamicsWorld *world, btScalar timeStep)
 void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
 {
     int numManifolds = mDynamicsWorld->getDispatcher()->getNumManifolds();
-    mCollisionSets.clear();
+
+    MatterCollisionSet collisionSet;
 
     //Iterate over all contact manifolds.
 	for (int i = 0; i < numManifolds; i++)
@@ -170,6 +173,7 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
 
 		const btRigidBody* rbA = btRigidBody::upcast(obA);
 		const btRigidBody* rbB = btRigidBody::upcast(obB);
+
 
 
         if(rbA != 0 && rbB != 0)
@@ -198,26 +202,8 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
                         //Offer collision object to collision sets.
                         //Merge sets if necessary.
                         int offerResult = 0;
-                        int index = -1;
-                        for(int k = 0; k < mCollisionSets.size() && offerResult != -1; k++)
-                        {
-                            offerResult = mCollisionSets[k].offer(collision);
-                            if(index == -1 && offerResult == 1)
-                            {
-                                index = k;
-                                mCollisionSets[k].add(collision);
-                            }
-                            else if(index != -1 && offerResult == 1)
-                            {
-                                mCollisionSets[index].merge(mCollisionSets[k]);
-                            }
-                        }
-                        //If did not find a home for the colllision, and it did not have duplicates, create a new set for it.
-                        if(index == -1 && offerResult != -1)
-                        {
-                            mCollisionSets.push_back(MatterCollisionSet());
-                            mCollisionSets.back().add(collision);
-                        }
+
+                        collisionSet.offer(collision);
 
                     }
                 }
@@ -225,12 +211,11 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
         }
 	}
 
-	for(unsigned int i = 0; i < mCollisionSets.size(); i++)
-	{
-	    mApp->getDestructionEngine()->processSet(mCollisionSets[i]);
-	}
+    std::cout << "Collision Set of " << collisionSet.numCollisions() << " collisions." << std::endl;
+    mApp->debugPrint(App::DEBUG_PHYSICS, "Num Collision Objects: ", world->getCollisionObjectArray().size());
+    mApp->getDestructionEngine()->processSet(collisionSet);
 
 	mApp->getDestructionEngine()->checkForSeparation();
 
-	std::cout << "END TICK" << std::endl;
+	//std::cout << "END TICK" << std::endl;
 }

@@ -337,8 +337,9 @@ const GLuint VoxelConverter::regularVertexData[3072] =
         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 };
 
-VoxelConverter::VoxelConverter()
+VoxelConverter::VoxelConverter(App* app)
 {
+    mApp = app;
     mUseCPU = false;
     mVoxelSpacing = 1.0f;
     mXOffset = 0.0f;
@@ -346,9 +347,8 @@ VoxelConverter::VoxelConverter()
     mZOffset = 0.0f;
 }
 
-VoxelConverter::VoxelConverter(GLfloat voxelSpacing)
+VoxelConverter::VoxelConverter(App* app_one, GLfloat voxelSpacing) : VoxelConverter(app_one)
 {
-    VoxelConverter();
     mVoxelSpacing = voxelSpacing;
 }
 
@@ -532,7 +532,7 @@ GLuint VoxelConverter::getEdgeNumber(GLuint cornerIndices)
 
 void VoxelConverter::convertCPU(MatterNode* matterNode)
 {
-    consolePrint("Attempting to convert voxel field with CPU.");
+    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with CPU.");
 
     matterNode->getMatter()->beginProcessing();
 
@@ -540,12 +540,16 @@ void VoxelConverter::convertCPU(MatterNode* matterNode)
     mYOffset = -matterNode->getMatter()->getVoxelField()->getCenterOfMass().y*mVoxelSpacing;
     mZOffset = -matterNode->getMatter()->getVoxelField()->getCenterOfMass().z*mVoxelSpacing;
 
+    double start = glfwGetTime();
     VoxelDecomposer decomp;
     decomp.decompose(matterNode->getMatter()->getVoxelField());
     matterNode->getMatter()->setupHulls();
+    double decomposed = glfwGetTime();
+    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
     listTrianglesCPU(matterNode->getMatter());
     genVerticesCPU(matterNode->getMatter());
-
+    double generated = glfwGetTime();
+    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
     matterNode->getMatter()->endProcessing(matterNode);
 
 }

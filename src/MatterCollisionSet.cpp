@@ -4,7 +4,7 @@
 
 MatterCollisionSet::MatterCollisionSet()
 {
-    mValid = true;
+
 }
 
 MatterCollisionSet::~MatterCollisionSet()
@@ -14,44 +14,34 @@ MatterCollisionSet::~MatterCollisionSet()
 
 
 //Return true if this collision belongs in this set.
-int MatterCollisionSet::offer(MatterCollision collision)
+void MatterCollisionSet::offer(MatterCollision collision)
 {
-    if(!mValid) return false;
+    bool found = false;
 
-    bool firstInSet = false;
-    bool secondInSet = false;
-    for(int i = 0; (!firstInSet || !secondInSet) && i < mMatterSet.size(); i++)
+    for(int i = 0; !found && i < mMatterSet.size(); i++)
     {
-        if(!firstInSet && (collision.getFirst()->getMatter()->getID() == mMatterSet[i].getFirst()->getMatter()->getID() ||
-                           collision.getFirst()->getMatter()->getID() == mMatterSet[i].getSecond()->getMatter()->getID()))
+        bool first = false;
+        bool second = false;
+        if(collision.getFirst()->getMatter()->getID() == mMatterSet[i].getFirst()->getMatter()->getID() ||
+                           collision.getFirst()->getMatter()->getID() == mMatterSet[i].getSecond()->getMatter()->getID())
         {
-            firstInSet = true;
+            first = true;
         }
-        if(!secondInSet && (collision.getSecond()->getMatter()->getID() == mMatterSet[i].getFirst()->getMatter()->getID() ||
-                            collision.getSecond()->getMatter()->getID() == mMatterSet[i].getSecond()->getMatter()->getID()))
+        if(collision.getSecond()->getMatter()->getID() == mMatterSet[i].getFirst()->getMatter()->getID() ||
+                            collision.getSecond()->getMatter()->getID() == mMatterSet[i].getSecond()->getMatter()->getID())
         {
-            secondInSet = true;
+            second = true;
+        }
+        if(first && second)
+        {
+            found = true;
         }
     }
-    if(firstInSet && secondInSet)
-    {
-        return -1;
-    }
-    else if(firstInSet || secondInSet)
-    {
-        return 1;
-    }
-    else return 0;
-}
 
-void MatterCollisionSet::merge(MatterCollisionSet& other)
-{
-    const std::vector<MatterCollision>& otherSet = other.mMatterSet;
-    for(int i = 0; i < otherSet.size(); i++)
+    if(!found)
     {
-        mMatterSet.push_back(otherSet[i]);
+        add(collision);
     }
-    other.mValid = false;
 }
 
 void MatterCollisionSet::add(MatterCollision collision)

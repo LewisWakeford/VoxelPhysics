@@ -40,8 +40,6 @@ class PhysicsManager
 
         btAlignedObjectArray<btCollisionShape*> mCollisionShapesArray;
 
-        std::vector<MatterCollisionSet> mCollisionSets;
-
         bool mPhysics;
 
     private:

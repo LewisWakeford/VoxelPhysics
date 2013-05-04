@@ -228,6 +228,8 @@ class EnergyGrid
                 Vector3i mVoxelCoord; //The voxel this node is representing.
                 unsigned int mGeneration; //Which step the node was added to the graph.
                 bool mDeadEnd;
+                TransferNode* mFeederRef;
+                float mAccumulatedStress;
 
                 TransferNode(bool isSource, Vector3i coord)
                 {
@@ -236,11 +238,14 @@ class EnergyGrid
                     mFeeder = -1;
                     mFeederDirection = INVALID_DIR;
                     mDeadEnd = false;
+                    mAccumulatedStress = 0.0f;
                 }
+
         };
 
         //Drag energy through the transfer graph. Return true if node is still valid.
         bool pullEnergy(unsigned int nodeIndex, float energy, char direction);
+        void stressTransferNode(int index, float stress);
 
         std::vector<TransferNode> mTransferGraph;
         std::vector<std::vector<std::vector<int>>> mTransferMap;
@@ -276,7 +281,7 @@ class EnergyGrid
         MatterNode* mMatterNode;
 
         float mEnergyPerVoxel;
-        float mStartingEnergy;
+        float mStartingEnergyPerVoxel;
 
         Vector3f mEnergyVector;
         Vector3f mEnergyVectorLocal;

@@ -10,6 +10,8 @@ class SceneGraph;
 class VoxelConverter;
 class DestructionEngine;
 
+#include <string>
+
 class App
 {
     public:
@@ -65,6 +67,17 @@ class App
         GLboolean gPitchDown;
         GLboolean gRollLeft;
         GLboolean gRollRight;
+
+        static bool DEBUG_INTERAL_SIMULATION;
+        static bool DEBUG_PHYSICS;
+        static bool DEBUG_MARCHING_CUBES;
+        static bool DEBUG_VOX_DECOMP;
+        static bool DEBUG_BREAKING;
+
+        void debugPrint(bool notMuted, const std::string& message);
+        void debugPrint(bool notMuted, const std::string& message, int value);
+        void debugPrint(bool notMuted, const std::string& message, float value);
+        void debugPrint(bool notMuted, const std::string& message, double value);
 
 
     protected:

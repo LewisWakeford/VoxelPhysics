@@ -133,7 +133,7 @@ void EnergyGrid::setInitialEnergy(float energy)
     unsigned int totalVoxels = getMatter()->getVoxelField()->getNumVoxels();
     float energyPerVoxel = energy / totalVoxels;
 
-    mStartingEnergy = energyPerVoxel;
+    mStartingEnergyPerVoxel = energyPerVoxel;
 
     for(int z = 0; z < 32; z++)
     {
@@ -184,7 +184,11 @@ void EnergyGrid::directTransfer()
 */
 void EnergyGrid::indirectTransfer()
 {
+    double startOfTransfer = glfwGetTime();
     buildTransferGraph();
+    double buildGraph = glfwGetTime();
+    float energyToTransfer = mEnergyPerVoxel - mStartingEnergyPerVoxel;
+    //std::cout << "Time to build graph: " << (buildGraph - startOfTransfer) << std::endl;
     for(unsigned int i = 0; i < mTransferGraph.size(); i++)
     {
         TransferNode& currentNode = mTransferGraph[i];
@@ -192,12 +196,19 @@ void EnergyGrid::indirectTransfer()
         {
             Vector3i coord = currentNode.mVoxelCoord;
             VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
+            stressVoxel(coord, currentNode.mAccumulatedStress*energyToTransfer);
+            /* Old Code
+            Vector3i coord = currentNode.mVoxelCoord;
+            VoxelData& voxel = mVoxelData[coord.x][coord.y][coord.z];
 
             float requiredEnergy = mEnergyPerVoxel - voxel.getEnergy(mIsReciever);
             if(requiredEnergy > 0) pullEnergy(i, requiredEnergy, INVALID_DIR);
             voxel.setEnergy(mIsReciever, mEnergyPerVoxel);
+            */
         }
     }
+    double transfer = glfwGetTime();
+    //std::cout << "Time to transfer: " << (transfer - buildGraph) << std::endl;
 }
 
 void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vector3f>::const_iterator bridgeIterator)
@@ -410,7 +421,7 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, Vec
     for(unsigned int i = 0; i < voxelsInPath.size(); i++)
     {
         int pressuringLayers = 1 + ((maxDistance - voxelDistance[i])*2); //How many layers of voxels are applying pressure to this one.
-        float pressure = pressuringLayers * (mStartingEnergy-mEnergyPerVoxel) * voxelWeights[i];
+        float pressure = pressuringLayers * (mStartingEnergyPerVoxel-mEnergyPerVoxel) * voxelWeights[i];
         pressureVoxel(voxelsInPath[i], pressure);
     }
 
@@ -466,7 +477,7 @@ void EnergyGrid::buildTransferGraph()
         //Add adjanct nodes to map.
         for(unsigned int i = startOfStep; i < endOfStep; i++)
         {
-            TransferNode currentNode = mTransferGraph[i];
+            TransferNode& currentNode = mTransferGraph[i];
             const Vector3i coord = currentNode.mVoxelCoord;
 
             //Get coords of adjanct nodes
@@ -504,6 +515,7 @@ void EnergyGrid::buildTransferGraph()
                             newNode.mFeeder = i;
                             newNode.mFeederDirection = getReverseDirection(k);
                             newNode.mGeneration = generation;
+                            stressTransferNode(mTransferGraph.size()-1, 1.0f);
                         }
                     }
                 }
@@ -516,6 +528,15 @@ void EnergyGrid::buildTransferGraph()
     }
 
 
+}
+
+void EnergyGrid::stressTransferNode(int index, float stress)
+{
+    if(index > -1)
+    {
+        mTransferGraph[index].mAccumulatedStress += stress;
+        stressTransferNode(mTransferGraph[index].mFeeder, stress);
+    }
 }
 
 void EnergyGrid::directTransferVoxel(Vector3i sourceVoxel)
@@ -973,9 +994,6 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
 
     if(!node.mSource)
     {
-
-
-
         //Stress and pressure due to pulling the energy.
         if(direction != INVALID_DIR) //this is not the first voxel in the proccess.
         {
@@ -1035,7 +1053,7 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
             {
                 if(potentialFeederGeneration[i] == lowestGeneration)
                 {
-                    float potentialFeederStress = 1.0f - fabs(mCurrentMap[potentialFeeders[i]]);
+                     float potentialFeederStress = 1.0f - fabs(mCurrentMap[potentialFeederDirections[i]]);
                     if(potentialFeederStress > highestStress || highestStress == 0.0f)
                     {
                         highestStress = potentialFeederStress;
@@ -1135,7 +1153,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
     if(!mDestructionOccured && !mSnappingOccured)
     return false;
 
-    std::cout << "Starting Breakage: ";
+    //std::cout << "Starting Breakage: ";
 
     //Similar to building the transfer graph, we need to have a map and a vector
     bool noShapesLeft = false;
@@ -1235,7 +1253,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 
             startOfStep = endOfStep;
             newSize = voxelsInShapes[shapeCount].size();
-            std::cout << newSize << std::endl;
+            //std::cout << newSize << std::endl;
         }
 
         shapesTotalEnergyP.push_back(totalEnergyProjecting);

@@ -278,3 +278,130 @@ Deadline Approaching! OMG BAILOUT! Nah, just kidding. Shit to do before 10th, in
 		- Including Reimplement GPU stuff, with Convex Decomp integrated.
 	- Add debugging tools. (hard.)
 	
+
+3/05/2013
+
+No longer circle-jerks. Need to add some kind of filter after direct transfer... or just make it much more efficent in general.
+
+Current Bottlenecks: 
+	Indirect Transfer <- Find which parts
+	Generating new Matter Nodes. <- Find if MC or Convex Decomp or both.
+
+Okay. When there is a lot of energy to move around, transfer time in indirect transfer is about .25 seconds, but overwise pretty negiligle. Graph building usually takes about .05 depending on how the collision goes. Both of them seem pretty slow.
+
+When generating, MC is the bottleneck. GPU acceleration would probably help a lot.
+
+My new idea for indirect transfer:
+
+	Nodes in the direct transfer paths are immune.
+	For each of those nodes, 
+
+Can't figure out a way to work it.
+
+Try to optimize what we have now real quick...
+Here is old code for graph building:
+
+void EnergyGrid::buildTransferGraph()
+{
+    mTransferGraph.clear();
+
+    unsigned int startOfStep = 0;
+    unsigned int endOfStep = 0;
+
+    //Reset the transfermap
+    mTransferMap = std::vector<std::vector<std::vector<int>>>(32, std::vector<std::vector<int>>(32, std::vector<int>(32, -1)));
+
+    //Add source voxels to graph
+    for(unsigned int x = 0; x < 32; x++)
+    {
+        for(unsigned int y = 0; y < 32; y++)
+        {
+            for(unsigned int z = 0; z < 32; z++)
+            {
+                VoxelData& voxel = mVoxelData[x][y][z];
+                if(//voxel.mFull && !voxel.mDestroyed &&
+                   voxel.getEnergy(mIsReciever) >= mEnergyPerVoxel)
+                {
+                    mTransferGraph.push_back(TransferNode(true, Vector3i(x, y, z)));
+                    mTransferGraph.back().mGeneration = 0;
+                    mTransferMap[x][y][z] = mTransferGraph.size()-1;
+                    endOfStep++;
+                }
+            }
+        }
+    }
+
+    unsigned int oldSize = 0;
+    unsigned int newSize = endOfStep;
+
+    unsigned int generation = 1;
+
+    //Expand graph
+    while(oldSize != newSize) //End if no new voxels are added to graph.
+    {
+        oldSize = newSize;
+        endOfStep = newSize;
+
+        //Add adjanct nodes to map.
+        for(unsigned int i = startOfStep; i < endOfStep; i++)
+        {
+            TransferNode currentNode = mTransferGraph[i];
+            const Vector3i coord = currentNode.mVoxelCoord;
+
+            //Get coords of adjanct nodes
+            for(unsigned int k = 0; k < 27; k++)
+            {
+                Vector3i adjanctCoord = coord + getDirectionVector(k);
+                if(validCoord(adjanctCoord))
+                {
+                    int nodeIndex = mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
+
+                    //Node has already been added to graph,
+                     but is "younger" than this node.
+                    if(nodeIndex >= 0 && nodeIndex > endOfStep)
+                    {
+                        TransferNode& adjanctNode = mTransferGraph[nodeIndex];
+                        eDirection previousFeederDirection = getReverseDirection(adjanctNode.mFeederDirection);
+                        float previousFeederStress = 1.0f - fabs(mCurrentMap[previousFeederDirection]);
+                        float stress = 1.0f - fabs(mCurrentMap[k]);
+
+                        //If this voxel is a better feeder, then use it instead of the previous one.
+                        if(stress > previousFeederStress)
+                        {
+                            adjanctNode.mFeeder = i;
+                            adjanctNode.mFeederDirection = getReverseDirection(k);
+                        }
+                    }
+                    else if(nodeIndex < 0)
+                    {
+                        //Node has not been added, must check it is full.
+                        VoxelData& voxel = mVoxelData[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
+                        if(voxel.mFull && !(voxel.mDestroyed || voxel.mSnapped))
+                        {
+                            mTransferGraph.push_back(TransferNode(false, adjanctCoord));
+                            mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z] = mTransferGraph.size()-1;
+                            TransferNode& newNode = mTransferGraph.back();
+                            newNode.mFeeder = i;
+                            newNode.mFeederDirection = getReverseDirection(k);
+                            newNode.mGeneration = generation;
+                        }
+                    }
+                }
+            }
+        }
+
+        newSize = mTransferGraph.size();
+        startOfStep = endOfStep;
+        generation++;
+    }
+
+
+}
+
+What I did was build stress at the same time as the graph, then do a quick pass and apply it all at once. 
+It seemed to result in much greater speed. 0.05 - 0.07 to build the graph which is *slightly* higher. 
+However, time to transfer was cut down to 0.001 - 0.003 ish.
+So worth it.
+
+Actual destruction seems fast *enough* now. It really just slows down when collision sets get to about: 20 or so simulatneous "non trivial" collisions.
+Also breaking, that is, the process of detecting breaks, takes about 0.5s. In some cases, so that obviously needs fixing.

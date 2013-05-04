@@ -27,6 +27,9 @@ class DestructionEngine
 
         App* mApp;
 
+        int mNumberOfNonTrivialCollisions;
+        int mDestructionsPerformed;
+
     private:
 };
 

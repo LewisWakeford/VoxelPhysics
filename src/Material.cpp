@@ -10,7 +10,7 @@ Material::Material()
     mMinStrength = 0.5f;
     mMaxStrength = 1.5f;
     mRandomChance = 0.5f;
-    mTrivialThreshold = 10000.0f;
+    mTrivialThreshold = 100000.0f;
 }
 
 Material::~Material()

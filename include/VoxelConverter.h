@@ -8,6 +8,7 @@
 #include "ShaderProgram.h"
 #include "Buffer.h"
 #include "Vector3.h"
+#include "App.h"
 
 class VoxelField;
 class VertexShell;
@@ -43,8 +44,8 @@ struct ListTrianglesOutput
 class VoxelConverter
 {
     public:
-        VoxelConverter();
-        VoxelConverter(GLfloat spacing);
+        VoxelConverter(App* app);
+        VoxelConverter(App* app, GLfloat spacing);
         virtual ~VoxelConverter();
 
         void convert(MatterNode* matter);
@@ -96,6 +97,8 @@ class VoxelConverter
         GLfloat mXOffset;
         GLfloat mYOffset;
         GLfloat mZOffset;
+
+        App* mApp;
 
     private:
 
