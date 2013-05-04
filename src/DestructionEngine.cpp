@@ -75,12 +75,20 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
 
         if(firstSpeed >= secondSpeed)
         {
+            double preBridge = glfwGetTime();
             buildBridges(firstIndex, secondIndex, collision);
+            double postBridge = glfwGetTime();
+            mApp->debugPrint(App::DEBUG_BRIDGES, "Time to build bridges: ", (postBridge - preBridge));
+
             transferEnergy(mEnergyGrids[firstIndex], mEnergyGrids[secondIndex]);
         }
         else
         {
+            double preBridge = glfwGetTime();
             buildBridges(secondIndex, firstIndex, collision);
+            double postBridge = glfwGetTime();
+            mApp->debugPrint(App::DEBUG_BRIDGES, "Time to build bridges: ", (postBridge - preBridge));
+
             transferEnergy(mEnergyGrids[secondIndex], mEnergyGrids[firstIndex]);
         }
         mNumberOfNonTrivialCollisions++;
@@ -108,61 +116,74 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     Vector3f directionFirst = firstEnergy.normalized();
     float secondEnergyRelative = directionFirst.dot(secondEnergy);
     float firstEnergyScalar = firstEnergy.length();
-
-
+    float secondEnergyScalar = secondEnergy.length();
 
     unsigned int totalVoxels = first.getMatter()->getVoxelField()->getNumVoxels() + second.getMatter()->getVoxelField()->getNumVoxels();
-    float energyPerVoxel = (firstEnergyScalar + secondEnergyRelative) / totalVoxels;
 
-    first.setEnergyPerVoxel(energyPerVoxel);
-    second.setEnergyPerVoxel(energyPerVoxel);
+    if(first.getMatter()->nonTrivial(firstEnergyScalar) || second.getMatter()->nonTrivial(firstEnergyScalar))
+    {
+        float energyPerVoxel = (firstEnergyScalar + secondEnergyRelative) / totalVoxels;
 
-    first.setAsProjector();
-    second.setAsReciever();
+        first.setEnergyPerVoxel(energyPerVoxel);
+        second.setEnergyPerVoxel(energyPerVoxel);
+
+        first.setAsProjector();
+        second.setAsReciever();
 
 
-    first.setInitialEnergy(firstEnergyScalar);
-    second.setInitialEnergy(secondEnergyRelative);
+        first.setInitialEnergy(firstEnergyScalar);
+        second.setInitialEnergy(secondEnergyRelative);
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
-    first.directTransfer();
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
+        double directTransferStart = glfwGetTime();
+        first.directTransfer();
+        double directTransferEnd = glfwGetTime();
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Time taken: ", (directTransferEnd - directTransferStart));
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
-    //first.indirectTransfer();
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+        first.indirectTransfer();
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
-    //second.indirectTransfer();
-
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+        second.indirectTransfer();
+    }
 
     mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing setup...");
     //Do the same for second
 
-    float remainingEnergyRatio = secondEnergyRelative / secondEnergy.length();
+    float remainingEnergyRatio = secondEnergyRelative / secondEnergyScalar;
     Vector3f remainingEnergy = secondEnergy.mult(remainingEnergyRatio);
     float remainingEnergyScalar = remainingEnergy.length();
 
     //Vector3f directionSecond = remainingEnergy.normalized();
     //float firstEnergyRelative = directionSecond.dot(firstEnergy);
 
-    energyPerVoxel = (remainingEnergyScalar) / totalVoxels;
 
-    first.setEnergyPerVoxel(energyPerVoxel);
-    second.setEnergyPerVoxel(energyPerVoxel);
 
-    second.setAsProjector();
-    first.setAsReciever();
+    if(first.getMatter()->nonTrivial(remainingEnergyScalar) || second.getMatter()->nonTrivial(remainingEnergyScalar))
+    {
+        float energyPerVoxel = (remainingEnergyScalar) / totalVoxels;
 
-    first.setInitialEnergy(0.0f);
-    second.setInitialEnergy(remainingEnergyScalar);
+        first.setEnergyPerVoxel(energyPerVoxel);
+        second.setEnergyPerVoxel(energyPerVoxel);
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
-    second.directTransfer();
+        second.setAsProjector();
+        first.setAsReciever();
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
-    //second.indirectTransfer();
+        first.setInitialEnergy(0.0f);
+        second.setInitialEnergy(remainingEnergyScalar);
 
-    mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
-    //first.indirectTransfer();
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing direct transfer...");
+        double directTransferStart = glfwGetTime();
+        second.directTransfer();
+        double directTransferEnd = glfwGetTime();
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Time taken: ", (directTransferEnd - directTransferStart));
+
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+        second.indirectTransfer();
+
+        mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Performing indirect transfer...");
+        first.indirectTransfer();
+    }
 
     mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "---SET---");
     mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "First: ", firstEnergyScalar);
@@ -252,10 +273,10 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
         {
             if(closeBridgesFirst[i].distance(closeBridgesSecond[k]) < closeRadius)
             {
-                Vector3f localPointFirst = firstTransformInverse.transformVertex(closeBridgesSecond[i]) + cOfMF;
-                Vector3f localPointSecond  = secondTransformInverse.transformVertex(closeBridgesFirst[i]) + cOfMS;
-                first.addBridge(potentialBridgesFirst[closeBridgesFirstOriginal[i]], localPointSecond);
-                second.addBridge(potentialBridgesSecond[closeBridgesSecondOriginal[k]], localPointFirst);
+                //Vector3f localPointFirst = firstTransformInverse.transformVertex(closeBridgesSecond[i]) + cOfMF;
+                //Vector3f localPointSecond  = secondTransformInverse.transformVertex(closeBridgesFirst[i]) + cOfMS;
+                first.addBridge(potentialBridgesFirst[closeBridgesFirstOriginal[i]], potentialBridgesSecond[closeBridgesSecondOriginal[k]]);
+                second.addBridge(potentialBridgesSecond[closeBridgesSecondOriginal[k]], potentialBridgesFirst[closeBridgesFirstOriginal[i]]);
             }
         }
     }

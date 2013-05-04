@@ -1,0 +1,93 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    int DOWN                = 0x1;
+    int UP                  = 0x2;
+    int LEFT                = 0x4;
+    int RIGHT               = 0x8;
+    int FRONT               = 0x10;
+    int BACK                = 0x20;
+    int LEFT_FRONT          = 0x40;
+    int LEFT_BACK           = 0x80;
+    int RIGHT_FRONT         = 0x100;
+    int RIGHT_BACK          = 0x200;
+    int UP_LEFT             = 0x400;
+    int UP_RIGHT            = 0x800;
+    int UP_FRONT            = 0x1000;
+    int UP_BACK             = 0x2000;
+    int UP_LEFT_FRONT       = 0x4000;
+    int UP_LEFT_BACK        = 0x8000;
+    int UP_RIGHT_FRONT      = 0x10000;
+    int UP_RIGHT_BACK       = 0x20000;
+    int DOWN_LEFT           = 0x40000;
+    int DOWN_RIGHT          = 0x80000;
+    int DOWN_FRONT          = 0x100000;
+    int DOWN_BACK           = 0x200000;
+    int DOWN_LEFT_FRONT     = 0x400000;
+    int DOWN_LEFT_BACK      = 0x800000;
+    int DOWN_RIGHT_FRONT    = 0x1000000;
+    int DOWN_RIGHT_BACK     = 0x2000000;
+
+    int ADJANCT_DOWN = 0x2FFFFFF & ~(UP | UP_LEFT | UP_RIGHT | UP_FRONT | UP_BACK | UP_LEFT_FRONT | UP_LEFT_BACK | UP_RIGHT_FRONT | UP_RIGHT_BACK);
+    int ADJANCT_UP = 0x2FFFFFF & ~(DOWN | DOWN_LEFT | DOWN_RIGHT | DOWN_FRONT | DOWN_BACK | DOWN_LEFT_FRONT | DOWN_LEFT_BACK | DOWN_RIGHT_FRONT | DOWN_RIGHT_BACK);
+    int ADJANCT_LEFT = 0x2FFFFFF & ~(RIGHT | RIGHT_FRONT | RIGHT_BACK | UP_RIGHT | UP_RIGHT_FRONT | UP_RIGHT_BACK | DOWN_RIGHT | DOWN_RIGHT_BACK | DOWN_RIGHT_FRONT);
+    int ADJANCT_RIGHT = 0x2FFFFFF & ~(LEFT | LEFT_FRONT | LEFT_BACK | UP_LEFT | UP_LEFT_FRONT | UP_LEFT_BACK | DOWN_LEFT | DOWN_LEFT_BACK | DOWN_LEFT_FRONT);
+    int ADJANCT_FRONT = 0x2FFFFFF & ~(BACK | LEFT_BACK | RIGHT_BACK | UP_BACK | UP_LEFT_BACK | UP_RIGHT_BACK | DOWN_BACK | DOWN_RIGHT_BACK | DOWN_LEFT_BACK);
+    int ADJANCT_BACK = 0x2FFFFFF & ~(FRONT | LEFT_FRONT | RIGHT_FRONT | UP_FRONT | UP_LEFT_FRONT | UP_RIGHT_FRONT | DOWN_FRONT | DOWN_RIGHT_FRONT | DOWN_LEFT_FRONT);
+
+    int ADJANCT_LEFT_FRONT          = ADJANCT_LEFT & ADJANCT_FRONT;
+    int ADJANCT_LEFT_BACK           = ADJANCT_LEFT & ADJANCT_BACK;
+    int ADJANCT_RIGHT_FRONT         = ADJANCT_RIGHT & ADJANCT_FRONT;
+    int ADJANCT_RIGHT_BACK          = ADJANCT_RIGHT & ADJANCT_BACK;
+    int ADJANCT_UP_LEFT             = ADJANCT_UP & ADJANCT_LEFT;
+    int ADJANCT_UP_RIGHT            = ADJANCT_UP & ADJANCT_RIGHT;
+    int ADJANCT_UP_FRONT            = ADJANCT_UP & ADJANCT_FRONT;
+    int ADJANCT_UP_BACK             = ADJANCT_UP & ADJANCT_BACK;
+    int ADJANCT_UP_LEFT_FRONT       = ADJANCT_UP_LEFT & ADJANCT_FRONT;
+    int ADJANCT_UP_LEFT_BACK        = ADJANCT_UP_LEFT & ADJANCT_BACK;
+    int ADJANCT_UP_RIGHT_FRONT      = ADJANCT_UP_RIGHT & ADJANCT_FRONT;
+    int ADJANCT_UP_RIGHT_BACK       = ADJANCT_UP_RIGHT & ADJANCT_BACK;
+    int ADJANCT_DOWN_LEFT           = ADJANCT_DOWN & ADJANCT_LEFT;
+    int ADJANCT_DOWN_RIGHT          = ADJANCT_DOWN & ADJANCT_RIGHT;
+    int ADJANCT_DOWN_FRONT          = ADJANCT_DOWN & ADJANCT_FRONT;
+    int ADJANCT_DOWN_BACK           = ADJANCT_DOWN & ADJANCT_BACK;
+    int ADJANCT_DOWN_LEFT_FRONT     = ADJANCT_DOWN_LEFT & ADJANCT_FRONT;
+    int ADJANCT_DOWN_LEFT_BACK      = ADJANCT_DOWN_LEFT & ADJANCT_BACK;
+    int ADJANCT_DOWN_RIGHT_FRONT    = ADJANCT_DOWN_RIGHT & ADJANCT_FRONT;
+    int ADJANCT_DOWN_RIGHT_BACK     = ADJANCT_DOWN_RIGHT & ADJANCT_BACK;
+
+    cout << "ADJANCT TO DOWN: " << ADJANCT_DOWN << endl;
+    cout << "ADJANCT TO UP: " << ADJANCT_UP << endl;
+    cout << "ADJANCT TO LEFT: " << ADJANCT_LEFT << endl;
+    cout << "ADJANCT TO RIGHT: " << ADJANCT_RIGHT << endl;
+    cout << "ADJANCT TO FRONT: " << ADJANCT_FRONT << endl;
+    cout << "ADJANCT TO BACK: " << ADJANCT_BACK << endl;
+
+     cout << "ADJANCT TO LEFT/FRONT: " << ADJANCT_LEFT_FRONT << endl;
+    cout << "ADJANCT TO LEFT/BACK: " << ADJANCT_LEFT_BACK << endl;
+    cout << "ADJANCT TO RIGHT/FRONT: " << ADJANCT_RIGHT_FRONT << endl;
+    cout << "ADJANCT TO RIGHT/BACK: " << ADJANCT_RIGHT_BACK << endl;
+
+    cout << "ADJANCT TO UP/LEFT: " << ADJANCT_UP_LEFT<< endl;
+    cout << "ADJANCT TO UP/RIGHT: " << ADJANCT_UP_RIGHT << endl;
+     cout << "ADJANCT TO UP/FRONT: " << ADJANCT_UP_FRONT << endl;
+    cout << "ADJANCT TO UP/BACK: " << ADJANCT_UP_BACK << endl;
+    cout << "ADJANCT TO UP/LEFT/FRONT: " << ADJANCT_UP_LEFT_FRONT << endl;
+    cout << "ADJANCT TO UP/LEFT/BACK: " << ADJANCT_UP_LEFT_BACK << endl;
+    cout << "ADJANCT TO UP/RIGHT/FRONT: " << ADJANCT_UP_RIGHT_FRONT << endl;
+    cout << "ADJANCT TO UP/RIGHT/BACK: " << ADJANCT_UP_RIGHT_BACK << endl;
+
+    cout << "ADJANCT TO DOWN/LEFT: " << ADJANCT_DOWN_LEFT << endl;
+    cout << "ADJANCT TO DOWN/RIGHT: " << ADJANCT_DOWN_RIGHT << endl;
+     cout << "ADJANCT TO DOWN/FRONT: " << ADJANCT_DOWN_FRONT << endl;
+    cout << "ADJANCT TO DOWN/BACK: " << ADJANCT_DOWN_BACK << endl;
+    cout << "ADJANCT TO DOWN/LEFT/FRONT: " << ADJANCT_DOWN_LEFT_FRONT << endl;
+    cout << "ADJANCT TO DOWN/LEFT/BACK: " << ADJANCT_DOWN_LEFT_BACK << endl;
+    cout << "ADJANCT TO DOWN/RIGHT/FRONT: " << ADJANCT_DOWN_RIGHT_FRONT << endl;
+    cout << "ADJANCT TO DOWN/RIGHT/BACK: " << ADJANCT_DOWN_RIGHT_BACK << endl;
+
+    return 0;
+}

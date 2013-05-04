@@ -46,7 +46,7 @@ class EnergyGrid
         void indirectTransfer();
 
         //Creates a bridge from the "virtual" voxel coordinate on this shape to at point on the partner shape.
-        void addBridge(Vector3i localVoxelCoord, Vector3f partnerLocalCoord);
+        void addBridge(Vector3i localVoxelCoord, Vector3i partnerVoxelCoord);
 
         //Check if the matter needs to be decomposed into smaller shapes due to breaking/snapping.
         //matterArray and numMatter are returns. Returns true if new matter shapes have been created.
@@ -95,25 +95,34 @@ class EnergyGrid
             INVALID_DIR
         };
 
+        static int sDirectionAsBit[27];
+        static int sAdjanctDirections[27];
+
         static eDirection DIRECTION_START;
 
         static Vector3i getDirectionVector(char direction);
         static Vector3f getDirectionVectorF(char direction);
         static eDirection getReverseDirection(char direction);
 
-        float mRecieverMap[26]; //Each direction is given a code from 0 - 25.
+        std::vector<float> mRecieverMap; //Each direction is given a code from 0 - 25.
                                 //Depending on the direction, a different amount of stress or pressure is generated.
                                 //The stored value in the map is the ratio pressure/stress.
 
-        float mProjectorMap[26]; //Second map for when projecting energy.
+        std::vector<float> mProjectorMap; //Second map for when projecting energy.
 
 
 
         std::vector<char> mPressureDirectionsR; //All direction codes that generate pressure should be stored here.
         std::vector<char> mPressureDirectionsP;
 
-        float* mCurrentMap; //Pointer to one of the two above maps, the one that we should currently use.
+        std::unordered_map<char, char> mStressDirectionsR;
+        std::unordered_map<char, char> mStressDirectionsP;
+
+        std::vector<float>* mCurrentMap; //Pointer to one of the two above maps, the one that we should currently use.
         std::vector<char>* mCurrentPressureDirections;
+
+        //Maps directions to a "priority" wich helps when building the indirect graph.
+        std::unordered_map<char, char>* mCurrentStressDirections;
 
         float mDirectTransferMap[26]; //This map stores the portion of energy each adjanct voxel should be given
 
@@ -121,10 +130,10 @@ class EnergyGrid
             When a voxel transfers energy to a different shape it maps onto a certain point on that shape.
             This bridge is reperesented by a virtual voxel in the home shape and a point on the other one.
         */
-        std::unordered_map<int, Vector3f> mBridges;
+        std::unordered_map<int, int> mBridges;
         int getBridgeKey(const Vector3i& voxelCoord);
         Vector3i getBridgeVector(int key);
-        bool getBridge(int key, Vector3f& ret_BridgePoint); //Returns true if bridge exists with it's point in rBridgePoint.
+        bool getBridge(int internalPoint, int& ret_externalPoint); //Returns true if bridge exists with it's point in rBridgePoint.
 
         bool mIsReciever; //False if projector
 
@@ -271,9 +280,9 @@ class EnergyGrid
         void directTransferTo(Vector3i targetVoxel, float energy);
 
         /* Move from a bridge backwards until the edge of the voxel field is reached, then return the total energy along that path and the point where the path ends */
-        void transferInternalEnergyThroughBridge(std::unordered_map<int, Vector3f>::const_iterator bridgeIterator);
+        void transferInternalEnergyThroughBridge(std::unordered_map<int, int>::const_iterator bridgeIterator);
 
-        void transferExternalEnergyTo(Vector3f pointCoord, float energy);
+        void transferExternalEnergyTo(const Vector3i& bridgePoint, float energy);
 
         bool mDestructionOccured; //Is true if there was any breakage during energy transfer.
         bool mSnappingOccured; //Is true if there was any snapping during energy transfer.

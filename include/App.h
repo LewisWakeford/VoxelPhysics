@@ -73,6 +73,7 @@ class App
         static bool DEBUG_MARCHING_CUBES;
         static bool DEBUG_VOX_DECOMP;
         static bool DEBUG_BREAKING;
+        static bool DEBUG_BRIDGES;
 
         void debugPrint(bool notMuted, const std::string& message);
         void debugPrint(bool notMuted, const std::string& message, int value);

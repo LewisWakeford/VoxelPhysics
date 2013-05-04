@@ -1,0 +1,4 @@
+# depslib dependency file v1.0
+1367667164 source:c:\code\voxelphysics_git\util\bitcodegen\main.cpp
+	<iostream>
+
