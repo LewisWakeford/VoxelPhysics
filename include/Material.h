@@ -24,6 +24,8 @@ class Material
         float getMaxStrength() const;
         float getRandomChance() const;
 
+        int getTrivialMass() const;
+
         //Returns true if this amount of energy can possibly alter the shape of an object composed of this material.
         bool nonTrivial(float energy) const;
 
@@ -44,6 +46,7 @@ class Material
         float mRandomChance; //The percentage chance that a particular voxel will use a random value between min and max strength instead of 1.
 
         float mTrivialThreshold;
+        int mTrivialMass;
 
     private:
 };

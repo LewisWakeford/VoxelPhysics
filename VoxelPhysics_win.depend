@@ -4416,7 +4416,7 @@
 	"RigidBody.h"
 	"Material.h"
 
-1367229164 c:\code\voxelphysics_git\include\material.h
+1367716525 c:\code\voxelphysics_git\include\material.h
 	"VP.h"
 	<string>
 
@@ -4476,7 +4476,7 @@
 	"VP.h"
 	<vector>
 
-1367677750 source:c:\code\voxelphysics_git\src\energygrid.cpp
+1367718720 source:c:\code\voxelphysics_git\src\energygrid.cpp
 	"EnergyGrid.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4487,14 +4487,14 @@
 	<cmath>
 	"console.h"
 
-1367610951 source:c:\code\voxelphysics_git\src\material.cpp
+1367717630 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
 	"Matrix4D.h"
 	<math.h>
 
-1367180445 source:c:\code\voxelphysics_git\src\matter.cpp
+1367716495 source:c:\code\voxelphysics_git\src\matter.cpp
 	"Matter.h"
 	"App.h"
 	"Material.h"

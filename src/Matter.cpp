@@ -64,8 +64,11 @@ const GLfloat* Matter::getColorPtr() const
 
 bool Matter::nonTrivial(float energy)
 {
-    float energyPerVoxel = (energy/mVoxelField.getNumVoxels())*32;
-    return mMaterial->nonTrivial(energyPerVoxel);
+    if(mVoxelField.getNumVoxels() > mMaterial->getTrivialMass())
+    {
+        float energyPerVoxel = (energy/mVoxelField.getNumVoxels())*32;
+        return mMaterial->nonTrivial(energyPerVoxel);
+    }
 }
 
 void Matter::import(const char* voxelFilename)

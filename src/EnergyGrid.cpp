@@ -294,7 +294,7 @@ void EnergyGrid::indirectTransfer()
     double startOfTransfer = glfwGetTime();
     buildTransferGraph();
     double buildGraph = glfwGetTime();
-    float energyToTransfer = mEnergyPerVoxel - mStartingEnergyPerVoxel;
+    float energyToTransfer = fabs(mEnergyPerVoxel - mStartingEnergyPerVoxel);
     //std::cout << "Time to build graph: " << (buildGraph - startOfTransfer) << std::endl;
     for(unsigned int i = 0; i < mTransferGraph.size(); i++)
     {
@@ -427,109 +427,6 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, int
 
 }
 
-
-
-void EnergyGrid::buildTransferGraph()
-{
-    mTransferGraph.clear();
-
-    unsigned int startOfStep = 0;
-    unsigned int endOfStep = 0;
-
-    //Reset the transfermap
-    mTransferMap = std::vector<std::vector<std::vector<int>>>(32, std::vector<std::vector<int>>(32, std::vector<int>(32, -1)));
-
-    //Add source voxels to graph
-    for(unsigned int x = 0; x < 32; x++)
-    {
-        for(unsigned int y = 0; y < 32; y++)
-        {
-            for(unsigned int z = 0; z < 32; z++)
-            {
-                VoxelData& voxel = mVoxelData[x][y][z];
-                if(//voxel.mFull && !voxel.mDestroyed &&
-                   voxel.getEnergy(mIsReciever) >= mEnergyPerVoxel)
-                {
-                    mTransferGraph.push_back(TransferNode(true, Vector3i(x, y, z)));
-                    mTransferGraph.back().mGeneration = 0;
-                    mTransferMap[x][y][z] = mTransferGraph.size()-1;
-                    endOfStep++;
-                }
-            }
-        }
-    }
-
-    unsigned int oldSize = 0;
-    unsigned int newSize = endOfStep;
-
-    unsigned int generation = 1;
-
-    //Expand graph
-    while(oldSize != newSize) //End if no new voxels are added to graph.
-    {
-        oldSize = newSize;
-        endOfStep = newSize;
-
-        //Add adjanct nodes to map.
-        for(unsigned int i = startOfStep; i < endOfStep; i++)
-        {
-            TransferNode& currentNode = mTransferGraph[i];
-            const Vector3i coord = currentNode.mVoxelCoord;
-            int adjanctNodesToFeeder = sAdjanctDirections[currentNode.mFeederDirection];
-
-            //Get coords of adjanct nodes
-            for(unsigned int k = 0; k < 27; k++)
-            {
-                if(! (k & adjanctNodesToFeeder))
-                {
-                    Vector3i adjanctCoord = coord + getDirectionVector(k);
-                    if(validCoord(adjanctCoord))
-                    {
-                        int nodeIndex = mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
-
-                        //Node has already been added to graph, but is "younger" than this node.
-                        if(nodeIndex >= 0 && nodeIndex > endOfStep)
-                        {
-                            TransferNode& adjanctNode = mTransferGraph[nodeIndex];
-                            eDirection previousFeederDirection = getReverseDirection(adjanctNode.mFeederDirection);
-                            char previousFeederPriority = mCurrentStressDirections->at(k);
-                            char currentNodePriority = mCurrentStressDirections->at(k);
-
-                            //If this voxel is a better feeder, then use it instead of the previous one.
-                            if(currentNodePriority > previousFeederPriority)
-                            {
-                                adjanctNode.mFeeder = i;
-                                adjanctNode.mFeederDirection = getReverseDirection(k);
-                            }
-                        }
-                        else if(nodeIndex < 0)
-                        {
-                            //Node has not been added, must check it is full.
-                            VoxelData& voxel = mVoxelData[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
-                            if(voxel.mFull && !(voxel.mDestroyed || voxel.mSnapped))
-                            {
-                                int insertedIndex = mTransferGraph.size();
-                                mTransferGraph.push_back(TransferNode(false, adjanctCoord));
-                                mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z] = insertedIndex;
-                                TransferNode& newNode = mTransferGraph.back();
-                                newNode.mFeeder = i;
-                                newNode.mFeederDirection = getReverseDirection(k);
-                                newNode.mGeneration = generation;
-                                stressTransferNode(insertedIndex, 1.0f);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        newSize = mTransferGraph.size();
-        startOfStep = endOfStep;
-        generation++;
-    }
-
-}
-
 void EnergyGrid::transferExternalEnergyTo(const Vector3i& bridgePoint, float energy)
 {
     double internalStart = glfwGetTime();
@@ -552,7 +449,7 @@ void EnergyGrid::transferExternalEnergyTo(const Vector3i& bridgePoint, float ene
     //Bridges local coord is awlays grid aligned.
     Vector3f pointOfIntersection = Vector3f(bridgePoint.x, bridgePoint.y, bridgePoint.z);
 
-    float energyAbsorbedPerVoxel = mStartingEnergyPerVoxel - mEnergyPerVoxel;
+    float energyAbsorbedPerVoxel = mEnergyPerVoxel - mStartingEnergyPerVoxel;
 
     int maxDistance = 0;
 
@@ -621,9 +518,123 @@ void EnergyGrid::transferExternalEnergyTo(const Vector3i& bridgePoint, float ene
     for(unsigned int i = 0; i < voxelsInPath.size(); i++)
     {
         int nonPressuringLayers = 1 + ((maxDistance - voxelDistance[i])); //How many layers of voxels are not applying pressure to this one. Pressure needs to be applied twice
-        float pressure = (2 * energy) - ((2 * voxelDistance[i] + 1) * energyAbsorbedPerVoxel);
+        float pressure = (2*energy) - ((2 * voxelDistance[i] + 1) * energyAbsorbedPerVoxel);
         pressureVoxel(voxelsInPath[i], pressure);
     }
+}
+
+void EnergyGrid::buildTransferGraph()
+{
+    mTransferGraph.clear();
+
+    unsigned int startOfStep = 0;
+    unsigned int endOfStep = 0;
+
+    //Reset the transfermap
+    mTransferMap = std::vector<std::vector<std::vector<int>>>(32, std::vector<std::vector<int>>(32, std::vector<int>(32, -1)));
+
+    float sourceLowerBound = mEnergyPerVoxel*0.9;
+    float sourceUpperBound = mEnergyPerVoxel*1.1;
+
+    //Add source voxels to graph
+    for(unsigned int x = 0; x < 32; x++)
+    {
+        for(unsigned int y = 0; y < 32; y++)
+        {
+            for(unsigned int z = 0; z < 32; z++)
+            {
+                VoxelData& voxel = mVoxelData[x][y][z];
+                float voxelEnergy = voxel.getEnergy(mIsReciever);
+                if(voxel.mFull)
+                {
+                    if(voxelEnergy < sourceUpperBound && voxelEnergy > sourceLowerBound)
+                    {
+                        mTransferGraph.push_back(TransferNode(true, Vector3i(x, y, z)));
+                        mTransferGraph.back().mGeneration = 0;
+                        mTransferMap[x][y][z] = mTransferGraph.size()-1;
+                        endOfStep++;
+                    }
+                    else
+                    {
+                        std::cout << "dep" << std::endl;
+                    }
+                }//&& !voxel.mDestroyed &&
+
+
+            }
+        }
+    }
+
+    unsigned int oldSize = 0;
+    unsigned int newSize = endOfStep;
+
+    unsigned int generation = 1;
+
+    //Expand graph
+    while(oldSize != newSize) //End if no new voxels are added to graph.
+    {
+        oldSize = newSize;
+        endOfStep = newSize;
+
+        //Add adjanct nodes to map.
+        for(unsigned int i = startOfStep; i < endOfStep; i++)
+        {
+            TransferNode& currentNode = mTransferGraph[i];
+            const Vector3i coord = currentNode.mVoxelCoord;
+            int adjanctNodesToFeeder = sAdjanctDirections[currentNode.mFeederDirection];
+
+            //Get coords of adjanct nodes
+            for(unsigned int k = 0; k < 27; k++)
+            {
+                if(! (sDirectionAsBit[k] & adjanctNodesToFeeder))
+                {
+                    Vector3i adjanctCoord = coord + getDirectionVector(k);
+                    if(validCoord(adjanctCoord))
+                    {
+                        int nodeIndex = mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
+
+                        //Node has already been added to graph, but is "younger" than this node.
+                        if(nodeIndex >= 0 && nodeIndex > endOfStep)
+                        {
+                            TransferNode& adjanctNode = mTransferGraph[nodeIndex];
+                            eDirection previousFeederDirection = getReverseDirection(adjanctNode.mFeederDirection);
+                            char previousFeederPriority = mCurrentStressDirections->at(k);
+                            char currentNodePriority = mCurrentStressDirections->at(k);
+
+                            //If this voxel is a better feeder, then use it instead of the previous one.
+                            if(currentNodePriority < previousFeederPriority)
+                            {
+                                adjanctNode.mFeeder = i;
+                                adjanctNode.mFeederDirection = getReverseDirection(k);
+                            }
+                        }
+                        else if(nodeIndex < 0)
+                        {
+                            //Node has not been added, must check it is full.
+                            VoxelData& voxel = mVoxelData[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
+                            if(voxel.mFull// && !(voxel.mDestroyed || voxel.mSnapped)
+                               )
+                            {
+                                int insertedIndex = mTransferGraph.size();
+                                mTransferGraph.push_back(TransferNode(false, adjanctCoord));
+                                mTransferMap[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z] = insertedIndex;
+                                TransferNode& newNode = mTransferGraph.back();
+                                newNode.mFeeder = i;
+                                newNode.mFeederDirection = getReverseDirection(k);
+                                newNode.mGeneration = generation;
+                                stressTransferNode(insertedIndex, 1.0f);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        newSize = mTransferGraph.size();
+        startOfStep = endOfStep;
+        generation++;
+    }
+
 }
 
 void EnergyGrid::stressTransferNode(int index, float stress)
