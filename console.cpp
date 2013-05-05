@@ -17,7 +17,7 @@ std::string consoleGet()
     return input;
 }
 
-void errorCheck(int line)
+void errorCheck(int line, std::string filename)
 {
     GLenum errCode;
     const GLubyte * errString;
@@ -25,7 +25,7 @@ void errorCheck(int line)
     if ((errCode = glGetError()) != GL_NO_ERROR)
     {
     errString = gluErrorString(errCode);
-    std::cout << "ERROR: " << errString << ". Line: " << line << std::endl;
+    std::cout << "ERROR: " << errString << ". Line: " << line << " of file: " << filename << std::endl;
     }
 
 }

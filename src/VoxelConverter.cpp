@@ -360,79 +360,6 @@ VoxelConverter::~VoxelConverter()
 GLboolean VoxelConverter::initGPU(const char* lst_tri_vert, const char* lst_tri_geom,
                         const char* gen_vert_vert, const char* gen_vert_geom)
 {
-    //Create Shader programs
-
-    //List triangles
-    consolePrint("Creating List Triangles Shader");
-    Shader vertListTriangles(GL_VERTEX_SHADER_ARB);
-    vertListTriangles.setSource(lst_tri_vert);
-    vertListTriangles.compile();
-
-    if(vertListTriangles.errorCheck() == GL_FALSE)
-    {
-        return false;
-    }
-
-    Shader geomListTriangles(GL_GEOMETRY_SHADER_ARB);
-    geomListTriangles.setSource(lst_tri_geom);
-    geomListTriangles.compile();
-    geomListTriangles.errorCheck();
-
-    if(geomListTriangles.errorCheck() == GL_FALSE)
-    {
-        return false;
-    }
-
-    mListTriangles.attach(vertListTriangles);
-    mListTriangles.attach(geomListTriangles);
-
-    const GLchar* varyings1[1];
-
-    varyings1[0] = "gTriangle";
-    glTransformFeedbackVaryings(mListTriangles.getID(), 1, varyings1, GL_INTERLEAVED_ATTRIBS);
-
-    errorCheck(001);
-    mListTriangles.link();
-
-    if(mListTriangles.checkLink() == GL_FALSE)
-    {
-        return false;
-    }
-
-    //Gen vertices
-    consolePrint("Creating Gen Vertices Shader");
-    Shader vertGenVertices(GL_VERTEX_SHADER_ARB);
-    vertGenVertices.setSource(gen_vert_vert);
-    vertGenVertices.compile();
-
-    if(vertGenVertices.errorCheck() == GL_FALSE)
-    {
-        return false;
-    }
-
-    Shader geomGenVertices(GL_GEOMETRY_SHADER_ARB);
-    geomGenVertices.setSource(gen_vert_geom);
-    geomGenVertices.compile();
-
-    if(geomGenVertices.errorCheck() == GL_FALSE)
-    {
-        return false;
-    }
-
-    mGenVertices.attach(vertGenVertices);
-    mGenVertices.attach(geomGenVertices);
-
-    const GLchar* varyings2[2];
-    varyings2[0] = "position";
-    varyings2[1] = "normal";
-    glTransformFeedbackVaryings(mGenVertices.getID(), 2, varyings2, GL_INTERLEAVED_ATTRIBS);
-
-    mGenVertices.link();
-    if(mGenVertices.checkLink() == GL_FALSE)
-    {
-        return false;
-    }
-
     //Create a texture
     glGenTextures(1, &mVolumeTexture);
 
@@ -474,6 +401,83 @@ GLboolean VoxelConverter::initGPU(const char* lst_tri_vert, const char* lst_tri_
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, (29791*5)*(sizeof(GLfloat)*6), 0, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    //Create Shader programs
+
+    //List triangles
+    consolePrint("Creating List Triangles Shader");
+    Shader vertListTriangles(GL_VERTEX_SHADER);
+    vertListTriangles.setSource(lst_tri_vert);
+    vertListTriangles.compile();
+
+    if(vertListTriangles.errorCheck() == GL_FALSE)
+    {
+        return false;
+    }
+
+    Shader geomListTriangles(GL_GEOMETRY_SHADER);
+    geomListTriangles.setSource(lst_tri_geom);
+    geomListTriangles.compile();
+    geomListTriangles.errorCheck();
+
+    if(geomListTriangles.errorCheck() == GL_FALSE)
+    {
+        return false;
+    }
+
+    mListTriangles.attach(vertListTriangles);
+    mListTriangles.attach(geomListTriangles);
+
+
+
+    errorCheck(__LINE__, __FILE__);
+
+
+    //Gen vertices
+    consolePrint("Creating Gen Vertices Shader");
+    Shader vertGenVertices(GL_VERTEX_SHADER);
+    vertGenVertices.setSource(gen_vert_vert);
+    vertGenVertices.compile();
+
+    if(vertGenVertices.errorCheck() == GL_FALSE)
+    {
+        return false;
+    }
+
+    Shader geomGenVertices(GL_GEOMETRY_SHADER);
+    geomGenVertices.setSource(gen_vert_geom);
+    geomGenVertices.compile();
+
+    if(geomGenVertices.errorCheck() == GL_FALSE)
+    {
+        return false;
+    }
+
+    mGenVertices.attach(vertGenVertices);
+    mGenVertices.attach(geomGenVertices);
+
+const GLchar* varyings1[1];
+    varyings1[0] = "gTriangle";
+    glTransformFeedbackVaryings(mListTriangles.getID(), 1, varyings1, GL_INTERLEAVED_ATTRIBS);
+
+    mListTriangles.link();
+    if(mListTriangles.checkLink() == GL_FALSE)
+    {
+        return false;
+    }
+
+
+const GLchar* varyings2[2];
+    varyings2[0] = "position";
+    varyings2[1] = "normal";
+    glTransformFeedbackVaryings(mGenVertices.getID(), 2, varyings2, GL_INTERLEAVED_ATTRIBS);
+
+    mGenVertices.link();
+    if(mGenVertices.checkLink() == GL_FALSE)
+    {
+        return false;
+    }
+
 
     //Remeber we are using GPU, assuming nothing went wrong
     mUseCPU = false;
@@ -916,32 +920,39 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     consolePrint("Attempting to convert voxel field with GPU.");
     consolePrint("Printing 3D volume texture.");
 
+    errorCheck(__LINE__, __FILE__);
+
     //Create a new buffer for the GPU to write directly to.
-    Buffer vertexBuffer;
-    vertexBuffer.init();
+    Buffer* vertexBuffer = new Buffer();
+    vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
 
     //Get data from voxel field
-    matterNode->getMatter()->getVoxelField()->printAs3DTexture(mVolumeTexture);
+    matterNode->getMatter()->getVoxelField()->printAs3DTexture(mVolumeTexture);    errorCheck(__LINE__, __FILE__);
 
-    listTrianglesGPU();
+    listTrianglesGPU();    errorCheck(__LINE__, __FILE__);
 
-    genVerticesGPU(vertexBuffer);
+    genVerticesGPU(vertexBuffer);    errorCheck(__LINE__, __FILE__);
 
     matterNode->getMatter()->getVertexShell()->setBuffer(vertexBuffer);
 
-
 /*
-    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
-    GLuint* testTris = (GLuint*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
-    errorCheck(301);
-    glUnmapBuffer(GL_ARRAY_BUFFER);
-
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    GLfloat* testVert = (GLfloat*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
-    errorCheck(302);
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBindTexture(GL_TEXTURE_3D, mVolumeTexture);
+    GLfloat* image = new GLfloat[32768*3];
+    glGetTexImage(GL_TEXTURE_3D, 0, GL_RGB, GL_FLOAT, image);
 */
 
+    errorCheck(__LINE__, __FILE__);
+    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
+    GLuint* testTris = (GLuint*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+    errorCheck(__LINE__, __FILE__);
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->getName());
+    GLfloat* testVert = (GLfloat*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+    errorCheck(__LINE__, __FILE__);
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+    //delete image;
 
 }
 
@@ -955,9 +966,10 @@ void VoxelConverter::listTrianglesGPU()
     glEnable(GL_RASTERIZER_DISCARD);
 
     //Input buffer: Initial vertices
-    glBindBuffer(GL_ARRAY_BUFFER, mInitialDataBuffer);
-    glEnableVertexAttribArray(0);
-    glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, mInitialDataBuffer); errorCheck(__LINE__, __FILE__);
+    GLint attribLocation = glGetAttribLocation(mListTriangles.getID(), "x_y_z");
+    glEnableVertexAttribArray(attribLocation);
+    glVertexAttribIPointer(attribLocation, 1, GL_UNSIGNED_INT, 0, 0);
 
     //Output buffer: Triangles
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTriangleBuffer);
@@ -981,43 +993,49 @@ void VoxelConverter::listTrianglesGPU()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VoxelConverter::genVerticesGPU(Buffer& vertexBuffer)
+void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
 {
+    //Prepare vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->getName());
+    glBufferData(GL_ARRAY_BUFFER, (29791*5)*(sizeof(GLfloat)*6), 0, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     //Use gen vertices shader
-    mGenVertices.use();
+    mGenVertices.use();     errorCheck(__LINE__, __FILE__);
 
     //Disable Rastering
-    glEnable(GL_RASTERIZER_DISCARD);
+    glEnable(GL_RASTERIZER_DISCARD);     errorCheck(__LINE__, __FILE__);
 
     //Input buffer: Triangle buffer
-    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
-    glEnableVertexAttribArray(0);
-    glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);     errorCheck(__LINE__, __FILE__);
+    GLint attribLocation = glGetAttribLocation(mGenVertices.getID(), "triangle");
+    glEnableVertexAttribArray(attribLocation);
+    glVertexAttribIPointer(attribLocation, 1, GL_UNSIGNED_INT, 0, 0);     errorCheck(__LINE__, __FILE__);
 
     //Output buffer: Vertices
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vertexBuffer.getName());
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, vertexBuffer->getName());     errorCheck(__LINE__, __FILE__);
 
     //Texture setup
-    GLint sampler = glGetUniformLocation(mGenVertices.getID(), "densityVol");
-    glUniform1i(sampler, 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, mVolumeTexture);
+    GLint sampler = glGetUniformLocation(mGenVertices.getID(), "densityVol");     errorCheck(__LINE__, __FILE__);
+    glUniform1i(sampler, 0);     errorCheck(__LINE__, __FILE__);
+    glActiveTexture(GL_TEXTURE0);     errorCheck(__LINE__, __FILE__);
+    glBindTexture(GL_TEXTURE_3D, mVolumeTexture);     errorCheck(__LINE__, __FILE__);
 
     //Set spaceing variable.
-    GLint space = glGetUniformLocation(mGenVertices.getID(), "voxelSpace");
-    glUniform1f(space, mVoxelSpacing);
+    GLint space = glGetUniformLocation(mGenVertices.getID(), "voxelSpace");     errorCheck(__LINE__, __FILE__);
+    glUniform1f(space, mVoxelSpacing);     errorCheck(__LINE__, __FILE__);
 
     //Transform Feedback
-    glBeginTransformFeedback(GL_POINTS);
+    glBeginTransformFeedback(GL_POINTS);     errorCheck(__LINE__, __FILE__);
 
-        glDrawArrays(GL_POINTS, 0, 29791*5);
+        glDrawArrays(GL_POINTS, 0, 29791*5);     errorCheck(__LINE__, __FILE__);
 
-    glEndTransformFeedback();
+    glEndTransformFeedback();     errorCheck(__LINE__, __FILE__);
 
     //Re-enable Rastering
-    glDisable(GL_RASTERIZER_DISCARD);
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisable(GL_RASTERIZER_DISCARD);     errorCheck(__LINE__, __FILE__);
+    glDisableVertexAttribArray(0);     errorCheck(__LINE__, __FILE__);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);     errorCheck(__LINE__, __FILE__);
 }
 
 //Deprecated hacky function
@@ -1064,11 +1082,11 @@ void VoxelConverter::drawLast()
     }
 
 
-errorCheck(502);
+errorCheck(__LINE__, __FILE__);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    errorCheck(503);
+    errorCheck(__LINE__, __FILE__);
 
 }
 

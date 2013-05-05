@@ -893,6 +893,7 @@ Okay. Sorted the stress/pressure stuff now. It's done. Leave it.
 Well it's still a tad slow, but I need to stop at some point.
 TODO:
 	Reimplement GPU marching cubes.
+	Inherit momentum.
 	Improve breaking to be more realistic.
 		-Maybe just leave destroy/snap till end.
 		-Then group voxels with similar stress into their own shapes, assuming their stress is > limit. 

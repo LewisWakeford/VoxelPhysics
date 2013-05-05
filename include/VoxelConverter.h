@@ -80,7 +80,7 @@ class VoxelConverter
 
         void convertGPU(MatterNode* matter);
         void listTrianglesGPU();
-        void genVerticesGPU(Buffer& outputBuffer);
+        void genVerticesGPU(Buffer* outputBuffer);
 
         void convertCPU(MatterNode* matter);
         void listTrianglesCPU(Matter* matter);

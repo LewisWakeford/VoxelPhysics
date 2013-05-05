@@ -191,14 +191,13 @@ GLfloat VoxelField::sample(GLfloat x, GLfloat y, GLfloat z)
 void VoxelField::printAs3DTexture(GLuint textureID)
 {
     consolePrint("Binding texture");
-    errorCheck(20);
+    errorCheck(__LINE__, __FILE__);
     glBindTexture(GL_TEXTURE_3D, textureID);
-    errorCheck(24);
+    errorCheck(__LINE__, __FILE__);
     if(!(glIsTexture(textureID)==GL_TRUE)) consolePrint("Texture Binding Failed.");
 
     consolePrint("Creating texture array");
-    GLfloat volumeData[32768*3];
-    memset(volumeData, 0, sizeof(volumeData));
+    GLfloat* volumeData = new GLfloat[32768*3];
 
     for(int z = 0; z < 32; z++)
     {
@@ -217,7 +216,7 @@ void VoxelField::printAs3DTexture(GLuint textureID)
 
     consolePrint("Copying array to texture");
 
-    errorCheck(47);
+    errorCheck(__LINE__, __FILE__);
 
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -226,14 +225,13 @@ void VoxelField::printAs3DTexture(GLuint textureID)
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, 32, 32, 32, 0, GL_RGB,
              GL_FLOAT, volumeData);
 
-
-
-
-    errorCheck(50);
+    errorCheck(__LINE__, __FILE__);
 
     consolePrint("Unbinding texture");
     glBindTexture(GL_TEXTURE_3D, 0);
-    errorCheck(57);
+    errorCheck(__LINE__, __FILE__);
+
+    delete[] volumeData;
 }
 
 void VoxelField::import(const char* filename)

@@ -8,7 +8,7 @@ VertexShell::VertexShell(App* app)
 
 VertexShell::~VertexShell()
 {
-
+    delete mBuffer;
 }
 
 void VertexShell::addVertex(Vector3f coord, Vector3f normal)
@@ -37,27 +37,28 @@ void VertexShell::endWrite()
 
 Buffer* VertexShell::getBuffer()
 {
-    return &mBuffer;
+    return mBuffer;
 }
 
 void VertexShell::createBuffer()
 {
-    mBuffer.init();
+    mBuffer = new Buffer();
+    mBuffer->init();
 }
 
 void VertexShell::setBufferData()
 {
     createBuffer();
 
-    mBuffer.setData(mVertexArray.data(), mVertexArray.size()/6, sizeof(float)*6, GL_STATIC_DRAW);
-    mBuffer.setArray(0, 3, GL_FLOAT, 0, 0);
-    mBuffer.setVertexArray(0);
-    mBuffer.setArray(1, 3, GL_FLOAT, 3, 0);
-    mBuffer.setNormalArray(1);
+    mBuffer->setData(mVertexArray.data(), mVertexArray.size()/6, sizeof(float)*6, GL_STATIC_DRAW);
+    mBuffer->setArray(0, 3, GL_FLOAT, 0, 0);
+    mBuffer->setVertexArray(0);
+    mBuffer->setArray(1, 3, GL_FLOAT, 3, 0);
+    mBuffer->setNormalArray(1);
 
 }
 
-void VertexShell::setBuffer(Buffer buffer)
+void VertexShell::setBuffer(Buffer* buffer)
 {
     mBuffer = buffer;
 

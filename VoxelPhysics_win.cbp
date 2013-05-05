@@ -39,7 +39,7 @@
 			<Add directory="include" />
 			<Add directory="../Libs/Boost/boost_1_51_0" />
 			<Add directory="../Libs/bullet-2.81-rev2613_unzipped/bullet-2.81-rev2613/src" />
-			<Add directory="../VoxelPhysics" />
+			<Add directory="../VoxelPhysics_git" />
 		</Compiler>
 		<Linker>
 			<Add library="..\Libs\GLEW\lib\glew32s.lib" />

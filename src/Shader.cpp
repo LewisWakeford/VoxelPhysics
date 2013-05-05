@@ -3,7 +3,7 @@
 
 Shader::Shader(GLenum shaderType)
 {
-    mID = glCreateShaderObjectARB(shaderType);
+    mID = glCreateShader(shaderType);
 }
 
 Shader::~Shader()
@@ -13,7 +13,7 @@ Shader::~Shader()
 
 void Shader::compile()
 {
-    glCompileShaderARB(mID);
+    glCompileShader(mID);
 }
 
 void Shader::setSource(const char* filename)
@@ -34,7 +34,7 @@ void Shader::setSource(const char* filename)
     }
     const char* temp = source.c_str();
     fileStream.close();
-    glShaderSourceARB(mID, 1, &temp, NULL);
+    glShaderSource(mID, 1, &temp, NULL);
 }
 
 int Shader::errorCheck()
@@ -48,13 +48,19 @@ int Shader::errorCheck()
     glGetShaderiv(mID, GL_INFO_LOG_LENGTH, &maxLength);
 
     /* The maxLength includes the NULL character */
-    infoLog = new char[maxLength];
+    if(maxLength > 0)
+    {
+        infoLog = new char[maxLength];
 
-    glGetShaderInfoLog(mID, maxLength, &maxLength, infoLog);
+        int length;
 
-    printf(infoLog);
+        glGetShaderInfoLog(mID, maxLength, &length, infoLog);
+        std::string infoString(infoLog, length);
 
-    delete [] infoLog;
+        std::cout << infoLog << std::endl;
+
+        delete [] infoLog;
+    }
 
     return isCompiled;
 

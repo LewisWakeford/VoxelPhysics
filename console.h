@@ -8,7 +8,7 @@
 
 void consolePrint(std::string outputString);
 void consolePrint(std::string outputString, double var);
-void errorCheck(int line);
+void errorCheck(int line, std::string filename);
 
 std::string consoleGet();
 

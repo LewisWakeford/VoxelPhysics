@@ -18,14 +18,7 @@ Buffer::~Buffer()
 
 void Buffer::init()
 {
-    if(glIsBuffer(mName))
-    {
-        //Do nothing for now
-    }
-    else
-    {
-        glGenBuffers(1, &mName);
-    }
+    glGenBuffers(1, &mName);
 }
 
 void Buffer::bind()

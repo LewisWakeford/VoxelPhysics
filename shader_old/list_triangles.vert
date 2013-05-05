@@ -1,4 +1,4 @@
-#version 330
+#version 130
 
 layout (location = 0) in int x_y_z;
 uniform sampler3D densityVol;

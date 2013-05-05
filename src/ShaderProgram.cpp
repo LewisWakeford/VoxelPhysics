@@ -15,26 +15,35 @@ ShaderProgram::~ShaderProgram()
 
 void ShaderProgram::attach(Shader shader)
 {
-    glAttachObjectARB(mID, shader.getID());
+    glAttachShader(mID, shader.getID());
 }
 
 void ShaderProgram::link()
 {
-    glLinkProgramARB(mID);
+    glLinkProgram(mID);
 }
 
 GLboolean ShaderProgram::checkLink()
 {
     GLint linkStatus;
+    GLint maxLength;
     glGetProgramiv(mID, GL_LINK_STATUS, &linkStatus);
-    GLsizei length;
-    GLchar message[200];
-    glGetProgramInfoLog(mID, 200, &length, message);
-    consolePrint(message);
+    glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &maxLength);
+
+    if(maxLength > 0)
+    {
+        GLsizei length;
+        char* message = new char[maxLength];
+        glGetProgramInfoLog(mID, maxLength, &length, message);
+        std::string infoString(message, length);
+
+        std::cout << "Shader info log: " << infoString << std::endl;
+
+        delete[] message;
+    }
 
     if(!linkStatus)
     {
-        consolePrint("Shader failed to link: " + mID);
         return false;
     }
     else
@@ -45,7 +54,7 @@ GLboolean ShaderProgram::checkLink()
 
 void ShaderProgram::use()
 {
-    glUseProgramObjectARB(mID);
+    glUseProgram(mID);
 }
 
 GLenum ShaderProgram::getID()

@@ -216,7 +216,7 @@ int main()
             consolePrint("ERROR: Initialisation Failed.");
             return 0;
         }
-        errorCheck(25);
+        errorCheck(__LINE__, __FILE__);
 
         consolePrint("Creating Window");
 
@@ -237,7 +237,7 @@ int main()
             consolePrint((char*)glewGetErrorString(err));
             return 0;
         }
-        errorCheck(46);
+        errorCheck(__LINE__, __FILE__);
 
         if(!GLEW_ARB_transform_feedback2 && !GLEW_ARB_transform_feedback3)
         {
@@ -314,22 +314,6 @@ int main()
             sceneGraph->getRoot()->addChild(matterNode2);
         }
 
-
-        //SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, &blue[0], false, "vox/atom.vox"));
-        //((MatterNode*)matterNode3.get())->setOffset(0.0f, 0.0f, 60.0f);
-        //sceneGraph->getRoot()->addChild(matterNode3);
-
-       // worldLightProgram.use();
-
-        GLint worldLightColor = glGetUniformLocation(worldLightProgram.getID(), "worldLightColor");
-        glUniform4f(worldLightColor, 0.8f, 0.8f, 0.8f, 1.0f);
-
-        GLint worldLightVector = glGetUniformLocation(worldLightProgram.getID(), "worldLightVector");
-        glUniform3f(worldLightVector, 0.0f, 0.0f, -1.0f);
-
-        GLint ambientColor = glGetUniformLocation(worldLightProgram.getID(), "ambientColor");
-        glUniform4f(ambientColor, 0.3f, 0.3f, 0.3f, 1.0f);
-
         unsigned int frames = 0;
         double lastFPSUpdate = 0.0;
         double elapsedTime = 0.0;
@@ -353,18 +337,7 @@ int main()
             }
 
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-/*
-            worldLightProgram.use();
 
-            GLint worldLightColor = glGetUniformLocation(worldLightProgram.getID(), "worldLightColor");
-            glUniform4f(worldLightColor, 0.8f, 0.8f, 0.8f, 1.0f);
-
-            GLint worldLightVector = glGetUniformLocation(worldLightProgram.getID(), "worldLightVector");
-            glUniform3f(worldLightVector, 0.0f, 0.0f, 1.0f);
-
-            GLint ambientColor = glGetUniformLocation(worldLightProgram.getID(), "ambientColor");
-            glUniform4f(ambientColor, 0.3f, 0.3f, 0.3f, 1.0f);
-*/
             //Rendering code
            //if(theApp.timeToRender())
             {

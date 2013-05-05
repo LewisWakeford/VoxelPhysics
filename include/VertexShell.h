@@ -28,7 +28,7 @@ class VertexShell
         void endWrite();
 
         Buffer* getBuffer();
-        void setBuffer(Buffer buffer);
+        void setBuffer(Buffer* buffer);
 
 
     protected:
@@ -41,7 +41,7 @@ class VertexShell
         void setBufferData();
 
         //Vertex buffer this shell uses.
-        Buffer mBuffer;
+        Buffer* mBuffer;
 
 
     private:

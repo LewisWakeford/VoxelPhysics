@@ -1,4 +1,4 @@
-#version 330
+#version 130
 
 /*00xxxxxxyyyyyyzzzzzz111122223333*/
 layout (location = 0) in uint triangle;
@@ -104,14 +104,14 @@ void main()
 		if(edge[i] != 12)
 		{
 			/*Create a normal from the rate of change in x, y and z*/
-			float xSample = ((coord[i].x)/totalSpace)+halfSpace;
-			float ySample = ((coord[i].y)/totalSpace)+halfSpace;
-			float zSample = ((coord[i].z)/totalSpace)+halfSpace;
+			float xSample = (coord[i].x)/totalSpace;
+			float ySample = (coord[i].y)/totalSpace;
+			float zSample = (coord[i].z)/totalSpace;
 			
-			vec4 base = texture(densityVol, vec3(xSample, ySample, zSample));
-			normal[i].x = texture(densityVol, vec3(xSample+spaceRatio, ySample, zSample)).r - base.r;
-			normal[i].y = texture(densityVol, vec3(xSample, ySample+spaceRatio, zSample)).r - base.r;
-			normal[i].z = texture(densityVol, vec3(xSample, ySample, zSample+spaceRatio)).r - base.r;
+			vec4 base = texture3D(densityVol, vec3(xSample+spaceRatio, ySample, zSample));
+			normal[i].x = texture3D(densityVol, vec3(xSample+spaceRatio, ySample, zSample)).r - base.r;
+			normal[i].y = texture3D(densityVol, vec3(xSample, ySample+spaceRatio, zSample)).r - base.r;
+			normal[i].z = texture3D(densityVol, vec3(xSample, ySample, zSample+spaceRatio)).r - base.r;
 			normal[i] = normalize(normal[i]);
 		}
 		
