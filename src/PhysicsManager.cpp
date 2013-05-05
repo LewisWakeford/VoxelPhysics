@@ -211,8 +211,8 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
         }
 	}
 
-    std::cout << "Collision Set of " << collisionSet.numCollisions() << " collisions." << std::endl;
-    mApp->debugPrint(App::DEBUG_PHYSICS, "Num Collision Objects: ", world->getCollisionObjectArray().size());
+    //std::cout << "Collision Set of " << collisionSet.numCollisions() << " collisions." << std::endl;
+    //mApp->debugPrint(App::DEBUG_PHYSICS, "Num Collision Objects: ", world->getCollisionObjectArray().size());
     mApp->getDestructionEngine()->processSet(collisionSet);
 
 	mApp->getDestructionEngine()->checkForSeparation();

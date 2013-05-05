@@ -23,6 +23,7 @@ class Buffer
 
         void init(); //Generate the buffer if necessary, clear if already inited.
         void setData(void* dataPointer, unsigned int itemCount, unsigned int itemSize, unsigned int bufferType); //Set the buffer data.
+        void zeroData(unsigned int itemCount, unsigned int itemSize, unsigned int bufferType);
         void setArray(unsigned int arrayName, unsigned int elementsPerVertex, unsigned int elementType, unsigned int offset, unsigned int vertexAttrib); //Create a sub array in this buffer.
         void clearArrays();
 

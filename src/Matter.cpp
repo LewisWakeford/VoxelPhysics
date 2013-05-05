@@ -333,9 +333,12 @@ void Matter::beginProcessing()
     mVertexShell.startWrite();
 }
 
-void Matter::endProcessing(MatterNode* node)
+void Matter::endProcessing(MatterNode* node, bool usingCPU)
 {
-    mVertexShell.endWrite();
+    if(usingCPU)
+    {
+        mVertexShell.endWrite();
+    }
     float mass = 0.0f;
     if(!floats())
     {

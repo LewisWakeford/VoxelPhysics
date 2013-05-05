@@ -86,6 +86,10 @@ class VoxelConverter
         void listTrianglesCPU(Matter* matter);
         void genVerticesCPU(Matter* matter);
 
+        //Only do the processing huls part of the generation.
+        //For when using GPU acceleration.
+        void processHulls(Matter* matter);
+
         void addVoxelVertex(Matter* matter, Vector3i voxelCoord);
         void addHullVertex(Matter* matter, Vector3i voxelCoord, Vector3f normal);
 
@@ -97,6 +101,7 @@ class VoxelConverter
         GLfloat mXOffset;
         GLfloat mYOffset;
         GLfloat mZOffset;
+        GLfloat mOffset[3];
 
         App* mApp;
 

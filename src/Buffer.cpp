@@ -56,6 +56,13 @@ void Buffer::setData(void* dataPointer, unsigned int itemCount, unsigned int ite
     unbind();
 }
 
+void Buffer::zeroData(unsigned int itemCount, unsigned int itemSize, unsigned int bufferType)
+{
+    glBufferData(GL_ARRAY_BUFFER, itemCount * itemSize, 0, bufferType);
+    mItemCount = itemCount;
+    mItemSize = itemSize;
+}
+
 void Buffer::setArray(unsigned int arrayName, unsigned int elementsPerVertex, unsigned int elementType, unsigned int offset, unsigned int vertexAttrib)
 {
     SubArray array = {arrayName, elementsPerVertex, elementType, offset, vertexAttrib};
@@ -88,7 +95,6 @@ void Buffer::setColorArray(unsigned int colorArrayName)
 
 void Buffer::bindArrays()
 {
-    bind();
 
     for(unsigned int i = 0; i < mArrayProperties.size(); i++)
     {
@@ -119,8 +125,6 @@ void Buffer::bindArrays()
             glVertexAttribIPointer(curr->mVertexAttrib, curr->mElementsPerVertex, curr->mElementType, mItemSize, (const GLvoid*)curr->mOffset);
         }
     }
-
-    unbind();
 
 }
 

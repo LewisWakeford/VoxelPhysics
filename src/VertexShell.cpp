@@ -62,7 +62,8 @@ void VertexShell::setBuffer(Buffer* buffer)
 {
     mBuffer = buffer;
 
-    //Possibly HORRIBLY Inefficent, must test.
-        //Retrieve data from VBO.
-
+    mBuffer->setArray(0, 3, GL_FLOAT, 0, 0);
+    mBuffer->setVertexArray(0);
+    mBuffer->setArray(1, 3, GL_FLOAT, 3, 0);
+    mBuffer->setNormalArray(1);
 }

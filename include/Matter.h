@@ -62,7 +62,7 @@ class Matter
         void setStartingPosition(Vector3 offset);
 
         void beginProcessing();
-        void endProcessing(MatterNode* node);
+        void endProcessing(MatterNode* node, bool usingCPU);
 
         void setCollided(bool value);
         bool hasCollided();

@@ -23,7 +23,7 @@ void DestructionEngine::processSet(const MatterCollisionSet& set)
     {
         processCollision(set.get(i));
     }
-    std::cout << "   NONTRIVIAL: " << mNumberOfNonTrivialCollisions << std::endl;
+    //std::cout << "   NONTRIVIAL: " << mNumberOfNonTrivialCollisions << std::endl;
 }
 
 unsigned int DestructionEngine::getGridIndex(MatterNode* matterNode)

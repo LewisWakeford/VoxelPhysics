@@ -517,7 +517,6 @@ void EnergyGrid::transferExternalEnergyTo(const Vector3i& bridgePoint, float ene
     //Apply pressure to voxels in path.
     for(unsigned int i = 0; i < voxelsInPath.size(); i++)
     {
-        int nonPressuringLayers = 1 + ((maxDistance - voxelDistance[i])); //How many layers of voxels are not applying pressure to this one. Pressure needs to be applied twice
         float pressure = (2*energy) - ((2 * voxelDistance[i] + 1) * energyAbsorbedPerVoxel);
         pressureVoxel(voxelsInPath[i], pressure);
     }

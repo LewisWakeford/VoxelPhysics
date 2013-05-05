@@ -207,6 +207,7 @@ int main()
     try{
         int     width, height;
         bool    running = true;
+        bool forceCPU = true;
         std::string optionChoice = "";
 
         consolePrint("Initialising GLFW");
@@ -239,11 +240,20 @@ int main()
         }
         errorCheck(__LINE__, __FILE__);
 
-        if(!GLEW_ARB_transform_feedback2 && !GLEW_ARB_transform_feedback3)
+        if(!forceCPU)
         {
-            consolePrint("Transform feedback is unsupported, reverting to CPU algorithm.");
+            if(!GLEW_ARB_transform_feedback2 && !GLEW_ARB_transform_feedback3)
+            {
+                consolePrint("Transform feedback is unsupported, reverting to CPU algorithm.");
+                theApp.useCPUforVoxelConversion(true);
+            }
+        }
+        else
+        {
+            consolePrint("Forcing CPU mode");
             theApp.useCPUforVoxelConversion(true);
         }
+
 
         //Render Setup
         Shader vertWorldLight(GL_VERTEX_SHADER_ARB);

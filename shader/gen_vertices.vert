@@ -4,6 +4,7 @@
 layout (location = 0) in uint triangle;
 uniform usampler3D densityVol;
 uniform float voxelSpace;
+uniform vec3 v3_offset;
 
 out triangleVerts
 {
@@ -28,9 +29,9 @@ void main()
 	
 	/*Place a vertex on each edge.*/
 	vec3 coord[3];
-	coord[0] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace);
-	coord[1] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace);
-	coord[2] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace);
+	coord[0] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace) + v3_offset;
+	coord[1] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace) + v3_offset;
+	coord[2] = vec3(float(voxX)*voxelSpace,float(voxY)*voxelSpace,float(voxZ)*voxelSpace) + v3_offset;
 	
 	vec3 normal[3];
 

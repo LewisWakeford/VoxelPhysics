@@ -554,13 +554,23 @@ void VoxelConverter::convertCPU(MatterNode* matterNode)
     genVerticesCPU(matterNode->getMatter());
     double generated = glfwGetTime();
     mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
-    matterNode->getMatter()->endProcessing(matterNode);
+    matterNode->getMatter()->endProcessing(matterNode, true);
 
 }
 
-void VoxelConverter::listTrianglesCPU(Matter* matter)
+void VoxelConverter::processHulls(Matter* matter)
 {
     VoxelField* vox = matter->getVoxelField();
+
+    //Normal addition components.
+    Vector3f normal0(1.0f, 1.0f, 1.0f);
+    Vector3f normal1(-1.0f, 1.0f, 1.0f);
+    Vector3f normal2(1.0f, -1.0f, 1.0f);
+    Vector3f normal3(-1.0f, -1.0f, 1.0f);
+    Vector3f normal4(1.0f, 1.0f, -1.0f);
+    Vector3f normal5(-1.0f, 1.0f, -1.0f);
+    Vector3f normal6(1.0f, -1.0f, -1.0f);
+    Vector3f normal7(-1.0f, -1.0f, -1.0f);
 
     for(unsigned int z = 0; z < 31; z++)
     {
@@ -568,15 +578,169 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
         {
             for(unsigned int x = 0; x < 31; x++)
             {
-                //Normal addition components.
-                Vector3f normal0(1.0f, 1.0f, 1.0f);
-                Vector3f normal1(-1.0f, 1.0f, 1.0f);
-                Vector3f normal2(1.0f, -1.0f, 1.0f);
-                Vector3f normal3(-1.0f, -1.0f, 1.0f);
-                Vector3f normal4(1.0f, 1.0f, -1.0f);
-                Vector3f normal5(-1.0f, 1.0f, -1.0f);
-                Vector3f normal6(1.0f, -1.0f, -1.0f);
-                Vector3f normal7(-1.0f, -1.0f, -1.0f);
+                //Corner coordinates, check the diagram to find out what goes where.
+                Vector3i corner0;
+
+                corner0.x = x;
+                corner0.y = y;
+                corner0.z = z;
+
+                Vector3i corner1;
+                Vector3i corner2;
+                Vector3i corner3;
+                Vector3i corner4;
+                Vector3i corner5;
+                Vector3i corner6;
+                Vector3i corner7;
+
+                corner1.x = corner0.x+1;
+                corner1.y = corner0.y;
+                corner1.z = corner0.z;
+
+                corner2.x = corner0.x;
+                corner2.y = corner0.y+1;
+                corner2.z = corner0.z;
+
+                corner3.x = corner0.x+1;
+                corner3.y = corner0.y+1;
+                corner3.z = corner0.z;
+
+                corner4.x = corner0.x;
+                corner4.y = corner0.y;
+                corner4.z = corner0.z+1;
+
+                corner5.x = corner4.x+1;
+                corner5.y = corner4.y;
+                corner5.z = corner4.z;
+
+                corner6.x = corner4.x;
+                corner6.y = corner4.y+1;
+                corner6.z = corner4.z;
+
+                corner7.x = corner4.x+1;
+                corner7.y = corner4.y+1;
+                corner7.z = corner4.z;
+
+                GLuint corners = 0;
+
+                GLubyte sample0 = vox->getValue(corner0);
+                GLubyte sample1 = vox->getValue(corner1);
+                GLubyte sample2 = vox->getValue(corner2);
+                GLubyte sample3 = vox->getValue(corner3);
+                GLubyte sample4 = vox->getValue(corner4);
+                GLubyte sample5 = vox->getValue(corner5);
+                GLubyte sample6 = vox->getValue(corner6);
+                GLubyte sample7 = vox->getValue(corner7);
+
+                int fullVoxels = 0;
+                Vector3f cubeNormal(0.0f, 0.0f, 0.0f);
+
+                if(sample0 != 0)
+                {
+                    cubeNormal.add(normal0);
+                    fullVoxels++;
+                }
+                if(sample1 != 0)
+                {
+                    cubeNormal.add(normal1);
+                    fullVoxels++;
+                }
+                if(sample2 != 0)
+                {
+                    cubeNormal.add(normal2);
+                    fullVoxels++;
+                }
+                if(sample3 != 0)
+                {
+                    cubeNormal.add(normal3);
+                    fullVoxels++;
+                }
+                if(sample4 != 0)
+                {
+                    cubeNormal.add(normal4);
+                    fullVoxels++;
+                }
+                if(sample5 != 0)
+                {
+                    cubeNormal.add(normal5);
+                    fullVoxels++;
+                }
+                if(sample6 != 0)
+                {
+                    cubeNormal.add(normal6);
+                    fullVoxels++;
+                }
+                if(sample7 != 0)
+                {
+                    cubeNormal.add(normal7);
+                    fullVoxels++;
+                }
+
+                bool isPartOfHull = !(fullVoxels == 0) && !(fullVoxels == 8);
+
+                if(isPartOfHull)
+                {
+                    cubeNormal.normalize();
+                    if(sample0 != 0)
+                    {
+                        addHullVertex(matter, corner0, cubeNormal);
+                    }
+                    if(sample1 != 0)
+                    {
+                        addHullVertex(matter, corner1, cubeNormal);
+                    }
+                    if(sample2 != 0)
+                    {
+                        addHullVertex(matter, corner2, cubeNormal);
+                    }
+                    if(sample3 != 0)
+                    {
+                        addHullVertex(matter, corner3, cubeNormal);
+                    }
+                    if(sample4 != 0)
+                    {
+                        addHullVertex(matter, corner4, cubeNormal);
+                    }
+                    if(sample5 != 0)
+                    {
+                        addHullVertex(matter, corner5, cubeNormal);
+                    }
+                    if(sample6 != 0)
+                    {
+                        addHullVertex(matter, corner6, cubeNormal);
+                    }
+                    if(sample7 != 0)
+                    {
+                        addHullVertex(matter, corner7, cubeNormal);
+                    }
+                }
+            }
+        }
+    }
+    matter->hullsDone();
+}
+
+void VoxelConverter::listTrianglesCPU(Matter* matter)
+{
+    VoxelField* vox = matter->getVoxelField();
+
+    //Normal addition components.
+    Vector3f normal0(1.0f, 1.0f, 1.0f);
+    Vector3f normal1(-1.0f, 1.0f, 1.0f);
+    Vector3f normal2(1.0f, -1.0f, 1.0f);
+    Vector3f normal3(-1.0f, -1.0f, 1.0f);
+    Vector3f normal4(1.0f, 1.0f, -1.0f);
+    Vector3f normal5(-1.0f, 1.0f, -1.0f);
+    Vector3f normal6(1.0f, -1.0f, -1.0f);
+    Vector3f normal7(-1.0f, -1.0f, -1.0f);
+
+    for(unsigned int z = 0; z < 31; z++)
+    {
+        for(unsigned int y = 0; y < 31; y++)
+        {
+            for(unsigned int x = 0; x < 31; x++)
+            {
+
 
                 //Corner coordinates, check the diagram to find out what goes where.
                 Vector3i corner0;
@@ -922,25 +1086,50 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
 
     errorCheck(__LINE__, __FILE__);
 
-    //Create a new buffer for the GPU to write directly to.
-    Buffer* vertexBuffer = new Buffer();
-    vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
-
     //Get data from voxel field
     matterNode->getMatter()->getVoxelField()->printAs3DTexture(mVolumeTexture);    errorCheck(__LINE__, __FILE__);
 
+    mXOffset = -matterNode->getMatter()->getVoxelField()->getCenterOfMass().x*mVoxelSpacing;
+    mYOffset = -matterNode->getMatter()->getVoxelField()->getCenterOfMass().y*mVoxelSpacing;
+    mZOffset = -matterNode->getMatter()->getVoxelField()->getCenterOfMass().z*mVoxelSpacing;
+
+    mOffset[0] = mXOffset;
+    mOffset[1] = mYOffset;
+    mOffset[2] = mZOffset;
+
+    double start = glfwGetTime();
+
+    VoxelDecomposer decomp;
+    decomp.decompose(matterNode->getMatter()->getVoxelField());
+    matterNode->getMatter()->setupHulls();
+    processHulls(matterNode->getMatter());
+
+    double decomposed = glfwGetTime();
+    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
+
     listTrianglesGPU();    errorCheck(__LINE__, __FILE__);
+
+    //Create a new buffer for the GPU to write directly to.
+    Buffer* vertexBuffer = new Buffer();
+    vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
+    vertexBuffer->bind();
+    vertexBuffer->zeroData(29791*5, sizeof(GLfloat)*6, GL_STATIC_COPY);
+    vertexBuffer->unbind();
 
     genVerticesGPU(vertexBuffer);    errorCheck(__LINE__, __FILE__);
 
+    double generated = glfwGetTime();
+    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
+
     matterNode->getMatter()->getVertexShell()->setBuffer(vertexBuffer);
+    matterNode->getMatter()->endProcessing(matterNode, false);
 
 /*
     glBindTexture(GL_TEXTURE_3D, mVolumeTexture);
     GLfloat* image = new GLfloat[32768*3];
     glGetTexImage(GL_TEXTURE_3D, 0, GL_RGB, GL_FLOAT, image);
 */
-
+/*
     errorCheck(__LINE__, __FILE__);
     glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
     GLuint* testTris = (GLuint*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
@@ -953,7 +1142,7 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
     //delete image;
-
+*/
 }
 
 void VoxelConverter::listTrianglesGPU()
@@ -980,6 +1169,8 @@ void VoxelConverter::listTrianglesGPU()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, mVolumeTexture);
 
+
+
     //Transform Feedback
     glBeginTransformFeedback(GL_POINTS);
 
@@ -995,11 +1186,6 @@ void VoxelConverter::listTrianglesGPU()
 
 void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
 {
-    //Prepare vertex buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->getName());
-    glBufferData(GL_ARRAY_BUFFER, (29791*5)*(sizeof(GLfloat)*6), 0, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     //Use gen vertices shader
     mGenVertices.use();     errorCheck(__LINE__, __FILE__);
 
@@ -1024,6 +1210,10 @@ void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
     //Set spaceing variable.
     GLint space = glGetUniformLocation(mGenVertices.getID(), "voxelSpace");     errorCheck(__LINE__, __FILE__);
     glUniform1f(space, mVoxelSpacing);     errorCheck(__LINE__, __FILE__);
+
+    //Apply offset
+    GLint offset = glGetUniformLocation(mListTriangles.getID(), "v3_offset");
+    glUniform3fv(offset, 3, mOffset);
 
     //Transform Feedback
     glBeginTransformFeedback(GL_POINTS);     errorCheck(__LINE__, __FILE__);

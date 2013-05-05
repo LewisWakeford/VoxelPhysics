@@ -48,8 +48,8 @@ void App::init()
     }
     else
     {
-        if(!mVoxelConverter->initGPU("shader_old/list_triangles.vert", "shader_old/list_triangles.geom",
-                            "shader_old/gen_vertices.vert", "shader_old/gen_vertices.geom"))
+        if(!mVoxelConverter->initGPU("shader/list_triangles.vert", "shader/list_triangles.geom",
+                            "shader/gen_vertices.vert", "shader/gen_vertices.geom"))
         {
             mVoxelConverter->initCPU();
         }
