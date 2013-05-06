@@ -39,7 +39,7 @@ void App::init()
     mResourceManager = new ResourceManager();
     mPhysicsManager = new PhysicsManager(this);
     mSceneGraph = new SceneGraph();
-    mVoxelConverter = new VoxelConverter(this);
+    mVoxelConverter = new VoxelConverter(this, 1.0f);
     mDestructionEngine = new DestructionEngine(this);
 
     if(mVoxelConversionCPU)

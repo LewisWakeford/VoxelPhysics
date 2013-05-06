@@ -1092,21 +1092,24 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
         float totalEnergyRecieving = 0.0f; //Total energy in recieveing direction.
         float totalEnergyProjecting = 0.0f; //Total energy in projecting direction.
 
+        const VoxelData* masterVoxel;
+
         //Select first voxel for shape.
         bool foundValid = false;
-        for(; x < 32 && !foundValid; x++)
+        for(x = 0; x < 32 && !foundValid; x++)
         {
-            for(; y < 32 && !foundValid; y++)
+            for(y = 0; y < 32 && !foundValid; y++)
             {
-                for(; z < 32 && !foundValid; z++)
+                for(z = 0; z < 32 && !foundValid; z++)
                 {
                     int voxelShape = map[x][y][z];
                     if(voxelShape == 0) //Must not be a member of another shape.
                     {
                         VoxelData& voxel = mVoxelData[x][y][z];
-                        if(voxel.mFull && !voxel.mDestroyed && !voxel.mSnapped)
+                        if(voxel.mFull)
                         {
                             voxelsInShapes[shapeCount].push_back(Vector3i(x,y,z));
+                            masterVoxel = &mVoxelData[x][y][z];
                             totalEnergyProjecting += voxel.mEnergyInProjectedDirection;
                             totalEnergyRecieving += voxel.mEnergyInRecievingDirection;
                             map[x][y][z] = shapeNumber;
@@ -1123,7 +1126,12 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
         unsigned int startOfStep = 0;
         unsigned int endOfStep = newSize;
 
-        while(oldSize != newSize)
+        float currentShapePressure = masterVoxel->mPressure;
+        float currentShapeStress = masterVoxel->mStress;
+
+        bool limitBreak = false;
+
+        while(oldSize != newSize && !limitBreak)
         {
             oldSize = newSize;
             endOfStep = newSize;
@@ -1133,7 +1141,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
                 Vector3i currentCoord = voxelsInShapes[shapeCount][i];
                 const VoxelData& currentVoxel = mVoxelData[currentCoord.x][currentCoord.y][currentCoord.z];
 
-                if(!currentVoxel.mSnapped)
+                if(!(!masterVoxel->mSnapped && currentVoxel.mSnapped))
                 {
                     for(unsigned int k = DIRECTION_START; k < LEFT_FRONT; k++)
                     {
@@ -1147,20 +1155,49 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
                             {
                                 //Check is valid
                                 VoxelData& adjanctVoxel = mVoxelData[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z];
-                                if(adjanctVoxel.mFull && !adjanctVoxel.mDestroyed)
+                                if(adjanctVoxel.mFull)
                                 {
-                                    voxelsInShapes[shapeCount].push_back(adjanctCoord);
+                                    bool canExpand = false;
+                                    if(masterVoxel->mDestroyed && adjanctVoxel.mDestroyed)
+                                    {
+                                        float grouping = getMatter()->getMaterial()->getPressureGrouping();
+                                        canExpand = fabs(currentVoxel.mPressure - adjanctVoxel.mPressure) < grouping;
+                                    }
+                                    else if(masterVoxel->mSnapped && adjanctVoxel.mSnapped)
+                                    {
+                                        float grouping = getMatter()->getMaterial()->getStressGrouping();
+                                        canExpand = fabs(currentVoxel.mStress - adjanctVoxel.mStress) < grouping;
+                                    }
+                                    else if(!(masterVoxel->mSnapped || masterVoxel->mDestroyed))
+                                    {
+                                        canExpand = !adjanctVoxel.mDestroyed;
+                                    }
 
-                                    totalEnergyProjecting += adjanctVoxel.mEnergyInProjectedDirection;
-                                    totalEnergyRecieving += adjanctVoxel.mEnergyInRecievingDirection;
+                                    if(canExpand)
+                                    {
+                                        if(masterVoxel->mDestroyed) currentShapePressure += adjanctVoxel.mPressure;
+                                        if(masterVoxel->mSnapped) currentShapeStress += adjanctVoxel.mStress;
 
-                                    //Add this shapes bit to the map.
-                                    map[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z] = voxelShape | shapeNumber;
+                                        voxelsInShapes[shapeCount].push_back(adjanctCoord);
+
+                                        totalEnergyProjecting += adjanctVoxel.mEnergyInProjectedDirection;
+                                        totalEnergyRecieving += adjanctVoxel.mEnergyInRecievingDirection;
+
+                                        //Add this shapes bit to the map.
+                                        map[adjanctCoord.x][adjanctCoord.y][adjanctCoord.z] = voxelShape | shapeNumber;
+                                    }
+
                                 }
                             }
                         }
                     }
                 }
+            }
+
+            if(currentShapePressure > getMatter()->getMaterial()->getDebrisPressureLimit()
+               || currentShapeStress > getMatter()->getMaterial()->getDebrisStressLimit())
+            {
+                limitBreak = true;
             }
 
             startOfStep = endOfStep;

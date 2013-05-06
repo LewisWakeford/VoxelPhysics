@@ -315,13 +315,22 @@ int main()
         Material* testMaterial = new Material();
 
         {
-            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
-            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
+            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_small_cube.vox"));
+            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20000.0f);
             sceneGraph->getRoot()->addChild(matterNode1);
 
-            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_big_cube.vox"));
+            SceneNodePtr matterNode4(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_small_cube.vox"));
+            ((MatterNode*)matterNode4.get())->setOffset(0.0f, 0.0f, 20.0f);
+            sceneGraph->getRoot()->addChild(matterNode4);
+
+            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/house.vox"));
+            ((MatterNode*)matterNode3.get())->setOffset(50.0f, 50.0f, 20.0f);
+            sceneGraph->getRoot()->addChild(matterNode3);
+
+            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/donut.vox"));
             ((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
             sceneGraph->getRoot()->addChild(matterNode2);
+
         }
 
         unsigned int frames = 0;

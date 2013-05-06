@@ -5,3 +5,7 @@
 
 1367230397 c:\code\voxelphysics_git\include\vector3.h
 
+1367230411 source:c:\code\voxelphysics_git\src\vector3.cpp
+	"Vector3.h"
+	<cmath>
+

@@ -150,8 +150,8 @@ GLboolean Renderer::renderMatter(Matter& matter)
     glUseProgram(0);
     matter.getVertexShell()->getBuffer()->render(); errorCheck(__LINE__, __FILE__);
     //matter.debugRenderVoxels();
-    //matter.debugRenderHulls();
-    matter.debugRenderPressure();
+    matter.debugRenderHulls();
+    //matter.debugRenderPressure();
 }
 
 void Renderer::render()

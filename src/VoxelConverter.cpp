@@ -341,7 +341,6 @@ VoxelConverter::VoxelConverter(App* app)
 {
     mApp = app;
     mUseCPU = false;
-    mVoxelSpacing = 1.0f;
     mXOffset = 0.0f;
     mYOffset = 0.0f;
     mZOffset = 0.0f;
@@ -811,6 +810,7 @@ void VoxelConverter::convertCPU(MatterNode* matterNode)
     listTrianglesCPU(matterNode->getMatter());
     genVerticesCPU(matterNode->getMatter());
     double generated = glfwGetTime();
+     mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
     mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
     matterNode->getMatter()->endProcessing(matterNode, true);
 
@@ -1351,7 +1351,8 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     genVerticesGPU(vertexBuffer);    errorCheck(__LINE__, __FILE__);
 
     double generated = glfwGetTime();
-    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
+    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
+    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Time to gen: ", (generated - decomposed));
 
     matterNode->getMatter()->getVertexShell()->setBuffer(vertexBuffer);
     matterNode->getMatter()->endProcessing(matterNode, false);

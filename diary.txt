@@ -913,4 +913,7 @@ Still to do:
 	Then Momentum.
 	Then demo.
 	THEN fix GPU bug.
-	I'm sure they understand.
+	I'm sure they will understand.
+
+06/05/2013
+Remember to base bullet friction and restitution values off of material properties.

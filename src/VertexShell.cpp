@@ -56,6 +56,8 @@ void VertexShell::setBufferData()
     mBuffer->setArray(1, 3, GL_FLOAT, 3, 0);
     mBuffer->setNormalArray(1);
 
+std::cout << "Number of vertices: " << mVertexArray.size()/6;
+
 }
 
 void VertexShell::setBuffer(Buffer* buffer)

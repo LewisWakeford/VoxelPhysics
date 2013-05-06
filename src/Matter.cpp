@@ -214,7 +214,8 @@ void Matter::debugRenderVoxels()
     {
         //Mix color
         int colorIndex1 = i % 11;
-        GLfloat color[3] = {colorArray[i][0], colorArray[i][1], colorArray[i][2]};
+        //GLfloat color[3] = {colorArray[i][0], colorArray[i][1], colorArray[i][2]};
+        GLfloat color[3] = {1.0f, 1.0f, 1.0f};
         glColor3fv(color);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_debug_VoxelBufferIDs[i]);

@@ -4298,7 +4298,7 @@
 	<GL/glew.h>
 	<GL/glfw.h>
 
-1367792418 source:c:\code\voxelphysics_git\main.cpp
+1367865776 source:c:\code\voxelphysics_git\main.cpp
 	"VP.h"
 	<iostream>
 	<exception>
@@ -4416,11 +4416,11 @@
 	"RigidBody.h"
 	"Material.h"
 
-1367716525 c:\code\voxelphysics_git\include\material.h
+1367838250 c:\code\voxelphysics_git\include\material.h
 	"VP.h"
 	<string>
 
-1367785349 source:c:\code\voxelphysics_git\src\app.cpp
+1367863613 source:c:\code\voxelphysics_git\src\app.cpp
 	"App.h"
 	"Renderer.h"
 	"ResourceManager.h"
@@ -4461,7 +4461,7 @@
 	"App.h"
 	"Renderer.h"
 
-1367833473 source:c:\code\voxelphysics_git\src\destructionengine.cpp
+1367833981 source:c:\code\voxelphysics_git\src\destructionengine.cpp
 	"DestructionEngine.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4478,7 +4478,7 @@
 	"VP.h"
 	<vector>
 
-1367831632 source:c:\code\voxelphysics_git\src\energygrid.cpp
+1367845537 source:c:\code\voxelphysics_git\src\energygrid.cpp
 	"EnergyGrid.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4489,14 +4489,14 @@
 	<cmath>
 	"console.h"
 
-1367833359 source:c:\code\voxelphysics_git\src\material.cpp
+1367845748 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
 	"Matrix4D.h"
 	<math.h>
 
-1367833504 source:c:\code\voxelphysics_git\src\matter.cpp
+1367852722 source:c:\code\voxelphysics_git\src\matter.cpp
 	"Matter.h"
 	"App.h"
 	"Material.h"
@@ -4527,7 +4527,7 @@
 1367055973 c:\code\voxelphysics_git\include\meshnode.h
 	"SceneNode.h"
 
-1367833464 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
+1367845707 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
 	"PhysicsManager.h"
 	"console.h"
 	"Matter.h"
@@ -4535,7 +4535,7 @@
 	"App.h"
 	"DestructionEngine.h"
 
-1367830279 source:c:\code\voxelphysics_git\src\renderer.cpp
+1367863379 source:c:\code\voxelphysics_git\src\renderer.cpp
 	"Renderer.h"
 	"Matrix4D.h"
 	"Mesh.h"
@@ -4584,11 +4584,11 @@
 	"Vector3.h"
 	<cmath>
 
-1367764402 source:c:\code\voxelphysics_git\src\vertexshell.cpp
+1367858241 source:c:\code\voxelphysics_git\src\vertexshell.cpp
 	"VertexShell.h"
 	"App.h"
 
-1367788802 source:c:\code\voxelphysics_git\src\voxelconverter.cpp
+1367863587 source:c:\code\voxelphysics_git\src\voxelconverter.cpp
 	"VoxelConverter.h"
 	"console.h"
 	"Matter.h"

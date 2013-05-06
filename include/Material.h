@@ -17,8 +17,13 @@ class Material
         const GLfloat* getColor3() const;
 
         float getDensity() const;
+
         float getPressureLimit() const;
+        float getPressureGrouping() const;
+        float getDebrisPressureLimit() const;
         float getStressLimit() const;
+        float getStressGrouping() const;
+        float getDebrisStressLimit() const;
 
         float getMinStrength() const;
         float getMaxStrength() const;
@@ -37,8 +42,13 @@ class Material
 
         //Physical
         float mDensity; // Mass over Volume kg/m^3 so with density 1 and voxel spacing of 1, mass will be equal to num voxels.
+
         float mPressureLimit; // Amount of pressure a voxel can withstand before obliterating.
+        float mPressureGrouping; //The amount of pressure adjanct broken nodes can share to group up.
+        float mDebrisPressureLimit; //The most total pressure a piece of debris can contain. More pressure = greater fragmentation.
         float mStressLimit; // Amount of stress a voxel can withstand before breaking.
+        float mStressGrouping; //The amount of pressure adjanct snapped voxels can share.
+        float mDebrisStressLimit; //The most total stress a piece of stress can contain. More stress = greater stress.
 
         //Note: Pressure and stress limits are multiplied by strength.
         float mMinStrength; //The minimum amount of strength a particular voxel can be randomly assigned. Should be 1 or less.
