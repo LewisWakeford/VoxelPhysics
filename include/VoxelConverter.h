@@ -91,12 +91,13 @@ class VoxelConverter
         void processHulls(Matter* matter);
 
         void addVoxelVertex(Matter* matter, Vector3i voxelCoord);
-        void addHullVertex(Matter* matter, Vector3i voxelCoord, Vector3f normal);
+        void addHullVertex(Matter* matter, const Vector3i& voxelCoord, const Vector3f& normal);
 
         ShaderProgram mListTriangles;
         ShaderProgram mGenVertices;
 
         GLfloat mVoxelSpacing;
+        GLfloat mHalfVoxel;
 
         GLfloat mXOffset;
         GLfloat mYOffset;
@@ -142,6 +143,9 @@ class VoxelConverter
     */
 
     static const GLuint regularVertexData[3072];
+
+    //Reference table storing all the possible "cube normals" used in convex decomp.
+    Vector3f mCubeNormals[256];
 };
 
 #endif // VOXELCONVERTER_H

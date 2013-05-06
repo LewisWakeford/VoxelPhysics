@@ -553,10 +553,6 @@ void EnergyGrid::buildTransferGraph()
                         mTransferMap[x][y][z] = mTransferGraph.size()-1;
                         endOfStep++;
                     }
-                    else
-                    {
-                        std::cout << "dep" << std::endl;
-                    }
                 }//&& !voxel.mDestroyed &&
 
 
@@ -1084,6 +1080,10 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
     std::vector<float> shapesTotalEnergyR;
     std::vector<float> shapesTotalEnergyP;
 
+    int x = 0;
+    int y = 0;
+    int z = 0;
+
     while(!noShapesLeft)
     {
         voxelsInShapes.push_back(std::vector<Vector3i>());
@@ -1094,11 +1094,11 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray)
 
         //Select first voxel for shape.
         bool foundValid = false;
-        for(unsigned int x = 0; x < 32 && !foundValid; x++)
+        for(; x < 32 && !foundValid; x++)
         {
-            for(unsigned int y = 0; y < 32 && !foundValid; y++)
+            for(; y < 32 && !foundValid; y++)
             {
-                for(unsigned int z = 0; z < 32 && !foundValid; z++)
+                for(; z < 32 && !foundValid; z++)
                 {
                     int voxelShape = map[x][y][z];
                     if(voxelShape == 0) //Must not be a member of another shape.
@@ -1267,7 +1267,7 @@ void EnergyGrid::updateRenderData()
     for(auto i = mBridges.begin(); i != mBridges.end(); i++)
     {
         Vector3i localInMe = getBridgeVector(i->first);
-        getMatter()->addEnergyBridge(Vector3f(localInMe.x, localInMe.y, localInMe.z), true);
+        getMatter()->addEnergyBridge(localInMe, true);
     }
 
 }

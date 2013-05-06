@@ -23,16 +23,21 @@ flat out uint gTriangle;
 void main()
 {
 
-for(int i = 0; i < vVoxel[0].triangleCount; i++)
-{
-	
-	gTriangle = vVoxel[0].triangles[i];
-	//If all edges have number 12, then this triangle does not exist.
-	if(!((gTriangle.x & 0xFFF)==0xCCC))
-	{
-		EmitVertex();
-		EndPrimitive();
+	for (int i = 0; i < vVoxel[0].triangleCount; i++)
+	{	
+		gTriangle = vVoxel[0].triangles[i];
+		//If all edges have number 12, then this triangle does not exist.
+		if(!((gTriangle.x & 0xFFF)==0xCCC))
+		{
+			EmitVertex();
+			EndPrimitive();
+		}
+		else
+		{
+			gTriangle = 0; //Make sure to overwrite every value in the output buffer.
+			EmitVertex();
+			EndPrimitive();
+		}
 	}
-}
 
 }

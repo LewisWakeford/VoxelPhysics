@@ -902,3 +902,15 @@ TODO:
 	Demo Features
 		- Few different shapes in the enviroment.
 		- Press enter to shoot balls out of camera.
+
+It seems that contstucting the hulls from convex decomp is really expensive. If I remove it from CPU MC, i get about 0.09s instead of 2.1 or whatever it was before. GPU MC takes AGES on the first run, but afterward it generates at about 0.001/2...
+
+Okay. GPU is working, sorta' something weird is wrong with it.
+Still to do:
+	Fix bug with GPU
+	All the above, actually. Shit.
+	Focus on breaking next.
+	Then Momentum.
+	Then demo.
+	THEN fix GPU bug.
+	I'm sure they understand.

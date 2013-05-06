@@ -5,13 +5,13 @@ Material::Material()
     //Default Properties
     mColor[0] = 1.0f; mColor[1] = 1.0f; mColor[2] = 1.0f; //Red
     mDensity = 5.0f;
-    mPressureLimit =    150000.0f;
-    mStressLimit =      10000.0f;
+    mPressureLimit =    100000.0f;
+    mStressLimit =      100000.0f;
     mMinStrength = 0.5f;
     mMaxStrength = 1.5f;
     mRandomChance = 0.5f;
     mTrivialThreshold = 100000.0f;
-    mTrivialMass = 9; //Minimum number of voxels to be considered a complex enough for destruction.
+    mTrivialMass = 9; //Minimum number of voxels to be considered complex enough for destruction.
 }
 
 Material::~Material()

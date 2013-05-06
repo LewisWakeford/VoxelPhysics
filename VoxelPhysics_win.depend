@@ -4298,7 +4298,7 @@
 	<GL/glew.h>
 	<GL/glfw.h>
 
-1367769125 source:c:\code\voxelphysics_git\main.cpp
+1367792418 source:c:\code\voxelphysics_git\main.cpp
 	"VP.h"
 	<iostream>
 	<exception>
@@ -4362,7 +4362,7 @@
 	"VP.h"
 	"Shader.h"
 
-1367766837 c:\code\voxelphysics_git\include\voxelconverter.h
+1367788783 c:\code\voxelphysics_git\include\voxelconverter.h
 	<vector>
 	<initializer_list>
 	"VP.h"
@@ -4409,7 +4409,7 @@
 	"SceneNode.h"
 	"Matter.h"
 
-1367767191 c:\code\voxelphysics_git\include\matter.h
+1367831685 c:\code\voxelphysics_git\include\matter.h
 	"VP.h"
 	"VoxelField.h"
 	"VertexShell.h"
@@ -4420,7 +4420,7 @@
 	"VP.h"
 	<string>
 
-1367768389 source:c:\code\voxelphysics_git\src\app.cpp
+1367785349 source:c:\code\voxelphysics_git\src\app.cpp
 	"App.h"
 	"Renderer.h"
 	"ResourceManager.h"
@@ -4451,15 +4451,17 @@
 	<random>
 	<iostream>
 
-1367768059 source:c:\code\voxelphysics_git\src\buffer.cpp
+1367784596 source:c:\code\voxelphysics_git\src\buffer.cpp
 	"Buffer.h"
+	"console.h"
+	<cstring>
 
 1367055991 source:c:\code\voxelphysics_git\src\cameranode.cpp
 	"CameraNode.h"
 	"App.h"
 	"Renderer.h"
 
-1367768916 source:c:\code\voxelphysics_git\src\destructionengine.cpp
+1367833473 source:c:\code\voxelphysics_git\src\destructionengine.cpp
 	"DestructionEngine.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4476,7 +4478,7 @@
 	"VP.h"
 	<vector>
 
-1367718720 source:c:\code\voxelphysics_git\src\energygrid.cpp
+1367831632 source:c:\code\voxelphysics_git\src\energygrid.cpp
 	"EnergyGrid.h"
 	"Matter.h"
 	"MatterNode.h"
@@ -4487,14 +4489,14 @@
 	<cmath>
 	"console.h"
 
-1367718784 source:c:\code\voxelphysics_git\src\material.cpp
+1367833359 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
 	"Matrix4D.h"
 	<math.h>
 
-1367767184 source:c:\code\voxelphysics_git\src\matter.cpp
+1367833504 source:c:\code\voxelphysics_git\src\matter.cpp
 	"Matter.h"
 	"App.h"
 	"Material.h"
@@ -4525,7 +4527,7 @@
 1367055973 c:\code\voxelphysics_git\include\meshnode.h
 	"SceneNode.h"
 
-1367768908 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
+1367833464 source:c:\code\voxelphysics_git\src\physicsmanager.cpp
 	"PhysicsManager.h"
 	"console.h"
 	"Matter.h"
@@ -4533,7 +4535,7 @@
 	"App.h"
 	"DestructionEngine.h"
 
-1367234824 source:c:\code\voxelphysics_git\src\renderer.cpp
+1367830279 source:c:\code\voxelphysics_git\src\renderer.cpp
 	"Renderer.h"
 	"Matrix4D.h"
 	"Mesh.h"
@@ -4541,6 +4543,7 @@
 	"VertexShell.h"
 	"Buffer.h"
 	"Matter.h"
+	"console.h"
 
 1367055992 source:c:\code\voxelphysics_git\src\resourcemanager.cpp
 	"ResourceManager.h"
@@ -4585,7 +4588,7 @@
 	"VertexShell.h"
 	"App.h"
 
-1367768917 source:c:\code\voxelphysics_git\src\voxelconverter.cpp
+1367788802 source:c:\code\voxelphysics_git\src\voxelconverter.cpp
 	"VoxelConverter.h"
 	"console.h"
 	"Matter.h"
@@ -4602,7 +4605,7 @@
 	"VoxelDecomposer.h"
 	<vector>
 
-1367759092 source:c:\code\voxelphysics_git\src\voxelfield.cpp
+1367782824 source:c:\code\voxelphysics_git\src\voxelfield.cpp
 	"VoxelField.h"
 	"console.h"
 	<math.h>

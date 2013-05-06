@@ -40,7 +40,7 @@ PhysicsManager::PhysicsManager(App* app)
 
     //Create "Floor"
 
-	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(500.),btScalar(500.),btScalar(1.0f)));
+	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1000.),btScalar(1000.),btScalar(1.0f)));
 
 	mCollisionShapesArray.push_back(groundShape);
 

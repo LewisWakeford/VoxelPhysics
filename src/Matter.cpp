@@ -132,6 +132,7 @@ void Matter::addVoxelVertex(unsigned int hullIndex, Vector3f vertex)
 
 void Matter::addPressureVertex(float pressure, float stress, float strength, Vector3f vertex)
 {
+
     Vector3f cOfm = mVoxelField.getCenterOfMass();
     m_debug_PressureVertexArray.push_back(vertex.x - cOfm.x);
     m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y);
@@ -152,16 +153,17 @@ void Matter::addPressureVertex(float pressure, float stress, float strength, Vec
     m_debug_PressureVertexArray.push_back(red); //High pressure = Red.
     m_debug_PressureVertexArray.push_back(green); //Low pressure = Green.
     m_debug_PressureVertexArray.push_back(blue);
+
 }
 
-void Matter::addEnergyBridge(Vector3f vertex, bool local)
+void Matter::addEnergyBridge(Vector3i vertex, bool local)
 {
     Vector3f cOfm = mVoxelField.getCenterOfMass();
-    m_debug_PressureVertexArray.push_back(vertex.x - cOfm.x
+    m_debug_PressureVertexArray.push_back(float(vertex.x) - cOfm.x
                                           );
-    m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y
+    m_debug_PressureVertexArray.push_back(float(vertex.y) - cOfm.y
                                           );
-    m_debug_PressureVertexArray.push_back(vertex.z - cOfm.z
+    m_debug_PressureVertexArray.push_back(float(vertex.z) - cOfm.z
                                           );
 
     if(local)

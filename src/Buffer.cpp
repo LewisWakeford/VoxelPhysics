@@ -1,4 +1,6 @@
 #include "Buffer.h"
+#include "console.h"
+#include <cstring>
 
 int Buffer::sBoundBuffer = -1;
 
@@ -135,8 +137,8 @@ unsigned int Buffer::getName()
 
 void Buffer::render()
 {
-    bind();
-    bindArrays();
-    glDrawArrays(GL_TRIANGLES, 0, mItemCount);
-    unbind();
+    bind();errorCheck(__LINE__, __FILE__);
+    bindArrays();errorCheck(__LINE__, __FILE__);
+    glDrawArrays(GL_TRIANGLES, 0, mItemCount);errorCheck(__LINE__, __FILE__);
+    unbind();errorCheck(__LINE__, __FILE__);
 }

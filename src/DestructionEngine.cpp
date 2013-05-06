@@ -59,6 +59,9 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
     float energyFirstScalar = energyFirst.length();
     float energySecondScalar = energySecond.length();
 
+    first->clearPressureRendering();
+    second->clearPressureRendering();
+
     //Check that collision is not trivial:
     if(first->nonTrivial(energyFirstScalar + energySecondScalar) ||
         second->nonTrivial(energyFirstScalar + energySecondScalar))
@@ -189,8 +192,7 @@ void DestructionEngine::transferEnergy(EnergyGrid& first, EnergyGrid& second)
     mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "First: ", firstEnergyScalar);
     mApp->debugPrint(App::DEBUG_INTERAL_SIMULATION, "Second: ", secondEnergyRelative);
 
-    first.getMatter()->clearPressureRendering();
-    second.getMatter()->clearPressureRendering();
+
     first.updateRenderData();
     second.updateRenderData();
     first.getMatter()->setupPressureRendering();
@@ -241,9 +243,12 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
         Vector3f voxel = firstTransform.transformVertex(Vector3f(potentialBridgesFirst[i].x-cOfMF.x, potentialBridgesFirst[i].y-cOfMF.y, potentialBridgesFirst[i].z-cOfMF.z));
         //voxel.add((first.getEnergyVector().normalized()).mult(0.5));
 
+
+
         //Test if voxel is within bounding box of the other matter.
         if(secondBB.pointInside(voxel))
         {
+
             closeBridgesFirst.push_back(voxel);
             closeBridgesFirstOriginal.push_back(i);
         }
@@ -256,22 +261,26 @@ void DestructionEngine::buildBridges(unsigned int firstIndex, unsigned int secon
         Vector3f voxel = secondTransform.transformVertex(Vector3f(potentialBridgesSecond[i].x-cOfMS.x, potentialBridgesSecond[i].y-cOfMS.y, potentialBridgesSecond[i].z-cOfMS.z));
         //voxel.add((-(first.getEnergyVector()).normalized()).mult(0.5));
 
+
+
         //Test if voxel is within bounding box of the other matter.
         if(firstBB.pointInside(voxel))
         {
+
             closeBridgesSecond.push_back(voxel);
             closeBridgesSecondOriginal.push_back(i);
         }
     }
 
-    float closeRadius = 1.0f;
+    float closeRadius = 1.3f;
 
     //Perform more advanced tests.
     for(int i = 0; i < closeBridgesFirst.size(); i++)
     {
         for(int k = 0; k < closeBridgesSecond.size(); k++)
         {
-            if(closeBridgesFirst[i].distance(closeBridgesSecond[k]) < closeRadius)
+            float distance = closeBridgesFirst[i].distance(closeBridgesSecond[k]);
+            if(distance < closeRadius)
             {
                 //Vector3f localPointFirst = firstTransformInverse.transformVertex(closeBridgesSecond[i]) + cOfMF;
                 //Vector3f localPointSecond  = secondTransformInverse.transformVertex(closeBridgesFirst[i]) + cOfMS;

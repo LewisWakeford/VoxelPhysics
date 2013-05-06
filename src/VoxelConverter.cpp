@@ -345,11 +345,269 @@ VoxelConverter::VoxelConverter(App* app)
     mXOffset = 0.0f;
     mYOffset = 0.0f;
     mZOffset = 0.0f;
+
+    mCubeNormals[255] = Vector3f (0, 0, 0);
+mCubeNormals[127] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[191] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[63] = Vector3f (0, 0.707107, 0.707107);
+mCubeNormals[223] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[95] = Vector3f (0.707107, 0, 0.707107);
+mCubeNormals[159] = Vector3f (0, 0, 1);
+mCubeNormals[31] = Vector3f (0.301511, 0.301511, 0.904534);
+mCubeNormals[239] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[111] = Vector3f (0, 0, 1);
+mCubeNormals[175] = Vector3f (-0.707107, 0, 0.707107);
+mCubeNormals[47] = Vector3f (-0.301511, 0.301511, 0.904534);
+mCubeNormals[207] = Vector3f (0, -0.707107, 0.707107);
+mCubeNormals[79] = Vector3f (0.301511, -0.301511, 0.904534);
+mCubeNormals[143] = Vector3f (-0.301511, -0.301511, 0.904534);
+mCubeNormals[15] = Vector3f (0, 0, 1);
+mCubeNormals[247] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[119] = Vector3f (0.707107, 0.707107, 0);
+mCubeNormals[183] = Vector3f (0, 1, 0);
+mCubeNormals[55] = Vector3f (0.301511, 0.904534, 0.301511);
+mCubeNormals[215] = Vector3f (1, 0, 0);
+mCubeNormals[87] = Vector3f (0.904534, 0.301511, 0.301511);
+mCubeNormals[151] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[23] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[231] = Vector3f (0, 0, 0);
+mCubeNormals[103] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[167] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[39] = Vector3f (0, 0.707107, 0.707107);
+mCubeNormals[199] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[71] = Vector3f (0.707107, 0, 0.707107);
+mCubeNormals[135] = Vector3f (0, 0, 1);
+mCubeNormals[7] = Vector3f (0.301511, 0.301511, 0.904534);
+mCubeNormals[251] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[123] = Vector3f (0, 1, 0);
+mCubeNormals[187] = Vector3f (-0.707107, 0.707107, 0);
+mCubeNormals[59] = Vector3f (-0.301511, 0.904534, 0.301511);
+mCubeNormals[219] = Vector3f (0, 0, 0);
+mCubeNormals[91] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[155] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[27] = Vector3f (0, 0.707107, 0.707107);
+mCubeNormals[235] = Vector3f (-1, 0, 0);
+mCubeNormals[107] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[171] = Vector3f (-0.904534, 0.301511, 0.301511);
+mCubeNormals[43] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[203] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[75] = Vector3f (0, 0, 1);
+mCubeNormals[139] = Vector3f (-0.707107, 0, 0.707107);
+mCubeNormals[11] = Vector3f (-0.301511, 0.301511, 0.904534);
+mCubeNormals[243] = Vector3f (0, 0.707107, -0.707107);
+mCubeNormals[115] = Vector3f (0.301511, 0.904534, -0.301511);
+mCubeNormals[179] = Vector3f (-0.301511, 0.904534, -0.301511);
+mCubeNormals[51] = Vector3f (0, 1, 0);
+mCubeNormals[211] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[83] = Vector3f (0.707107, 0.707107, 0);
+mCubeNormals[147] = Vector3f (0, 1, 0);
+mCubeNormals[19] = Vector3f (0.301511, 0.904534, 0.301511);
+mCubeNormals[227] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[99] = Vector3f (0, 1, 0);
+mCubeNormals[163] = Vector3f (-0.707107, 0.707107, 0);
+mCubeNormals[35] = Vector3f (-0.301511, 0.904534, 0.301511);
+mCubeNormals[195] = Vector3f (0, 0, 0);
+mCubeNormals[67] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[131] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[3] = Vector3f (0, 0.707107, 0.707107);
+mCubeNormals[253] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[125] = Vector3f (1, 0, 0);
+mCubeNormals[189] = Vector3f (0, 0, 0);
+mCubeNormals[61] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[221] = Vector3f (0.707107, -0.707107, 0);
+mCubeNormals[93] = Vector3f (0.904534, -0.301511, 0.301511);
+mCubeNormals[157] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[29] = Vector3f (0.707107, 0, 0.707107);
+mCubeNormals[237] = Vector3f (0, -1, 0);
+mCubeNormals[109] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[173] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[45] = Vector3f (0, 0, 1);
+mCubeNormals[205] = Vector3f (0.301511, -0.904534, 0.301511);
+mCubeNormals[77] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[141] = Vector3f (0, -0.707107, 0.707107);
+mCubeNormals[13] = Vector3f (0.301511, -0.301511, 0.904534);
+mCubeNormals[245] = Vector3f (0.707107, 0, -0.707107);
+mCubeNormals[117] = Vector3f (0.904534, 0.301511, -0.301511);
+mCubeNormals[181] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[53] = Vector3f (0.707107, 0.707107, 0);
+mCubeNormals[213] = Vector3f (0.904534, -0.301511, -0.301511);
+mCubeNormals[85] = Vector3f (1, 0, 0);
+mCubeNormals[149] = Vector3f (1, 0, 0);
+mCubeNormals[21] = Vector3f (0.904534, 0.301511, 0.301511);
+mCubeNormals[229] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[101] = Vector3f (1, 0, 0);
+mCubeNormals[165] = Vector3f (0, 0, 0);
+mCubeNormals[37] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[197] = Vector3f (0.707107, -0.707107, 0);
+mCubeNormals[69] = Vector3f (0.904534, -0.301511, 0.301511);
+mCubeNormals[133] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[5] = Vector3f (0.707107, 0, 0.707107);
+mCubeNormals[249] = Vector3f (0, 0, -1);
+mCubeNormals[121] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[185] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[57] = Vector3f (0, 1, 0);
+mCubeNormals[217] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[89] = Vector3f (1, 0, 0);
+mCubeNormals[153] = Vector3f (0, 0, 0);
+mCubeNormals[25] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[233] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[105] = Vector3f (0, 0, 0);
+mCubeNormals[169] = Vector3f (-1, 0, 0);
+mCubeNormals[41] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[201] = Vector3f (0, -1, 0);
+mCubeNormals[73] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[137] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[9] = Vector3f (0, 0, 1);
+mCubeNormals[241] = Vector3f (0.301511, 0.301511, -0.904534);
+mCubeNormals[113] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[177] = Vector3f (0, 0.707107, -0.707107);
+mCubeNormals[49] = Vector3f (0.301511, 0.904534, -0.301511);
+mCubeNormals[209] = Vector3f (0.707107, 0, -0.707107);
+mCubeNormals[81] = Vector3f (0.904534, 0.301511, -0.301511);
+mCubeNormals[145] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[17] = Vector3f (0.707107, 0.707107, 0);
+mCubeNormals[225] = Vector3f (0, 0, -1);
+mCubeNormals[97] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[161] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[33] = Vector3f (0, 1, 0);
+mCubeNormals[193] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[65] = Vector3f (1, 0, 0);
+mCubeNormals[129] = Vector3f (0, 0, 0);
+mCubeNormals[1] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[254] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[126] = Vector3f (0, 0, 0);
+mCubeNormals[190] = Vector3f (-1, 0, 0);
+mCubeNormals[62] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[222] = Vector3f (0, -1, 0);
+mCubeNormals[94] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[158] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[30] = Vector3f (0, 0, 1);
+mCubeNormals[238] = Vector3f (-0.707107, -0.707107, 0);
+mCubeNormals[110] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[174] = Vector3f (-0.904534, -0.301511, 0.301511);
+mCubeNormals[46] = Vector3f (-0.707107, 0, 0.707107);
+mCubeNormals[206] = Vector3f (-0.301511, -0.904534, 0.301511);
+mCubeNormals[78] = Vector3f (0, -0.707107, 0.707107);
+mCubeNormals[142] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[14] = Vector3f (-0.301511, -0.301511, 0.904534);
+mCubeNormals[246] = Vector3f (0, 0, -1);
+mCubeNormals[118] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[182] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[54] = Vector3f (0, 1, 0);
+mCubeNormals[214] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[86] = Vector3f (1, 0, 0);
+mCubeNormals[150] = Vector3f (0, 0, 0);
+mCubeNormals[22] = Vector3f (0.57735, 0.57735, 0.57735);
+mCubeNormals[230] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[102] = Vector3f (0, 0, 0);
+mCubeNormals[166] = Vector3f (-1, 0, 0);
+mCubeNormals[38] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[198] = Vector3f (0, -1, 0);
+mCubeNormals[70] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[134] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[6] = Vector3f (0, 0, 1);
+mCubeNormals[250] = Vector3f (-0.707107, 0, -0.707107);
+mCubeNormals[122] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[186] = Vector3f (-0.904534, 0.301511, -0.301511);
+mCubeNormals[58] = Vector3f (-0.707107, 0.707107, 0);
+mCubeNormals[218] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[90] = Vector3f (0, 0, 0);
+mCubeNormals[154] = Vector3f (-1, 0, 0);
+mCubeNormals[26] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[234] = Vector3f (-0.904534, -0.301511, -0.301511);
+mCubeNormals[106] = Vector3f (-1, 0, 0);
+mCubeNormals[170] = Vector3f (-1, 0, 0);
+mCubeNormals[42] = Vector3f (-0.904534, 0.301511, 0.301511);
+mCubeNormals[202] = Vector3f (-0.707107, -0.707107, 0);
+mCubeNormals[74] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[138] = Vector3f (-0.904534, -0.301511, 0.301511);
+mCubeNormals[10] = Vector3f (-0.707107, 0, 0.707107);
+mCubeNormals[242] = Vector3f (-0.301511, 0.301511, -0.904534);
+mCubeNormals[114] = Vector3f (0, 0.707107, -0.707107);
+mCubeNormals[178] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[50] = Vector3f (-0.301511, 0.904534, -0.301511);
+mCubeNormals[210] = Vector3f (0, 0, -1);
+mCubeNormals[82] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[146] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[18] = Vector3f (0, 1, 0);
+mCubeNormals[226] = Vector3f (-0.707107, 0, -0.707107);
+mCubeNormals[98] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[162] = Vector3f (-0.904534, 0.301511, -0.301511);
+mCubeNormals[34] = Vector3f (-0.707107, 0.707107, 0);
+mCubeNormals[194] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[66] = Vector3f (0, 0, 0);
+mCubeNormals[130] = Vector3f (-1, 0, 0);
+mCubeNormals[2] = Vector3f (-0.57735, 0.57735, 0.57735);
+mCubeNormals[252] = Vector3f (0, -0.707107, -0.707107);
+mCubeNormals[124] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[188] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[60] = Vector3f (0, 0, 0);
+mCubeNormals[220] = Vector3f (0.301511, -0.904534, -0.301511);
+mCubeNormals[92] = Vector3f (0.707107, -0.707107, 0);
+mCubeNormals[156] = Vector3f (0, -1, 0);
+mCubeNormals[28] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[236] = Vector3f (-0.301511, -0.904534, -0.301511);
+mCubeNormals[108] = Vector3f (0, -1, 0);
+mCubeNormals[172] = Vector3f (-0.707107, -0.707107, 0);
+mCubeNormals[44] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[204] = Vector3f (0, -1, 0);
+mCubeNormals[76] = Vector3f (0.301511, -0.904534, 0.301511);
+mCubeNormals[140] = Vector3f (-0.301511, -0.904534, 0.301511);
+mCubeNormals[12] = Vector3f (0, -0.707107, 0.707107);
+mCubeNormals[244] = Vector3f (0.301511, -0.301511, -0.904534);
+mCubeNormals[116] = Vector3f (0.707107, 0, -0.707107);
+mCubeNormals[180] = Vector3f (0, 0, -1);
+mCubeNormals[52] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[212] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[84] = Vector3f (0.904534, -0.301511, -0.301511);
+mCubeNormals[148] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[20] = Vector3f (1, 0, 0);
+mCubeNormals[228] = Vector3f (0, -0.707107, -0.707107);
+mCubeNormals[100] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[164] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[36] = Vector3f (0, 0, 0);
+mCubeNormals[196] = Vector3f (0.301511, -0.904534, -0.301511);
+mCubeNormals[68] = Vector3f (0.707107, -0.707107, 0);
+mCubeNormals[132] = Vector3f (0, -1, 0);
+mCubeNormals[4] = Vector3f (0.57735, -0.57735, 0.57735);
+mCubeNormals[248] = Vector3f (-0.301511, -0.301511, -0.904534);
+mCubeNormals[120] = Vector3f (0, 0, -1);
+mCubeNormals[184] = Vector3f (-0.707107, 0, -0.707107);
+mCubeNormals[56] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[216] = Vector3f (0, -0.707107, -0.707107);
+mCubeNormals[88] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[152] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[24] = Vector3f (0, 0, 0);
+mCubeNormals[232] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[104] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[168] = Vector3f (-0.904534, -0.301511, -0.301511);
+mCubeNormals[40] = Vector3f (-1, 0, 0);
+mCubeNormals[200] = Vector3f (-0.301511, -0.904534, -0.301511);
+mCubeNormals[72] = Vector3f (0, -1, 0);
+mCubeNormals[136] = Vector3f (-0.707107, -0.707107, 0);
+mCubeNormals[8] = Vector3f (-0.57735, -0.57735, 0.57735);
+mCubeNormals[240] = Vector3f (0, 0, -1);
+mCubeNormals[112] = Vector3f (0.301511, 0.301511, -0.904534);
+mCubeNormals[176] = Vector3f (-0.301511, 0.301511, -0.904534);
+mCubeNormals[48] = Vector3f (0, 0.707107, -0.707107);
+mCubeNormals[208] = Vector3f (0.301511, -0.301511, -0.904534);
+mCubeNormals[80] = Vector3f (0.707107, 0, -0.707107);
+mCubeNormals[144] = Vector3f (0, 0, -1);
+mCubeNormals[16] = Vector3f (0.57735, 0.57735, -0.57735);
+mCubeNormals[224] = Vector3f (-0.301511, -0.301511, -0.904534);
+mCubeNormals[96] = Vector3f (0, 0, -1);
+mCubeNormals[160] = Vector3f (-0.707107, 0, -0.707107);
+mCubeNormals[32] = Vector3f (-0.57735, 0.57735, -0.57735);
+mCubeNormals[192] = Vector3f (0, -0.707107, -0.707107);
+mCubeNormals[64] = Vector3f (0.57735, -0.57735, -0.57735);
+mCubeNormals[128] = Vector3f (-0.57735, -0.57735, -0.57735);
+mCubeNormals[0] = Vector3f (0, 0, 0);
 }
 
 VoxelConverter::VoxelConverter(App* app_one, GLfloat voxelSpacing) : VoxelConverter(app_one)
 {
     mVoxelSpacing = voxelSpacing;
+    mHalfVoxel = mVoxelSpacing/2; //Precompute to save a few cycles.
 }
 
 VoxelConverter::~VoxelConverter()
@@ -383,7 +641,7 @@ GLboolean VoxelConverter::initGPU(const char* lst_tri_vert, const char* lst_tri_
 
     glGenBuffers(1, &mInitialDataBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mInitialDataBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(initialVerts), initialVerts, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(initialVerts), initialVerts, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //Create transform feedback object.
@@ -563,14 +821,6 @@ void VoxelConverter::processHulls(Matter* matter)
     VoxelField* vox = matter->getVoxelField();
 
     //Normal addition components.
-    Vector3f normal0(1.0f, 1.0f, 1.0f);
-    Vector3f normal1(-1.0f, 1.0f, 1.0f);
-    Vector3f normal2(1.0f, -1.0f, 1.0f);
-    Vector3f normal3(-1.0f, -1.0f, 1.0f);
-    Vector3f normal4(1.0f, 1.0f, -1.0f);
-    Vector3f normal5(-1.0f, 1.0f, -1.0f);
-    Vector3f normal6(1.0f, -1.0f, -1.0f);
-    Vector3f normal7(-1.0f, -1.0f, -1.0f);
 
     for(unsigned int z = 0; z < 31; z++)
     {
@@ -633,54 +883,53 @@ void VoxelConverter::processHulls(Matter* matter)
                 GLubyte sample7 = vox->getValue(corner7);
 
                 int fullVoxels = 0;
-                Vector3f cubeNormal(0.0f, 0.0f, 0.0f);
 
                 if(sample0 != 0)
                 {
-                    cubeNormal.add(normal0);
                     fullVoxels++;
+                    corners = corners | 1;
                 }
                 if(sample1 != 0)
                 {
-                    cubeNormal.add(normal1);
                     fullVoxels++;
+                    corners = corners | 2;
                 }
                 if(sample2 != 0)
                 {
-                    cubeNormal.add(normal2);
                     fullVoxels++;
+                    corners = corners | 4;
                 }
                 if(sample3 != 0)
                 {
-                    cubeNormal.add(normal3);
                     fullVoxels++;
+                    corners = corners | 8;
                 }
                 if(sample4 != 0)
                 {
-                    cubeNormal.add(normal4);
                     fullVoxels++;
+                    corners = corners | 16;
                 }
                 if(sample5 != 0)
                 {
-                    cubeNormal.add(normal5);
                     fullVoxels++;
+                    corners = corners | 32;
                 }
                 if(sample6 != 0)
                 {
-                    cubeNormal.add(normal6);
                     fullVoxels++;
+                    corners = corners | 64;
                 }
                 if(sample7 != 0)
                 {
-                    cubeNormal.add(normal7);
                     fullVoxels++;
+                    corners = corners | 128;
                 }
 
                 bool isPartOfHull = !(fullVoxels == 0) && !(fullVoxels == 8);
 
                 if(isPartOfHull)
                 {
-                    cubeNormal.normalize();
+                    const Vector3f& cubeNormal = mCubeNormals[corners];
                     if(sample0 != 0)
                     {
                         addHullVertex(matter, corner0, cubeNormal);
@@ -724,16 +973,6 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
 {
     VoxelField* vox = matter->getVoxelField();
 
-    //Normal addition components.
-    Vector3f normal0(1.0f, 1.0f, 1.0f);
-    Vector3f normal1(-1.0f, 1.0f, 1.0f);
-    Vector3f normal2(1.0f, -1.0f, 1.0f);
-    Vector3f normal3(-1.0f, -1.0f, 1.0f);
-    Vector3f normal4(1.0f, 1.0f, -1.0f);
-    Vector3f normal5(-1.0f, 1.0f, -1.0f);
-    Vector3f normal6(1.0f, -1.0f, -1.0f);
-    Vector3f normal7(-1.0f, -1.0f, -1.0f);
-
     for(unsigned int z = 0; z < 31; z++)
     {
         for(unsigned int y = 0; y < 31; y++)
@@ -799,19 +1038,16 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 GLubyte sample7 = vox->getValue(corner7);
 
                 int fullVoxels = 0;
-                Vector3f cubeNormal(0.0f, 0.0f, 0.0f);
 
                 if(sample0 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal0);
                     corners = corners | 1;
                     addVoxelVertex(matter, corner0);
                 }
                 if(sample1 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal1);
                     corners = corners | 2;
                     if(x == 30)
                     {
@@ -821,7 +1057,6 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 if(sample2 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal2);
                     corners = corners | 4;
                     if(y == 30)
                     {
@@ -831,17 +1066,15 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 if(sample3 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal3);
                     corners = corners | 8;
                     if(y == 30)
                     {
                         addVoxelVertex(matter, corner3);
-                    }
+                    }    glEnable(GL_TEXTURE_3D);
                 }
                 if(sample4 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal4);
                     corners = corners | 16;
                     if(z == 30)
                     {
@@ -851,7 +1084,6 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 if(sample5 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal5);
                     corners = corners | 32;
                     if(z == 30)
                     {
@@ -861,7 +1093,6 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 if(sample6 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal6);
                     corners = corners | 64;
                     if(z == 30)
                     {
@@ -871,7 +1102,6 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
                 if(sample7 != 0)
                 {
                     fullVoxels++;
-                    cubeNormal.add(normal7);
                     corners = corners | 128;
                     if(z == 30)
                     {
@@ -883,7 +1113,7 @@ void VoxelConverter::listTrianglesCPU(Matter* matter)
 
                 if(isPartOfHull)
                 {
-                    cubeNormal.normalize();
+                    const Vector3f& cubeNormal = mCubeNormals[corners];
                     if(sample0 != 0)
                     {
                         addHullVertex(matter, corner0, cubeNormal);
@@ -1084,6 +1314,8 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     consolePrint("Attempting to convert voxel field with GPU.");
     consolePrint("Printing 3D volume texture.");
 
+    glEnable(GL_TEXTURE_3D);
+
     errorCheck(__LINE__, __FILE__);
 
     //Get data from voxel field
@@ -1113,7 +1345,7 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     Buffer* vertexBuffer = new Buffer();
     vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
     vertexBuffer->bind();
-    vertexBuffer->zeroData(29791*5, sizeof(GLfloat)*6, GL_STATIC_COPY);
+    vertexBuffer->zeroData((29791*5), sizeof(GLfloat)*6, GL_STATIC_COPY);
     vertexBuffer->unbind();
 
     genVerticesGPU(vertexBuffer);    errorCheck(__LINE__, __FILE__);
@@ -1140,9 +1372,9 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     GLfloat* testVert = (GLfloat*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
     errorCheck(__LINE__, __FILE__);
     glUnmapBuffer(GL_ARRAY_BUFFER);
-
-    //delete image;
 */
+    //delete image;
+
 }
 
 void VoxelConverter::listTrianglesGPU()
@@ -1212,7 +1444,7 @@ void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
     glUniform1f(space, mVoxelSpacing);     errorCheck(__LINE__, __FILE__);
 
     //Apply offset
-    GLint offset = glGetUniformLocation(mListTriangles.getID(), "v3_offset");
+    GLint offset = glGetUniformLocation(mGenVertices.getID(), "v3_offset");
     glUniform3fv(offset, 3, mOffset);
 
     //Transform Feedback
@@ -1287,13 +1519,13 @@ void VoxelConverter::addVoxelVertex(Matter* matter, Vector3i voxelCoord)
     matter->addVoxelVertex(hullID, vertex);
 }
 
-void VoxelConverter::addHullVertex(Matter* matter, Vector3i voxelCoord, Vector3f normal)
+void VoxelConverter::addHullVertex(Matter* matter, const Vector3i& voxelCoord, const Vector3f& normal)
 {
     int hullID = matter->getVoxelField()->hullAt(voxelCoord);
 
-    Vector3f vertex((float(voxelCoord.x)*mVoxelSpacing)+mXOffset+((mVoxelSpacing/2)*normal.x),
-                    (float(voxelCoord.y)*mVoxelSpacing)+mYOffset+((mVoxelSpacing/2)*normal.y),
-                    (float(voxelCoord.z)*mVoxelSpacing)+mZOffset+((mVoxelSpacing/2)*normal.z));
+    Vector3f vertex((float(voxelCoord.x)*mVoxelSpacing)+mXOffset+((mHalfVoxel)*normal.x),
+                    (float(voxelCoord.y)*mVoxelSpacing)+mYOffset+((mHalfVoxel)*normal.y),
+                    (float(voxelCoord.z)*mVoxelSpacing)+mZOffset+((mHalfVoxel)*normal.z));
 
     matter->addHullVertex(hullID, vertex);
 }

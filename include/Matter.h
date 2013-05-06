@@ -35,7 +35,7 @@ class Matter
         void addHullVertex(unsigned int hullIndex, Vector3f vertex); //Add a hull point to be drawn in debug rendering
         void addVoxelVertex(unsigned int hullIndex, Vector3f vertex); //Add a voxel point to be drawn in debug rendering
         void addPressureVertex(float pressure, float stress, float strength, Vector3f vertex); //Add a pressure point to be drawn in debug rendering
-        void addEnergyBridge(Vector3f vertex, bool local);
+        void addEnergyBridge(Vector3i vertex, bool local);
 
         void hullsDone();
         btConvexHullShape* getHull(int index);

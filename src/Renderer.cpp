@@ -5,6 +5,7 @@
 #include "VertexShell.h"
 #include "Buffer.h"
 #include "Matter.h"
+#include "console.h"
 
 Renderer::Renderer()
 {
@@ -146,11 +147,11 @@ GLboolean Renderer::renderMatter(Matter& matter)
     //
     //glColor3f(1.0f, 1.0f, 1.0f);
     glMultMatrixf(currentMatrix().getValues());
-
-    matter.getVertexShell()->getBuffer()->render();
+    glUseProgram(0);
+    matter.getVertexShell()->getBuffer()->render(); errorCheck(__LINE__, __FILE__);
     //matter.debugRenderVoxels();
     //matter.debugRenderHulls();
-    //matter.debugRenderPressure();
+    matter.debugRenderPressure();
 }
 
 void Renderer::render()
