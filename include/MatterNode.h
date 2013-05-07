@@ -16,6 +16,7 @@ class MatterNode : public SceneNode
         void setLinearVelocity(btVector3 vel);
         void setMatrix(const Matrix4D& matrix);
         void setInitialForce(const Vector3f& force);
+        void setEnergy(const Vector3f& energyVector); //Convert energy back into velocity.
 
         btVector3 getLinearVelocity();
 

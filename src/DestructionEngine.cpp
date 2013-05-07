@@ -298,8 +298,10 @@ void DestructionEngine::checkForSeparation()
         MatterNode* original = mEnergyGrids[i].getMatterNode();
         Vector3f originalCofM = original->getMatter()->getVoxelField()->getCenterOfMass();
         std::vector<VoxelField> voxArray;
+        std::vector<float> energyR;
+        std::vector<float> energyP;
         double startDestruction = glfwGetTime();
-        bool breakage = mEnergyGrids[i].separate(voxArray);
+        bool breakage = mEnergyGrids[i].separate(voxArray, energyR, energyP);
         double endDestruction = glfwGetTime();
         mApp->debugPrint(App::DEBUG_BREAKING, "Time to destroy: ", (endDestruction - startDestruction));
 
@@ -317,8 +319,12 @@ void DestructionEngine::checkForSeparation()
                Matrix4D transform = original->getTransform();
                transform.translate(offset.x, offset.y, offset.z);
 
-               SceneNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, original->getMatter()->getMaterial(), false, voxArray[k]));
-                ((MatterNode*)matterNode.get())->setTransform(transform);
+               //Set Energy
+               Vector3f energyVector = mEnergyGrids[i].constructEnergyVector(energyP[k], energyR[k]);
+
+               MatterNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, original->getMatter()->getMaterial(), false, voxArray[k]));
+                matterNode->setTransform(transform);
+                matterNode->setEnergy(energyVector);
                 mApp->getSceneGraph()->getRoot()->addChild(matterNode);
 
             }

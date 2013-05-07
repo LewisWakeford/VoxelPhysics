@@ -9,6 +9,7 @@ MatterNode::MatterNode(App* app, GLenum renderPass, const MaterialPtr material, 
     mMatter.import(voxelFilename);
     mMatter.setMaterial(material);
     mUpToDate = false;
+    mInitialMatrix = Matrix4D::createIdentity();
 }
 
 MatterNode::MatterNode(App* app, GLenum renderPass, const MaterialPtr material, bool floats, VoxelField voxelField): SceneNode(app, renderPass), mMatter(app, material, floats)
@@ -33,7 +34,7 @@ void MatterNode::simulateSelf(GLdouble deltaTime)
     if(!mUpToDate)
     {
         mApp->getVoxelConverter()->convert(this);
-        setTransform(mInitialMatrix);
+        //setTransform(mInitialMatrix);
         mMatter.getRigidBody()->applyForce(mInitialForce);
         mUpToDate = true;
     }
@@ -84,4 +85,10 @@ void MatterNode::setMatrix(const Matrix4D& matrix)
 void MatterNode::setInitialForce(const Vector3f& force)
 {
     mInitialForce = force;
+}
+
+void MatterNode::setEnergy(const Vector3f& energyVector)
+{
+    float speed = sqrtf((2 * energyVector.length())/mMatter.getMass());
+    mMatter.getRigidBody()->setVelocity(energyVector.normalized() * speed);
 }

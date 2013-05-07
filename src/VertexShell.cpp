@@ -50,7 +50,7 @@ void VertexShell::setBufferData()
 {
     createBuffer();
 
-    mBuffer->setData(mVertexArray.data(), mVertexArray.size()/6, sizeof(float)*6, GL_STATIC_DRAW);
+    mBuffer->setData(mVertexArray.data(), mVertexArray.size()/6, sizeof(GLfloat)*6, GL_STATIC_DRAW);
     mBuffer->setArray(0, 3, GL_FLOAT, 0, 0);
     mBuffer->setVertexArray(0);
     mBuffer->setArray(1, 3, GL_FLOAT, 3, 0);

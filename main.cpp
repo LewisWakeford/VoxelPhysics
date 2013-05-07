@@ -334,20 +334,20 @@ int main(int numArgs, char* args[])
         theApp.gDefaultMaterial = MaterialPtr(new Material());
         theApp.gBulletMaterial = MaterialPtr(new Material());
         theApp.gBulletMaterial->setDensity(20.0f);
-        theApp.gBulletMaterial->setPressureLimit(100000.0f);
+        theApp.gBulletMaterial->setPressureLimit(1000000.0f);
 
         { //Need to scope the shared pointer so matternodes can be deleted properly.
-            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/test_small_cube.vox"));
-            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20000.0f);
+            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/ground.vox"));
+            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
             sceneGraph->getRoot()->addChild(matterNode1);
 
-            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/house.vox"));
+            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/ledge.vox"));
             ((MatterNode*)matterNode3.get())->setOffset(50.0f, 50.0f, 20.0f);
             sceneGraph->getRoot()->addChild(matterNode3);
 
-            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/donut.vox"));
-            ((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
-            sceneGraph->getRoot()->addChild(matterNode2);
+            //SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/donut.vox"));
+            //((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
+            //sceneGraph->getRoot()->addChild(matterNode2);
 
         }
 
@@ -357,7 +357,7 @@ int main(int numArgs, char* args[])
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        std::cout << "System Initialised... press something to continue: ";
+        std::cout << "System Initialised... type something to continue: ";
         std::string cmd;
         std::cin >> cmd;
 
@@ -409,6 +409,9 @@ int main(int numArgs, char* args[])
     catch (std::exception& e)
     {
         std::cout << e.what() << std::endl;
+        std::cout << "Type something to end program";
+        std::string cmd;
+        std::cin >> cmd;
     }
 
     glfwTerminate();

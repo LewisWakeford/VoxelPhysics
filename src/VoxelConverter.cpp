@@ -653,12 +653,6 @@ GLboolean VoxelConverter::initGPU(const char* lst_tri_vert, const char* lst_tri_
     glBufferData(GL_ARRAY_BUFFER, sizeof(initialVerts)*5, 0, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    //Create vertex buffer (initially blank)
-    glGenBuffers(1, &mVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, (29791*5)*(sizeof(GLfloat)*6), 0, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     //Create Shader programs
 
     //List triangles
@@ -1407,7 +1401,7 @@ void VoxelConverter::listTrianglesGPU()
     //Transform Feedback
     glBeginTransformFeedback(GL_POINTS);
 
-        glDrawArrays(GL_POINTS, 0, 29790);
+        glDrawArrays(GL_POINTS, 0, 29791);
 
     glEndTransformFeedback();
 
@@ -1462,6 +1456,7 @@ void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
 }
 
 //Deprecated hacky function
+/*
 void VoxelConverter::drawLast()
 {
     //glUseProgramObjectARB(0);
@@ -1511,7 +1506,7 @@ errorCheck(__LINE__, __FILE__);
 
     errorCheck(__LINE__, __FILE__);
 
-}
+}*/
 
 void VoxelConverter::addVoxelVertex(Matter* matter, Vector3i voxelCoord)
 {

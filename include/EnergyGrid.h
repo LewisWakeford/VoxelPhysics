@@ -34,6 +34,8 @@ class EnergyGrid
         void setEnergy(const Vector3f& energyVector);
         void setCollisionPartner(EnergyGrid* energyGrid);
 
+        Vector3f constructEnergyVector(float projectedEnergy, float recievingEnergy);
+
         void setAsProjector();
         void setAsReciever();
 
@@ -50,7 +52,7 @@ class EnergyGrid
 
         //Check if the matter needs to be decomposed into smaller shapes due to breaking/snapping.
         //matterArray and numMatter are returns. Returns true if new matter shapes have been created.
-        bool separate(std::vector<VoxelField>& voxelFieldArray);
+        bool separate(std::vector<VoxelField>& voxelFieldArray, std::vector<float>& shapesTotalEnergyR, std::vector<float>& shapesTotalEnergyP);
 
         //Construct Pressure maps for the grids.
         void buildMaps(const Vector3f& otherEnergy);

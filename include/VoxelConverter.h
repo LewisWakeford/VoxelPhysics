@@ -69,7 +69,6 @@ class VoxelConverter
         std::vector<GLuint> mTriangleArray;
 
         //The buffer containing the finished vertexs.
-        GLuint mVertexBuffer;
         std::vector<GLfloat> mVertexArray;
 
         //Volume texture, overwritten by each new voxel field.

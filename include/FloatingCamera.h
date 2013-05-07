@@ -4,7 +4,7 @@
 #include <CameraNode.h>
 
 const double RECHARGE_TIME = 1.0;
-const float BULLET_FORCE = 1000;
+const float BULLET_FORCE = -50000.0f;
 
 class FloatingCamera : public CameraNode
 {

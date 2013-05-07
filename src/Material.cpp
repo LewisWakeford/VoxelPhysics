@@ -9,7 +9,7 @@ Material::Material()
     mPressureGrouping = 5000.0f;
     mDebrisPressureLimit = 10000.0f;
 
-    mStressLimit =      10000.0f;
+    mStressLimit =      12500.0f;
     mStressGrouping = 10000.0f;
     mDebrisStressLimit = 25000.0f;
 

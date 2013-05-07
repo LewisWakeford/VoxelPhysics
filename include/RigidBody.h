@@ -23,6 +23,7 @@ class RigidBody
         const Matrix4D& getTransform();
         const Matrix4D& getInvertedTransform();
         void applyForce(const Vector3f& force);
+        void setVelocity(const Vector3f& velocity);
 
     protected:
         App* mApp;

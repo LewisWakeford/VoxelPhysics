@@ -98,8 +98,9 @@ void FloatingCamera::simulateSelf(GLdouble deltaTime)
         if(mRechargeTime < 0)
         {
             //Shoot
-             MatterNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, mApp->gBulletMaterial, false, "vox/ball.vox"));
-            matterNode->setMatrix(getCameraMatrix());
+             MatterNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, mApp->gBulletMaterial, false, "vox/atom.vox"));
+            // matterNode->setOffset(0.0f, 0.0f, 0.0f);
+            matterNode->setTransform(getCameraMatrix().inverted());
             Vector3f force = mForward * BULLET_FORCE;
             matterNode->setInitialForce(force);
             mApp->getSceneGraph()->getRoot()->addChild(matterNode);

@@ -167,6 +167,16 @@ void RigidBody::applyForce(const Vector3f& force)
     if(mRigidBody)
     {
         btVector3 btForce(force.x, force.y, force.z);
-        mRigidBody->applyCentralForce(btForce);
+        btVector3 rel(0.0f, 0.0f, 0.0f);
+        mRigidBody->applyImpulse(btForce, rel);
+    }
+}
+
+void RigidBody::setVelocity(const Vector3f& velocity)
+{
+    if(mRigidBody)
+    {
+        btVector3 btVelocity(velocity.x, velocity.y, velocity.z);
+        mRigidBody->setLinearVelocity(btVelocity);
     }
 }

@@ -10,8 +10,8 @@
 
 bool App::DEBUG_PHYSICS = false;
 bool App::DEBUG_INTERAL_SIMULATION = false;
-bool App::DEBUG_MARCHING_CUBES = true;
-bool App::DEBUG_VOX_DECOMP = true;
+bool App::DEBUG_MARCHING_CUBES = false;
+bool App::DEBUG_VOX_DECOMP = false;
 bool App::DEBUG_BREAKING = false;
 bool App::DEBUG_BRIDGES = false;
 
