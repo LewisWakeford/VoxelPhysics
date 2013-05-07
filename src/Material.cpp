@@ -88,3 +88,13 @@ int Material::getTrivialMass() const
 {
     return mTrivialMass;
 }
+
+void Material::setDensity(float density)
+{
+    mDensity = density;
+}
+
+void Material::setPressureLimit(float limit)
+{
+    mPressureLimit = limit;
+}

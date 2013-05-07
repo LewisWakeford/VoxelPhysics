@@ -4298,7 +4298,7 @@
 	<GL/glew.h>
 	<GL/glfw.h>
 
-1367865776 source:c:\code\voxelphysics_git\main.cpp
+1367878905 source:c:\code\voxelphysics_git\main.cpp
 	"VP.h"
 	<iostream>
 	<exception>
@@ -4322,8 +4322,9 @@
 	<fstream>
 	<string>
 
-1367668766 c:\code\voxelphysics_git\include\app.h
+1367878999 c:\code\voxelphysics_git\include\app.h
 	"VP.h"
+	"Material.h"
 	<string>
 
 1367178238 c:\code\voxelphysics_git\include\voxelfield.h
@@ -4353,7 +4354,7 @@
 	<vector>
 	"VP.h"
 
-1367179730 c:\code\voxelphysics_git\include\rigidbody.h
+1367877345 c:\code\voxelphysics_git\include\rigidbody.h
 	"Matrix4D.h"
 	"btBulletDynamicsCommon.h"
 	<vector>
@@ -4388,7 +4389,7 @@
 	<vector>
 	"Matrix4D.h"
 
-1367055973 c:\code\voxelphysics_git\include\floatingcamera.h
+1367876489 c:\code\voxelphysics_git\include\floatingcamera.h
 	<CameraNode.h>
 
 1367055974 c:\code\voxelphysics_git\include\cameranode.h
@@ -4405,22 +4406,23 @@
 	"VP.h"
 	<boost/shared_ptr.hpp>
 
-1367179298 c:\code\voxelphysics_git\include\matternode.h
+1367879063 c:\code\voxelphysics_git\include\matternode.h
 	"SceneNode.h"
 	"Matter.h"
 
-1367831685 c:\code\voxelphysics_git\include\matter.h
+1367880094 c:\code\voxelphysics_git\include\matter.h
 	"VP.h"
 	"VoxelField.h"
 	"VertexShell.h"
 	"RigidBody.h"
 	"Material.h"
 
-1367838250 c:\code\voxelphysics_git\include\material.h
+1367879024 c:\code\voxelphysics_git\include\material.h
 	"VP.h"
 	<string>
+	<boost/shared_ptr.hpp>
 
-1367863613 source:c:\code\voxelphysics_git\src\app.cpp
+1367879184 source:c:\code\voxelphysics_git\src\app.cpp
 	"App.h"
 	"Renderer.h"
 	"ResourceManager.h"
@@ -4428,6 +4430,7 @@
 	"SceneGraph.h"
 	"DestructionEngine.h"
 	"VoxelConverter.h"
+	"Material.h"
 	"console.h"
 
 1367055972 c:\code\voxelphysics_git\include\resourcemanager.h
@@ -4483,23 +4486,24 @@
 	"Matter.h"
 	"MatterNode.h"
 
-1367055992 source:c:\code\voxelphysics_git\src\floatingcamera.cpp
+1367879274 source:c:\code\voxelphysics_git\src\floatingcamera.cpp
 	"FloatingCamera.h"
 	"App.h"
+	"SceneGraph.h"
 	<cmath>
 	"console.h"
+	"MatterNode.h"
 
-1367845748 source:c:\code\voxelphysics_git\src\material.cpp
+1367878833 source:c:\code\voxelphysics_git\src\material.cpp
 	"Material.h"
 
 1367055993 source:c:\code\voxelphysics_git\src\matrix4d.cpp
 	"Matrix4D.h"
 	<math.h>
 
-1367852722 source:c:\code\voxelphysics_git\src\matter.cpp
+1367880135 source:c:\code\voxelphysics_git\src\matter.cpp
 	"Matter.h"
 	"App.h"
-	"Material.h"
 
 1367055991 source:c:\code\voxelphysics_git\src\mattercollision.cpp
 	"MatterCollision.h"
@@ -4509,7 +4513,7 @@
 	"Matter.h"
 	"MatterNode.h"
 
-1367180403 source:c:\code\voxelphysics_git\src\matternode.cpp
+1367880159 source:c:\code\voxelphysics_git\src\matternode.cpp
 	"MatterNode.h"
 	"App.h"
 	"Renderer.h"

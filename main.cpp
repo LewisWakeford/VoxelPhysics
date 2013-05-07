@@ -200,15 +200,34 @@ void GLFWCALL keyCallback(int key, int action)
             theApp.gRollRight = false;
         }
     }
+
+    //R - Shoot ball.
+    if(key == 82)
+    {
+        if(action == GLFW_PRESS)
+        {
+            theApp.gShoot = true;
+        }
+        else
+        {
+            theApp.gShoot = false;
+        }
+    }
 }
 
-int main()
+int main(int numArgs, char* args[])
 {
     try{
         int     width, height;
         bool    running = true;
-        bool forceCPU = true;
-        std::string optionChoice = "";
+        bool forceCPU = false;
+
+        for(int i = 0; i < numArgs; i++)
+        {
+            std::string arg(args[i]);
+            std::cout << arg << std::endl;
+            if(arg == "-forceCPU") forceCPU = true;
+        }
 
         consolePrint("Initialising GLFW");
 
@@ -312,22 +331,21 @@ int main()
         GLfloat green[3] = {0.0f, 1.0f, 0.0f};
         GLfloat blue[3] = {0.0f, 0.0f, 1.0f};
 
-        Material* testMaterial = new Material();
+        theApp.gDefaultMaterial = MaterialPtr(new Material());
+        theApp.gBulletMaterial = MaterialPtr(new Material());
+        theApp.gBulletMaterial->setDensity(20.0f);
+        theApp.gBulletMaterial->setPressureLimit(100000.0f);
 
-        {
-            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_small_cube.vox"));
+        { //Need to scope the shared pointer so matternodes can be deleted properly.
+            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/test_small_cube.vox"));
             ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20000.0f);
             sceneGraph->getRoot()->addChild(matterNode1);
 
-            SceneNodePtr matterNode4(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/test_small_cube.vox"));
-            ((MatterNode*)matterNode4.get())->setOffset(0.0f, 0.0f, 20.0f);
-            sceneGraph->getRoot()->addChild(matterNode4);
-
-            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/house.vox"));
+            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/house.vox"));
             ((MatterNode*)matterNode3.get())->setOffset(50.0f, 50.0f, 20.0f);
             sceneGraph->getRoot()->addChild(matterNode3);
 
-            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, testMaterial, false, "vox/donut.vox"));
+            SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/donut.vox"));
             ((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
             sceneGraph->getRoot()->addChild(matterNode2);
 
@@ -338,6 +356,10 @@ int main()
         double elapsedTime = 0.0;
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        std::cout << "System Initialised... press something to continue: ";
+        std::string cmd;
+        std::cin >> cmd;
 
         while(running)
         {
@@ -382,9 +404,7 @@ int main()
 
             // exit if ESC was pressed or window was closed
             running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam( GLFW_OPENED);
-
         }
-        delete testMaterial;
     }
     catch (std::exception& e)
     {

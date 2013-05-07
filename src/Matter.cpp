@@ -1,7 +1,6 @@
 #include "Matter.h"
 
 #include "App.h"
-#include "Material.h"
 
 unsigned int Matter::gCurrentMatterID = 0;
 
@@ -12,13 +11,12 @@ unsigned int Matter::getNewID()
     return temp;
 }
 
-Matter::Matter(App* app, const Material* material, bool floating) : mVertexShell(app), mRigidBody(app)
+Matter::Matter(App* app, MaterialPtr material, bool floating) : mVertexShell(app), mRigidBody(app)
 {
     mMaterial = material;
     mFloating = floating;
     mCollided = false;
     mMatterID = Matter::getNewID();
-    mMaterial = new Material();
     m_debug_PressureVertexBufferID = 0;
 }
 
@@ -37,7 +35,7 @@ void Matter::addVertex(GLfloat cX, GLfloat cY, GLfloat cZ, GLfloat nX, GLfloat n
     mVertexShell.addVertex(cX, cY, cZ, nX, nY, nZ);
 }
 
-void Matter::setMaterial(const Material* material)
+void Matter::setMaterial(MaterialPtr material)
 {
     mMaterial = material;
 }
@@ -103,7 +101,7 @@ void Matter::setupHulls()
     glGenBuffers(numHulls, &m_debug_HullBufferIDs[0]);
 }
 
-const Material* Matter::getMaterial() const
+MaterialPtr Matter::getMaterial()
 {
     return mMaterial;
 }

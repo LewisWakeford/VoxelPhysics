@@ -16,7 +16,7 @@ class App;
 class Matter
 {
     public:
-        Matter(App* app, const Material*, bool floating);
+        Matter(App* app, MaterialPtr material, bool floating);
         virtual ~Matter();
 
         /**
@@ -77,8 +77,8 @@ class Matter
 
         static unsigned int getNewID();
 
-        void setMaterial(const Material* material);
-        const Material* getMaterial() const;
+        void setMaterial(MaterialPtr material);
+        MaterialPtr getMaterial();
 
         float getMass();
 
@@ -111,7 +111,7 @@ class Matter
 
         bool mCollided;
 
-        const Material* mMaterial; //Properties
+        MaterialPtr mMaterial; //Properties
 
     private:
 };

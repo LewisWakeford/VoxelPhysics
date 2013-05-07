@@ -3,6 +3,7 @@
 
 #include "VP.h"
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 /*
     Property set of a material.
@@ -28,6 +29,10 @@ class Material
         float getMinStrength() const;
         float getMaxStrength() const;
         float getRandomChance() const;
+
+        void setDensity(float density);
+        void setPressureLimit(float limit);
+
 
         int getTrivialMass() const;
 
@@ -60,5 +65,7 @@ class Material
 
     private:
 };
+
+typedef boost::shared_ptr<Material> MaterialPtr;
 
 #endif // MATERIAL_H

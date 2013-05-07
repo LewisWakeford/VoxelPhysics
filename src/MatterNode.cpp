@@ -4,14 +4,14 @@
 #include "Renderer.h"
 #include "VoxelConverter.h"
 
-MatterNode::MatterNode(App* app, GLenum renderPass, const Material* material, bool floats, const char* voxelFilename): SceneNode(app, renderPass), mMatter(app, material, floats)
+MatterNode::MatterNode(App* app, GLenum renderPass, const MaterialPtr material, bool floats, const char* voxelFilename): SceneNode(app, renderPass), mMatter(app, material, floats)
 {
     mMatter.import(voxelFilename);
     mMatter.setMaterial(material);
     mUpToDate = false;
 }
 
-MatterNode::MatterNode(App* app, GLenum renderPass, const Material* material, bool floats, VoxelField voxelField): SceneNode(app, renderPass), mMatter(app, material, floats)
+MatterNode::MatterNode(App* app, GLenum renderPass, const MaterialPtr material, bool floats, VoxelField voxelField): SceneNode(app, renderPass), mMatter(app, material, floats)
 {
     mMatter.setVoxelField(voxelField);
     mMatter.setMaterial(material);
@@ -33,6 +33,8 @@ void MatterNode::simulateSelf(GLdouble deltaTime)
     if(!mUpToDate)
     {
         mApp->getVoxelConverter()->convert(this);
+        setTransform(mInitialMatrix);
+        mMatter.getRigidBody()->applyForce(mInitialForce);
         mUpToDate = true;
     }
 }
@@ -72,4 +74,14 @@ void MatterNode::setLinearVelocity(btVector3 vel)
 btVector3 MatterNode::getLinearVelocity()
 {
     return mLinearVelocity;
+}
+
+void MatterNode::setMatrix(const Matrix4D& matrix)
+{
+    mInitialMatrix = matrix;
+}
+
+void MatterNode::setInitialForce(const Vector3f& force)
+{
+    mInitialForce = force;
 }

@@ -71,7 +71,7 @@ void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHull
     if (isDynamic)
         rbShape->calculateLocalInertia(rbMass,localInertia);
 
-    btDefaultMotionState* rbMotionState = new MatterMotionState(rbTransform); //Remember to implement own motion state.
+    btDefaultMotionState* rbMotionState = new MatterMotionState(rbTransform);
     btRigidBody::btRigidBodyConstructionInfo rbInfo(rbMass,rbMotionState, rbShape,localInertia);
     rbInfo.m_restitution = 0.5f;
     rbInfo.m_friction = 2.0f;
@@ -159,5 +159,14 @@ const Matrix4D& RigidBody::getInvertedTransform()
     {
         consolePrint("NO RIGID BODY");
         return Matrix4D::createIdentity();
+    }
+}
+
+void RigidBody::applyForce(const Vector3f& force)
+{
+    if(mRigidBody)
+    {
+        btVector3 btForce(force.x, force.y, force.z);
+        mRigidBody->applyCentralForce(btForce);
     }
 }

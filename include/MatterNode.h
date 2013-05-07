@@ -7,13 +7,16 @@
 class MatterNode : public SceneNode
 {
     public:
-        MatterNode(App* app, GLenum renderPass, const Material* material, bool floats, const char* voxelFilename);
-        MatterNode(App* app, GLenum renderPass, const Material* material, bool floats, VoxelField voxelField);
+        MatterNode(App* app, GLenum renderPass, const MaterialPtr material, bool floats, const char* voxelFilename);
+        MatterNode(App* app, GLenum renderPass, const MaterialPtr material, bool floats, VoxelField voxelField);
         virtual ~MatterNode();
 
         void setOffset(GLfloat x, GLfloat y, GLfloat z);
         void setOffset(Vector3 offset);
         void setLinearVelocity(btVector3 vel);
+        void setMatrix(const Matrix4D& matrix);
+        void setInitialForce(const Vector3f& force);
+
         btVector3 getLinearVelocity();
 
         Matter* getMatter();
@@ -26,7 +29,8 @@ class MatterNode : public SceneNode
         virtual void renderSelf();
         virtual void simulateSelf(GLdouble deltaTime);
 
-
+        Matrix4D mInitialMatrix;
+        Vector3f mInitialForce;
 
         GLboolean mUpToDate;
 
@@ -35,5 +39,7 @@ class MatterNode : public SceneNode
 
     private:
 };
+
+typedef boost::shared_ptr<MatterNode> MatterNodePtr;
 
 #endif // MATTERNODE_H

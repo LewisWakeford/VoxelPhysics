@@ -5,6 +5,7 @@
 #include "SceneGraph.h"
 #include "DestructionEngine.h"
 #include "VoxelConverter.h"
+#include "Material.h"
 #include "console.h"
 
 bool App::DEBUG_PHYSICS = false;

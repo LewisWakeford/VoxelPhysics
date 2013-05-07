@@ -1,13 +1,17 @@
 #include "FloatingCamera.h"
 #include "App.h"
+#include "SceneGraph.h"
 #include <cmath>
 #include "console.h"
+#include "MatterNode.h"
 
 FloatingCamera::FloatingCamera(App* app, GLenum renderPass, GLdouble fov, GLdouble zNear, GLdouble zFar)
     : CameraNode(app, renderPass, fov, zNear, zFar)
 {
     mRotX = 0.0;
     mRotY = 0.0;
+
+    mRechargeTime = RECHARGE_TIME;
 
     mCanRoll = false;
 }
@@ -82,6 +86,26 @@ void FloatingCamera::simulateSelf(GLdouble deltaTime)
     else if(mApp->gRollRight)
     {
         dRoll = -pyrRot*deltaTime;
+    }
+
+    if(mRechargeTime > 0)
+    {
+        mRechargeTime -= deltaTime;
+    }
+
+    if(mApp->gShoot)
+    {
+        if(mRechargeTime < 0)
+        {
+            //Shoot
+             MatterNodePtr matterNode(new MatterNode(mApp, VP_RENDER_GEOMETRY, mApp->gBulletMaterial, false, "vox/ball.vox"));
+            matterNode->setMatrix(getCameraMatrix());
+            Vector3f force = mForward * BULLET_FORCE;
+            matterNode->setInitialForce(force);
+            mApp->getSceneGraph()->getRoot()->addChild(matterNode);
+
+            mRechargeTime = RECHARGE_TIME;
+        }
     }
 
     yaw(dYaw);

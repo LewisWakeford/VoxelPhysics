@@ -9,6 +9,7 @@ class PhysicsManager;
 class SceneGraph;
 class VoxelConverter;
 class DestructionEngine;
+#include "Material.h"
 
 #include <string>
 
@@ -67,6 +68,10 @@ class App
         GLboolean gPitchDown;
         GLboolean gRollLeft;
         GLboolean gRollRight;
+        GLboolean gShoot;
+
+        MaterialPtr gBulletMaterial;
+        MaterialPtr gDefaultMaterial;
 
         static bool DEBUG_INTERAL_SIMULATION;
         static bool DEBUG_PHYSICS;
