@@ -1305,8 +1305,8 @@ void VoxelConverter::genVerticesCPU(Matter* matter)
 
 void VoxelConverter::convertGPU(MatterNode* matterNode)
 {
-    consolePrint("Attempting to convert voxel field with GPU.");
-    consolePrint("Printing 3D volume texture.");
+    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with GPU.");
+    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Printing 3D volume texture.");
 
     glEnable(GL_TEXTURE_3D);
 
@@ -1332,6 +1332,13 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
 
     double decomposed = glfwGetTime();
     mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
+
+    //Reset triangle buffer
+    glDeleteBuffers(1, &mTriangleBuffer);
+    glGenBuffers(1, &mTriangleBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 29791*5*sizeof(GLuint), 0, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     listTrianglesGPU();    errorCheck(__LINE__, __FILE__);
 
