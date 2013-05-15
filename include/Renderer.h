@@ -13,11 +13,12 @@ class CameraNode;
 class VertexShell;
 class Buffer;
 class Matter;
+class App;
 
 class Renderer
 {
     public:
-        Renderer();
+        Renderer(App* app);
         virtual ~Renderer();
 
         GLboolean renderMesh(Mesh* mesh);
@@ -52,6 +53,8 @@ class Renderer
 
         GLdouble mViewportWidth;
         GLdouble mViewportHeight;
+
+        App* mApp;
 
     private:
 };

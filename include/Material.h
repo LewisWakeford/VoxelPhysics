@@ -25,13 +25,19 @@ class Material
         float getStressLimit() const;
         float getStressGrouping() const;
         float getDebrisStressLimit() const;
+        float getBondStrength() const;
+        float getFriction() const;
+        float getRestitution() const;
 
         float getMinStrength() const;
         float getMaxStrength() const;
-        float getRandomChance() const;
 
         void setDensity(float density);
         void setPressureLimit(float limit);
+        void setStressLimit(float limit);
+        void setColor(float red, float green, float blue);
+        void setBondStrength(float bondStrength);
+        void setStrength(float min, float max);
 
 
         int getTrivialMass() const;
@@ -48,7 +54,9 @@ class Material
         //Physical
         float mDensity; // Mass over Volume kg/m^3 so with density 1 and voxel spacing of 1, mass will be equal to num voxels.
 
-        float mPressureLimit; // Amount of pressure a voxel can withstand before obliterating.
+        float mPressureLimit; // Amount of pressure a voxel can withstand before broken.
+
+        float mBondStrength;    //The amount of
         float mPressureGrouping; //The amount of pressure adjanct broken nodes can share to group up.
         float mDebrisPressureLimit; //The most total pressure a piece of debris can contain. More pressure = greater fragmentation.
         float mStressLimit; // Amount of stress a voxel can withstand before breaking.
@@ -58,7 +66,9 @@ class Material
         //Note: Pressure and stress limits are multiplied by strength.
         float mMinStrength; //The minimum amount of strength a particular voxel can be randomly assigned. Should be 1 or less.
         float mMaxStrength; //The maximum amount of strength a particular voxel can be randomly assigned. Should be 1 or more.
-        float mRandomChance; //The percentage chance that a particular voxel will use a random value between min and max strength instead of 1.
+
+        float mFriction;
+        float mRestitution;
 
         float mTrivialThreshold;
         int mTrivialMass;

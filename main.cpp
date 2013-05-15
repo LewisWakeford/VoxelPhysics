@@ -19,6 +19,52 @@
 
 App theApp;
 
+void buildScene()
+{
+    //Delete old scene
+
+    theApp.getSceneGraph()->setRoot(SceneNodePtr(new SceneNode(&theApp, VP_RENDER_NONE)));
+
+    SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/test_small_cube.vox"));
+    ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
+    theApp.getSceneGraph()->getRoot()->addChild(matterNode1);
+
+    SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/building.vox"));
+    ((MatterNode*)matterNode2.get())->setOffset(-50.0f, -50.0f, 20.0f);
+    theApp.getSceneGraph()->getRoot()->addChild(matterNode2);
+
+    SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/ledge.vox"));
+    ((MatterNode*)matterNode3.get())->setOffset(50.0f, 50.0f, 20.0f);
+    theApp.getSceneGraph()->getRoot()->addChild(matterNode3);
+
+    SceneNodePtr cameraPtr(new FloatingCamera(&theApp, VP_RENDER_GEOMETRY, 90.0f, 1.0f, 1000.0f));
+    ((FloatingCamera*)cameraPtr.get())->pitch(1.5f);
+    ((FloatingCamera*)cameraPtr.get())->yaw(3.2f);
+    ((FloatingCamera*)cameraPtr.get())->fly(-20.0f);
+    ((FloatingCamera*)cameraPtr.get())->walk(-30.0f);
+
+    theApp.getRenderer()->setCamera((CameraNode*)cameraPtr.get());
+
+    theApp.getSceneGraph()->getRoot()->addChild(cameraPtr);
+
+    //SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/donut.vox"));
+    //((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
+    //sceneGraph->getRoot()->addChild(matterNode2);
+
+}
+
+void useBullets()
+{
+    theApp.gBulletFile = "vox/atom.vox";
+    theApp.gBulletForce = -50000.0f;
+}
+
+void useCubes()
+{
+    theApp.gBulletFile = "vox/test_small_cube.vox";
+    theApp.gBulletForce = -5000000.0f;
+}
+
 void GLFWCALL keyCallback(int key, int action)
 {
      //A - Move Left
@@ -213,6 +259,40 @@ void GLFWCALL keyCallback(int key, int action)
             theApp.gShoot = false;
         }
     }
+
+    //1 - use balls
+    if(key == 49)
+    {
+        if(action == GLFW_RELEASE)
+        {
+            useBullets();
+        }
+    }
+
+    //2 - use cubes -- Removed due to bug.
+   /* if(key == 50)
+    {
+        if(action == GLFW_RELEASE)
+        {
+            useCubes();
+        }
+    }
+*/
+    //P - reset
+    if(key == 80)
+    {
+        if(action == GLFW_RELEASE)
+        {
+            buildScene();
+        }
+    }
+    if(key == 84)
+    {
+        if(action == GLFW_RELEASE)
+        {
+            theApp.gPhysics = !theApp.gPhysics;
+        }
+    }
 }
 
 int main(int numArgs, char* args[])
@@ -221,6 +301,10 @@ int main(int numArgs, char* args[])
         int     width, height;
         bool    running = true;
         bool forceCPU = false;
+
+        theApp.gPhysics = true;
+        theApp.gDestructionEnabled = true;
+        useBullets();
 
         for(int i = 0; i < numArgs; i++)
         {
@@ -305,16 +389,6 @@ int main(int numArgs, char* args[])
 
         renderer->setDimensions((GLdouble)width, (GLdouble)height);
 
-        SceneNodePtr cameraPtr(new FloatingCamera(&theApp, VP_RENDER_GEOMETRY, 90.0f, 1.0f, 1000.0f));
-        ((FloatingCamera*)cameraPtr.get())->pitch(1.5f);
-        ((FloatingCamera*)cameraPtr.get())->yaw(3.2f);
-        ((FloatingCamera*)cameraPtr.get())->fly(-20.0f);
-        ((FloatingCamera*)cameraPtr.get())->walk(-30.0f);
-
-        renderer->setCamera((CameraNode*)cameraPtr.get());
-
-        sceneGraph->getRoot()->addChild(cameraPtr);
-
         //End app setup
 
         glEnable(GL_TEXTURE_3D);
@@ -334,22 +408,13 @@ int main(int numArgs, char* args[])
         theApp.gDefaultMaterial = MaterialPtr(new Material());
         theApp.gBulletMaterial = MaterialPtr(new Material());
         theApp.gBulletMaterial->setDensity(20.0f);
-        theApp.gBulletMaterial->setPressureLimit(1000000.0f);
+        theApp.gBulletMaterial->setStrength(0.9, 1.1);
+        theApp.gBulletMaterial->setPressureLimit(100000000000.0f);
+        theApp.gBulletMaterial->setStressLimit(100000000000.0f);
+        theApp.gBulletMaterial->setBondStrength(10.0f);
+        theApp.gBulletMaterial->setColor(0.0f, 0.0f, 0.0f);
 
-        { //Need to scope the shared pointer so matternodes can be deleted properly.
-            SceneNodePtr matterNode1(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/ground.vox"));
-            ((MatterNode*)matterNode1.get())->setOffset(0.0f, 0.0f, 20.0f);
-            sceneGraph->getRoot()->addChild(matterNode1);
-
-            SceneNodePtr matterNode3(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/ledge.vox"));
-            ((MatterNode*)matterNode3.get())->setOffset(50.0f, 50.0f, 20.0f);
-            sceneGraph->getRoot()->addChild(matterNode3);
-
-            //SceneNodePtr matterNode2(new MatterNode(&theApp, VP_RENDER_GEOMETRY, theApp.gDefaultMaterial, false, "vox/donut.vox"));
-            //((MatterNode*)matterNode2.get())->setOffset(15.0f, 15.0f, 200.0f);
-            //sceneGraph->getRoot()->addChild(matterNode2);
-
-        }
+        buildScene();
 
         unsigned int frames = 0;
         double lastFPSUpdate = 0.0;

@@ -6,6 +6,10 @@
 
 class App;
 
+/*
+    Class: DestructionEngine
+    Manages desturction
+*/
 class DestructionEngine
 {
     public:
@@ -14,8 +18,8 @@ class DestructionEngine
 
         void processSet(const MatterCollisionSet& set);
         void processCollision(const MatterCollision& collision);
-        void transferEnergy(EnergyGrid& first, EnergyGrid& second);
         void buildBridges(unsigned int firstIndex, unsigned int secondIndex, const MatterCollision& collision);
+        void transferEnergy(EnergyGrid& first, EnergyGrid& second);
 
         void checkForSeparation();
 

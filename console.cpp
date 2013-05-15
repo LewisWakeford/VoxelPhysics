@@ -34,3 +34,23 @@ void consoleClear()
 {
     std::cout << std::string(100, '\n');
 }
+
+void debugPrint(bool notMuted, const std::string& message)
+{
+    if(notMuted) std::cout << "D: " << message << std::endl;
+}
+
+void debugPrint(bool notMuted, const std::string& message, int value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
+}
+
+void debugPrint(bool notMuted, const std::string& message, float value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
+}
+
+void debugPrint(bool notMuted, const std::string& message, double value)
+{
+    if(notMuted) std::cout << "D: " << message << value << std::endl;
+}

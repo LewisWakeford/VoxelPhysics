@@ -1,0 +1,1 @@
+start VoxelPhysics.exe -forceCPU

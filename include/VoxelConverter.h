@@ -17,6 +17,8 @@ class MatterNode;
 
 class ShaderProgram;
 
+const unsigned int MAX_CELLS = 29791;
+
 class RegularCellData
 {
     public:
@@ -78,8 +80,8 @@ class VoxelConverter
         GLboolean mUseCPU;
 
         void convertGPU(MatterNode* matter);
-        void listTrianglesGPU();
-        void genVerticesGPU(Buffer* outputBuffer);
+        void listTrianglesGPU(unsigned int numCells);
+        void genVerticesGPU(unsigned int numCells, Buffer* outputBuffer);
 
         void convertCPU(MatterNode* matter);
         void listTrianglesCPU(Matter* matter);
@@ -97,6 +99,7 @@ class VoxelConverter
 
         GLfloat mVoxelSpacing;
         GLfloat mHalfVoxel;
+
 
         GLfloat mXOffset;
         GLfloat mYOffset;

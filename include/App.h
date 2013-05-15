@@ -13,6 +13,10 @@ class DestructionEngine;
 
 #include <string>
 
+/*
+    Class: App
+    Manages a lot of global... stuff.
+*/
 class App
 {
     public:
@@ -69,6 +73,11 @@ class App
         GLboolean gRollLeft;
         GLboolean gRollRight;
         GLboolean gShoot;
+        GLboolean gDestructionEnabled;
+        GLboolean gPhysics;
+
+        std::string gBulletFile;
+        float gBulletForce;
 
         MaterialPtr gBulletMaterial;
         MaterialPtr gDefaultMaterial;
@@ -79,12 +88,12 @@ class App
         static bool DEBUG_VOX_DECOMP;
         static bool DEBUG_BREAKING;
         static bool DEBUG_BRIDGES;
-
+/* Moved to Global
         void debugPrint(bool notMuted, const std::string& message);
         void debugPrint(bool notMuted, const std::string& message, int value);
         void debugPrint(bool notMuted, const std::string& message, float value);
         void debugPrint(bool notMuted, const std::string& message, double value);
-
+*/
 
     protected:
 

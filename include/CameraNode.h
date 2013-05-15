@@ -4,6 +4,11 @@
 #include "SceneNode.h"
 #include "Vector3.h"
 
+/*
+    Class: CameraNode
+    Posistions the camera.
+*/
+
 class CameraNode : public SceneNode
 {
     public:

@@ -38,7 +38,8 @@ void Vector3f::normalize()
 Vector3f Vector3f::normalized() const
 {
     float mag = sqrtf((x * x) + (y*y) + (z*z));
-    return Vector3f(x/mag, y/mag, z/mag);
+    if (mag == 0) return Vector3f(0.0f, 0.0f, 0.0f);
+    else return Vector3f(x/mag, y/mag, z/mag);
 }
 
 float Vector3f::dot(const Vector3f& other) const
@@ -134,6 +135,13 @@ void Vector3f::operator += (const Vector3f& other)
     x += other.x;
     y += other.y;
     z += other.z;
+}
+
+void Vector3f:: operator = (const Vector3f& other)
+{
+    x = other.x;
+    y = other.y;
+    z = other.z;
 }
 
 Vector3f Vector3f::operator * (const float& ratio) const

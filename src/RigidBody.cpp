@@ -5,6 +5,7 @@
 #include "Matter.h"
 #include "VoxelField.h"
 #include "MatterMotionState.h"
+#include "MatterNode.h"
 
 #include "console.h"
 
@@ -16,6 +17,7 @@ RigidBody::RigidBody(App* app)
     mTransformOutdated = true;
     mInverseTransformOutdated = true;
     mPreparedTransform = 0;
+    mPreparedVelocity = btVector3(0.0f, 0.0f, 0.0f);
 }
 
 RigidBody::~RigidBody()
@@ -73,9 +75,10 @@ void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHull
 
     btDefaultMotionState* rbMotionState = new MatterMotionState(rbTransform);
     btRigidBody::btRigidBodyConstructionInfo rbInfo(rbMass,rbMotionState, rbShape,localInertia);
-    rbInfo.m_restitution = 0.5f;
-    rbInfo.m_friction = 2.0f;
+    rbInfo.m_restitution = matter->getMatter()->getMaterial()->getRestitution();
+    rbInfo.m_friction = matter->getMatter()->getMaterial()->getFriction();
     btRigidBody* body = new btRigidBody(rbInfo);
+    body->setLinearVelocity(mPreparedVelocity);
 
     body->setUserPointer(matter);
 
@@ -174,9 +177,13 @@ void RigidBody::applyForce(const Vector3f& force)
 
 void RigidBody::setVelocity(const Vector3f& velocity)
 {
-    if(mRigidBody)
+    btVector3 btVelocity(velocity.x, velocity.y, velocity.z);
+    if(mRigidBody) //Change current rigidbodies speed.
     {
-        btVector3 btVelocity(velocity.x, velocity.y, velocity.z);
         mRigidBody->setLinearVelocity(btVelocity);
+    }
+    else
+    {
+        mPreparedVelocity = btVelocity;
     }
 }

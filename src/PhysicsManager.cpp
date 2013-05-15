@@ -114,7 +114,7 @@ PhysicsManager::~PhysicsManager()
 
 void PhysicsManager::simulate(double deltaTime)
 {
-    if(mPhysics) mDynamicsWorld->stepSimulation(deltaTime, 7);
+    if(mPhysics && mApp->gPhysics) mDynamicsWorld->stepSimulation(deltaTime, 7);
 }
 
 unsigned int PhysicsManager::addRigidBody(btRigidBody* rigidbody, btCollisionShape* shape)
@@ -194,7 +194,8 @@ void PhysicsManager::postTickCallback(btDynamicsWorld *world, btScalar timeStep)
                     {
                         btVector3 velA = matterA->getLinearVelocity();
                         btVector3 velB = matterB->getLinearVelocity();
-//mPhysics = false;
+
+                        if(!mApp->gDestructionEnabled) mPhysics = false;
 
                         //Build collision object.
                         MatterCollision collision(matterA, matterB, velA, velB, pt, timeStep);

@@ -130,7 +130,7 @@ void Matter::addVoxelVertex(unsigned int hullIndex, Vector3f vertex)
 
 void Matter::addPressureVertex(float pressure, float stress, float strength, Vector3f vertex)
 {
-
+/*
     Vector3f cOfm = mVoxelField.getCenterOfMass();
     m_debug_PressureVertexArray.push_back(vertex.x - cOfm.x);
     m_debug_PressureVertexArray.push_back(vertex.y - cOfm.y);
@@ -150,7 +150,7 @@ void Matter::addPressureVertex(float pressure, float stress, float strength, Vec
 
     m_debug_PressureVertexArray.push_back(red); //High pressure = Red.
     m_debug_PressureVertexArray.push_back(green); //Low pressure = Green.
-    m_debug_PressureVertexArray.push_back(blue);
+    m_debug_PressureVertexArray.push_back(blue);*/
 
 }
 

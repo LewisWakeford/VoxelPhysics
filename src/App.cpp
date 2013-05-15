@@ -12,7 +12,7 @@ bool App::DEBUG_PHYSICS = false;
 bool App::DEBUG_INTERAL_SIMULATION = false;
 bool App::DEBUG_MARCHING_CUBES = false;
 bool App::DEBUG_VOX_DECOMP = false;
-bool App::DEBUG_BREAKING = false;
+bool App::DEBUG_BREAKING = true;
 bool App::DEBUG_BRIDGES = false;
 
 App::App()
@@ -24,7 +24,7 @@ App::~App()
 {
     delete mRenderer;
     delete mResourceManager;
-    delete mSceneGraph; //Must delete before physics manager.
+    delete mSceneGraph; //Must delete before physics manager to ensure all rigid bodies get deleted.
     delete mPhysicsManager;
     delete mVoxelConverter;
     delete mDestructionEngine;
@@ -36,7 +36,7 @@ void App::init()
     mLastFrameTime = mLastTickTime;
     mLastSimulationTime = glfwGetTime();
 
-     mRenderer = new Renderer();
+     mRenderer = new Renderer(this);
     mResourceManager = new ResourceManager();
     mPhysicsManager = new PhysicsManager(this);
     mSceneGraph = new SceneGraph();
@@ -177,6 +177,7 @@ void App::clockFrame()
     mFrameCount++;
 }
 
+/*
 void App::debugPrint(bool notMuted, const std::string& message)
 {
     if(notMuted) std::cout << "D: " << message << std::endl;
@@ -196,3 +197,4 @@ void App::debugPrint(bool notMuted, const std::string& message, double value)
 {
     if(notMuted) std::cout << "D: " << message << value << std::endl;
 }
+*/

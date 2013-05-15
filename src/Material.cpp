@@ -5,19 +5,23 @@ Material::Material()
     //Default Properties
     mColor[0] = 1.0f; mColor[1] = 1.0f; mColor[2] = 1.0f; //Red
     mDensity = 5.0f;
-    mPressureLimit =    10000.0f;
+    mPressureLimit =    100000.0f;
+
     mPressureGrouping = 5000.0f;
     mDebrisPressureLimit = 10000.0f;
 
-    mStressLimit =      12500.0f;
-    mStressGrouping = 10000.0f;
-    mDebrisStressLimit = 25000.0f;
+    mStressLimit =      5000.0f;
+    mStressGrouping = 50000.0f;
+    mDebrisStressLimit = 100000.0f;
 
+    mBondStrength = 1.0f;
     mMinStrength = 0.5f;
     mMaxStrength = 1.5f;
-    mRandomChance = 0.5f;
     mTrivialThreshold = 100000.0f;
     mTrivialMass = 9; //Minimum number of voxels to be considered complex enough for destruction.
+
+    mFriction = 2.0f;
+    mRestitution = 0.5f;
 }
 
 Material::~Material()
@@ -74,9 +78,19 @@ float Material::getMaxStrength() const
     return mMaxStrength;
 }
 
-float Material::getRandomChance() const
+float Material::getBondStrength() const
 {
-    return mRandomChance;
+    return mBondStrength;
+}
+
+float Material::getFriction() const
+{
+    return mFriction;
+}
+
+float Material::getRestitution() const
+{
+    return mRestitution;
 }
 
 bool Material::nonTrivial(float energy) const
@@ -97,4 +111,27 @@ void Material::setDensity(float density)
 void Material::setPressureLimit(float limit)
 {
     mPressureLimit = limit;
+}
+
+void Material::setStressLimit(float limit)
+{
+    mStressLimit = limit;
+}
+
+void Material::setBondStrength(float bondStrength)
+{
+    mBondStrength = bondStrength;
+}
+
+void Material::setStrength(float min, float max)
+{
+    mMinStrength = min;
+    mMaxStrength = max;
+}
+
+void Material::setColor(float red, float green, float blue)
+{
+    mColor[0] = red;
+    mColor[1] = green;
+    mColor[2] = blue;
 }

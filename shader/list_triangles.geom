@@ -23,7 +23,8 @@ flat out uint gTriangle;
 void main()
 {
 
-	for (int i = 0; i < vVoxel[0].triangleCount; i++)
+	for (int i = 0; i < 5;//vVoxel[0].triangleCount; 
+	i++)
 	{	
 		gTriangle = vVoxel[0].triangles[i];
 		//If all edges have number 12, then this triangle does not exist.

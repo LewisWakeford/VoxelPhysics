@@ -917,3 +917,7 @@ Still to do:
 
 06/05/2013
 Remember to base bullet friction and restitution values off of material properties.
+
+08/05/2013
+Still need to base bullet friction and restitution values off of material proerties.
+Also, might need to record matrix from each rigid body, before collision.

@@ -23,7 +23,7 @@ class Buffer
 
         void init(); //Generate the buffer if necessary, clear if already inited.
         void setData(void* dataPointer, unsigned int itemCount, unsigned int itemSize, unsigned int bufferType); //Set the buffer data.
-        void zeroData(unsigned int itemCount, unsigned int itemSize, unsigned int bufferType);
+        void zeroData(unsigned int itemCount, unsigned int itemSize, unsigned int bufferType); //Create a blank buffer.
         void setArray(unsigned int arrayName, unsigned int elementsPerVertex, unsigned int elementType, unsigned int offset, unsigned int vertexAttrib); //Create a sub array in this buffer.
         void clearArrays();
 
@@ -39,11 +39,6 @@ class Buffer
         void render();
 
         void bindArrays(); //Bind all arrrays to their correct targets.
-        //void bindVertexArray();
-        //void bindNormalArray();
-        //void bindTexCoordArray();
-        //void bindColorArray();
-        //void bindCustomArrays();
 
         unsigned int getName();
 

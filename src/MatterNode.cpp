@@ -90,5 +90,5 @@ void MatterNode::setInitialForce(const Vector3f& force)
 void MatterNode::setEnergy(const Vector3f& energyVector)
 {
     float speed = sqrtf((2 * energyVector.length())/mMatter.getMass());
-    mMatter.getRigidBody()->setVelocity(energyVector.normalized() * speed);
+    setInitialForce(energyVector.normalized() * speed * mMatter.getMass());
 }

@@ -116,14 +116,11 @@ float EnergyGrid::getStrength(int x, int y, int z)
         Vector3i adjanctCoord = coord + directionVector;
         if(getMatter()->getVoxelField()->get(adjanctCoord.x, adjanctCoord.y, adjanctCoord.z) == 1) adjanctVoxels++;
     }
-    bool random = rand100() > getMatter()->getMaterial()->getRandomChance()*100;
-    float strength = 1.0f;
-    if(random)
-    {
-        strength = (float(rand100())/100.0f*(getMatter()->getMaterial()->getMaxStrength() - getMatter()->getMaterial()->getMinStrength()))
-                    + getMatter()->getMaterial()->getMinStrength();
-    }
-    return strength;
+
+    float strength = (float(rand100())/100.0f*(getMatter()->getMaterial()->getMaxStrength() - getMatter()->getMaterial()->getMinStrength()))
+                + getMatter()->getMaterial()->getMinStrength();
+
+    return strength * (adjanctVoxels * getMatter()->getMaterial()->getBondStrength());
 }
 
 void EnergyGrid::setEnergy(const Vector3f& energy)
@@ -266,30 +263,6 @@ void EnergyGrid::directTransfer()
     }
 }
 
-//There is an issue I need to solve with indirect transfer:
-//The problem is that energy might "fall off" but all the voxels in the matter are already energised.
-//I need to rethink this bit...
-
-/*
-    The current method should work for all recieving matters? If they have less energy than the projector, yes.
-    What about otherwise? Meh, should be okay.
-    So the issue is only when a projector is a weird shape and not all of it's energy can transfer via the bridges.
-    It may be worth having a second phase for this then... Basically nodes with left over energy need to do indirect transfer until they get to a bridge.
-    So build a seperate transfer graph going from nodes with excess energy in every direction until they hit some bridge(s).
-    At that point do pullEnergy on each bridge node. Then project the same amount of energy along the bridge(s).
-
-    ACTUALLY: Go the other way, start with bridges and then expand until you find overflowing nodes, then suck energy back.
-
-    That's a bit innaccurate still, so maybe something simpler when doing the direct transfer, IE as soon as energy falls off it gets spread somewhere else.
-
-    Nah. Start from bridges and work backwards. However, if any snappage/breakage occurs, the graph may need fixing. This is a feature that should be in the regular indirect transfer too.
-    Just store the "generation" of a node as the graph is built, when a node ends up with no feeders, it checks the adjanct nodes. The ones with the joint lowest generation are new feeders.
-    If all are broken then the isolation of the node is fine and that's how it should be.
-
-    Also need a way to recover energy if a voxel snaps. Maybe just recover it all? Yeah lets do that.
-
-    NEW VERSION: Only 1 feeder per voxel, the feeder from the most "stressful" direction is the one used.
-*/
 void EnergyGrid::indirectTransfer()
 {
     double startOfTransfer = glfwGetTime();
@@ -349,6 +322,8 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, int
 
     bool intersectValid = true;
 
+    float freeEnergyPerVoxel = mStartingEnergyPerVoxel - mEnergyPerVoxel;
+
     while(intersectValid)
     {
         //NOTE: We can assume that the line is not parrallel to the plane as we change the plane we intersect with based on direction of energy.
@@ -391,8 +366,8 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, int
         if(validCoord(closestVoxel))
         {
             VoxelData& voxel = mVoxelData[closestVoxel.x][closestVoxel.y][closestVoxel.z];
-            float freeEnergyInVoxel = (voxel.getEnergy(mIsReciever)-mEnergyPerVoxel);
-            energyPool += freeEnergyInVoxel;
+            //float freeEnergyInVoxel = (voxel.getEnergy(mIsReciever)-mEnergyPerVoxel);
+            energyPool += freeEnergyPerVoxel;
             voxel.setEnergy(mIsReciever, mEnergyPerVoxel);
             voxelsInPath.push_back(closestVoxel);
             voxelDistance.push_back(maxDistance);
@@ -413,13 +388,14 @@ void EnergyGrid::transferInternalEnergyThroughBridge(std::unordered_map<int, int
     //Apply pressure to voxels in path.
     for(unsigned int i = 0; i < voxelsInPath.size(); i++)
     {
-        int pressuringLayers = 1 + ((maxDistance - voxelDistance[i])*2); //How many layers of voxels are applying pressure to this one.
-        float pressure = pressuringLayers * (mStartingEnergyPerVoxel-mEnergyPerVoxel);
+        //int pressuringLayers = 1 + ((maxDistance - voxelDistance[i])*2); //How many layers of voxels are applying pressure to this one.
+        float pressure = ((maxDistance - voxelDistance[i] - 1) * freeEnergyPerVoxel) + ((maxDistance - voxelDistance[i] - 2) * freeEnergyPerVoxel);
         pressureVoxel(voxelsInPath[i], pressure);
     }
 
     double internalDone = glfwGetTime();
     //std::cout << "Int Transfer: " << (internalDone - internalStart) << std::endl;
+
 
     Vector3i bridgePoint3i = getBridgeVector(bridgeIterator->second);
     mCollisionPartner->transferExternalEnergyTo(bridgePoint3i, energyPool);
@@ -518,7 +494,8 @@ void EnergyGrid::transferExternalEnergyTo(const Vector3i& bridgePoint, float ene
     //Apply pressure to voxels in path.
     for(unsigned int i = 0; i < voxelsInPath.size(); i++)
     {
-        float pressure = (2*energy) - ((2 * voxelDistance[i] + 1) * energyAbsorbedPerVoxel);
+        float pressure = (energy - ((voxelDistance[i]) * energyAbsorbedPerVoxel)) +
+                        (energy - ((voxelDistance[i]+1) * energyAbsorbedPerVoxel));
         pressureVoxel(voxelsInPath[i], pressure);
     }
 }
@@ -722,7 +699,9 @@ void EnergyGrid::transferEnergy(Vector3i sourceVoxel, char direction, float ener
 }
 */
 
+//DEPRECATED
 //Used in external transfer, sucks out some free energy
+/*
 float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel, float energy)
 {
     if(validCoord(sourceVoxel))
@@ -747,7 +726,7 @@ float EnergyGrid::transferEnergyFrom(Vector3i sourceVoxel, float energy)
         }
     }
     return 0.0f;
-}
+}*/
 
 //Returns the key to the bridge.
 //Which is the x-y-z coords compressed into an int.
@@ -811,6 +790,7 @@ void EnergyGrid::transferEnergyTo(Vector3i targetVoxel, char direction, float en
     */
 }
 
+/* DEPRECATED
 void EnergyGrid::directTransferTo(Vector3i targetVoxel, float energy)
 {
     if(validCoord(targetVoxel))
@@ -821,7 +801,7 @@ void EnergyGrid::directTransferTo(Vector3i targetVoxel, float energy)
         pressureVoxel(targetVoxel, energy);
     }
 }
-
+*/
 
 
 EnergyGrid::eDirection EnergyGrid::getReverseDirection(char direction)
@@ -925,6 +905,7 @@ Vector3i EnergyGrid::getDirectionVector(char direction)
     return mDirectionVectors[direction];
 }
 
+/* DEPRECATED
 bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction)
 {
 
@@ -1055,7 +1036,7 @@ bool EnergyGrid::pullEnergy(unsigned int nodeIndex, float energy, char direction
         return false; //No longer valid for transfer.
     }
     else return true;
-}
+}*/
 
 void EnergyGrid::pressureVoxel(Vector3i voxelCoord, float pressure)
 {
@@ -1096,12 +1077,14 @@ void EnergyGrid::stressVoxel(Vector3i voxelCoord, float stress)
     Snapped voxels are added to the shape, but cannot expand any further.
     Broken voxels are not added to the shape.
 */
-bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray, std::vector<float>& shapesTotalEnergyR, std::vector<float>& shapesTotalEnergyP)
+bool EnergyGrid::separate(std::vector<SubShape>& shapeArray)
 {
     if(!mDestructionOccured && !mSnappingOccured)
     return false;
 
     //std::cout << "Starting Breakage: ";
+
+    shapeArray.clear();
 
     //Similar to building the transfer graph, we need to have a map and a vector
     bool noShapesLeft = false;
@@ -1114,7 +1097,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray, std::vector<
 
 
     //Similar to building the transfer graph, we need to have a map.
-    //The map stores a 32 bit int, each bit is a boolean that represents owner ship of a shape.
+    //The map stores a 32 bit int, each bit is a boolean that represents ownership of a shape.
     std::vector<std::vector<std::vector<unsigned int>>> map(32, std::vector<std::vector<unsigned int>>(32, std::vector<unsigned int>(32, 0)));
     std::vector<std::vector<Vector3i>> voxelsInShapes;
 
@@ -1125,7 +1108,7 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray, std::vector<
     while(!noShapesLeft)
     {
         voxelsInShapes.push_back(std::vector<Vector3i>());
-
+        shapeArray.push_back(SubShape());
 
         float totalEnergyRecieving = 0.0f; //Total energy in recieveing direction.
         float totalEnergyProjecting = 0.0f; //Total energy in projecting direction.
@@ -1243,8 +1226,8 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray, std::vector<
             //std::cout << newSize << std::endl;
         }
 
-        shapesTotalEnergyP.push_back(totalEnergyProjecting);
-        shapesTotalEnergyR.push_back(totalEnergyRecieving);
+        shapeArray[shapeCount].mEnergyProjectedTotal = totalEnergyProjecting;
+        shapeArray[shapeCount].mEnergyRecievedTotal = totalEnergyRecieving;
 
         //Shift 1 bit to left.
         shapeNumber << 1;
@@ -1264,16 +1247,14 @@ bool EnergyGrid::separate(std::vector<VoxelField>& voxelFieldArray, std::vector<
     if(shapeCount < 2 && voxelsInShapes[0].size() == totalVoxels) return false;
     else
     {
-        voxelFieldArray.clear();
         for(unsigned int i = 0; i < shapeCount; i++)
         {
-            voxelFieldArray.push_back(VoxelField());
-            voxelFieldArray.back().buildStart();
+            shapeArray[i].mVoxelField.buildStart();
             for(unsigned int k = 0; k < voxelsInShapes[i].size(); k++)
             {
-                voxelFieldArray[i].buildSetVoxel(voxelsInShapes[i][k], 1);
+                shapeArray[i].mVoxelField.buildSetVoxel(voxelsInShapes[i][k], 1);
             }
-            voxelFieldArray.back().buildEnd();
+            shapeArray[i].mVoxelField.buildEnd();
         }
         return true;
     }

@@ -6,10 +6,12 @@
 #include "Buffer.h"
 #include "Matter.h"
 #include "console.h"
+#include "App.h"
 
-Renderer::Renderer()
+Renderer::Renderer(App* app)
 {
     mCameraMatrix = Matrix4D::createIdentity();
+    mApp = app;
 }
 
 Renderer::~Renderer()
@@ -136,14 +138,8 @@ GLboolean Renderer::renderMatter(Matter& matter)
         glMultMatrixf(values);
     }
 
-    if(matter.hasCollided())
-    {
-        glColor3fv(matter.getColorPtr());
-    }
-    else
-    {
-        glColor3f(1.0f, 1.0f, 1.0f);
-    }
+    glColor3fv(matter.getColorPtr());
+
     //
     //glColor3f(1.0f, 1.0f, 1.0f);
     glMultMatrixf(currentMatrix().getValues());
@@ -151,7 +147,7 @@ GLboolean Renderer::renderMatter(Matter& matter)
     matter.getVertexShell()->getBuffer()->render(); errorCheck(__LINE__, __FILE__);
     //matter.debugRenderVoxels();
     //matter.debugRenderHulls();
-    //matter.debugRenderPressure();
+    if(!mApp->gDestructionEnabled)matter.debugRenderPressure();
 }
 
 void Renderer::render()

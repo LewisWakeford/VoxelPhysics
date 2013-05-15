@@ -787,7 +787,7 @@ GLuint VoxelConverter::getEdgeNumber(GLuint cornerIndices)
 
 void VoxelConverter::convertCPU(MatterNode* matterNode)
 {
-    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with CPU.");
+    debugPrint(DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with CPU.");
 
     matterNode->getMatter()->beginProcessing();
 
@@ -800,12 +800,12 @@ void VoxelConverter::convertCPU(MatterNode* matterNode)
     decomp.decompose(matterNode->getMatter()->getVoxelField());
     matterNode->getMatter()->setupHulls();
     double decomposed = glfwGetTime();
-    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
+    debugPrint(DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
     listTrianglesCPU(matterNode->getMatter());
     genVerticesCPU(matterNode->getMatter());
     double generated = glfwGetTime();
-     mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
-    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
+    debugPrint(DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
+    debugPrint(DEBUG_VOX_DECOMP, "Time to gen: ", (generated - decomposed));
     matterNode->getMatter()->endProcessing(matterNode, true);
 
 }
@@ -1305,8 +1305,8 @@ void VoxelConverter::genVerticesCPU(Matter* matter)
 
 void VoxelConverter::convertGPU(MatterNode* matterNode)
 {
-    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with GPU.");
-    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Printing 3D volume texture.");
+    debugPrint(DEBUG_MARCHING_CUBES, "Attempting to convert voxel field with GPU.");
+    debugPrint(DEBUG_MARCHING_CUBES, "Printing 3D volume texture.");
 
     glEnable(GL_TEXTURE_3D);
 
@@ -1331,29 +1331,24 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
     processHulls(matterNode->getMatter());
 
     double decomposed = glfwGetTime();
-    mApp->debugPrint(App::DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
+    debugPrint(DEBUG_VOX_DECOMP, "Time to decomp: ", (decomposed - start));
 
-    //Reset triangle buffer
-    glDeleteBuffers(1, &mTriangleBuffer);
-    glGenBuffers(1, &mTriangleBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 29791*5*sizeof(GLuint), 0, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    listTrianglesGPU();    errorCheck(__LINE__, __FILE__);
+
+    unsigned int numVoxels = matterNode->getMatter()->getVoxelField()->getNumVoxels();
+    unsigned int numCells = 8 * numVoxels;
+    if(numCells > MAX_CELLS) numCells = MAX_CELLS;
+
+    listTrianglesGPU(numCells);    errorCheck(__LINE__, __FILE__);
 
     //Create a new buffer for the GPU to write directly to.
     Buffer* vertexBuffer = new Buffer();
-    vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
-    vertexBuffer->bind();
-    vertexBuffer->zeroData((29791*5), sizeof(GLfloat)*6, GL_STATIC_COPY);
-    vertexBuffer->unbind();
 
-    genVerticesGPU(vertexBuffer);    errorCheck(__LINE__, __FILE__);
+    genVerticesGPU(numCells, vertexBuffer);    errorCheck(__LINE__, __FILE__);
 
     double generated = glfwGetTime();
-    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
-    mApp->debugPrint(App::DEBUG_MARCHING_CUBES, "Time to gen: ", (generated - decomposed));
+    debugPrint(DEBUG_MARCHING_CUBES, "Number of voxels: ", (int)matterNode->getMatter()->getVoxelField()->getNumVoxels());
+    debugPrint(DEBUG_MARCHING_CUBES, "Time to gen: ", (generated - decomposed));
 
     matterNode->getMatter()->getVertexShell()->setBuffer(vertexBuffer);
     matterNode->getMatter()->endProcessing(matterNode, false);
@@ -1379,8 +1374,15 @@ void VoxelConverter::convertGPU(MatterNode* matterNode)
 
 }
 
-void VoxelConverter::listTrianglesGPU()
+void VoxelConverter::listTrianglesGPU(unsigned int numCells)
 {
+
+    //Reset triangle buffer
+    glDeleteBuffers(1, &mTriangleBuffer);
+    glGenBuffers(1, &mTriangleBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mTriangleBuffer);
+    glBufferData(GL_ARRAY_BUFFER, numCells*5*sizeof(GLuint), 0, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //Use list triangles shader
     mListTriangles.use();
@@ -1408,7 +1410,7 @@ void VoxelConverter::listTrianglesGPU()
     //Transform Feedback
     glBeginTransformFeedback(GL_POINTS);
 
-        glDrawArrays(GL_POINTS, 0, 29791);
+        glDrawArrays(GL_POINTS, 0, numCells);
 
     glEndTransformFeedback();
 
@@ -1418,8 +1420,15 @@ void VoxelConverter::listTrianglesGPU()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
+void VoxelConverter::genVerticesGPU(unsigned int numCells, Buffer* vertexBuffer)
 {
+
+    //Initialise Vertex Buffer
+    vertexBuffer->init();    errorCheck(__LINE__, __FILE__);
+    vertexBuffer->bind();
+    vertexBuffer->zeroData((numCells*5*3), sizeof(GLfloat)*6, GL_STATIC_COPY);
+    vertexBuffer->unbind();
+
     //Use gen vertices shader
     mGenVertices.use();     errorCheck(__LINE__, __FILE__);
 
@@ -1452,7 +1461,7 @@ void VoxelConverter::genVerticesGPU(Buffer* vertexBuffer)
     //Transform Feedback
     glBeginTransformFeedback(GL_POINTS);     errorCheck(__LINE__, __FILE__);
 
-        glDrawArrays(GL_POINTS, 0, 29791*5);     errorCheck(__LINE__, __FILE__);
+        glDrawArrays(GL_POINTS, 0, numCells*5);     errorCheck(__LINE__, __FILE__);
 
     glEndTransformFeedback();     errorCheck(__LINE__, __FILE__);
 

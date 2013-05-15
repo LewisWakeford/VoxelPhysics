@@ -69,7 +69,6 @@
 		<Unit filename="include/Buffer.h" />
 		<Unit filename="include/CameraNode.h" />
 		<Unit filename="include/DestructionEngine.h" />
-		<Unit filename="include/DrawCall.h" />
 		<Unit filename="include/EnergyGrid.h" />
 		<Unit filename="include/FloatingCamera.h" />
 		<Unit filename="include/Material.h" />

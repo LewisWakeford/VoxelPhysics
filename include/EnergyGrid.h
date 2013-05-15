@@ -12,10 +12,31 @@
     During the simulation of a collision, each Matter is represented by an energy grid.
 */
 
-//TODO: We need to track energy separatly for each collision set.
-
 class MatterNode;
 class Matter;
+
+/*
+    Class: SubShape
+    Represents a sub-shape created during fragmentation of a larger objects.
+*/
+class SubShape
+{
+    public:
+        SubShape()
+        {
+
+        }
+        virtual ~SubShape()
+        {
+
+        }
+
+        VoxelField mVoxelField;
+        Vector3f mEnergyProjectedCofM;
+        float mEnergyProjectedTotal;
+        Vector3f mEnergyRecievedCofM;
+        float mEnergyRecievedTotal;
+};
 
 class EnergyGrid
 {
@@ -52,7 +73,7 @@ class EnergyGrid
 
         //Check if the matter needs to be decomposed into smaller shapes due to breaking/snapping.
         //matterArray and numMatter are returns. Returns true if new matter shapes have been created.
-        bool separate(std::vector<VoxelField>& voxelFieldArray, std::vector<float>& shapesTotalEnergyR, std::vector<float>& shapesTotalEnergyP);
+        bool separate(std::vector<SubShape>& shapeArray);
 
         //Construct Pressure maps for the grids.
         void buildMaps(const Vector3f& otherEnergy);
@@ -153,6 +174,7 @@ class EnergyGrid
                     mFull = false;
                     mGraphed = false;
                     mDestroyed = false;
+                    mAnhilated = false;
                     mSnapped = false;
                 }
                 float mStrength;
@@ -163,6 +185,7 @@ class EnergyGrid
                 bool mGraphed; //Used in indirect transfer.
 
                 bool mDestroyed; //Caved into pressure.
+                bool mAnhilated; //Dusted
                 bool mSnapped; //Snapped under stress.
 
                 bool mFull;
