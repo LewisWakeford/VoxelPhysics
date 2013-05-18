@@ -11,6 +11,6 @@ Unfortunatly does not *quite* run in real time, but I plan to improve upon this 
 
 A runnable demo can be found here:
 
-	
+	https://www.dropbox.com/s/g1o0uwjetiikho2/VoxelPhysics_git.zip
 
 I apologise for the lack of documentation and support, I will be working on this over the next month or so.
