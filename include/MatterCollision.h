@@ -6,7 +6,7 @@
 
 
 /*
-    Encapsulates all data regarding a matter collision.
+    Encapsulates all information regarding a collision between two matter objects.
 */
 class MatterNode;
 class MatterCollision
@@ -20,9 +20,11 @@ class MatterCollision
 
         const btManifoldPoint& getPoint() const;
 
+        //Collision Normals
         const btVector3& getNormalOnFirst() const;
         const btVector3& getNormalOnSecond() const;
 
+        //Linear Velocity
         const btVector3& getVelocityFirst() const;
         const btVector3& getVelocitySecond() const;
 

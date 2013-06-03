@@ -7,9 +7,11 @@
 
 
 
-//Class: Mesh
-//Description: Stores the information needed to render a mesh. Meshes are stored in the resource manager, Nodes that use meshs reference them through the resource manager.
-//Multiple nodes with the same mesh do not need to store all the vertices again.
+/**
+    Class: Mesh
+    Description: Stores the information needed to render a mesh. Meshes are stored in the resource manager, Nodes that use meshs reference them through the resource manager.
+    Multiple nodes with the same mesh do not need to store all the vertices again.
+*/
 class Mesh
 {
     public:

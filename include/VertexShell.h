@@ -12,6 +12,11 @@
 class App;
 class Matter;
 
+
+/**
+    Class: VertexShell
+    Vertex Shell mesh for a Matter Object.
+*/
 class VertexShell
 {
     public:

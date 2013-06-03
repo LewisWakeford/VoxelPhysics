@@ -11,7 +11,11 @@ class App;
 
 /**
     Class: Matter
-    A Matter object links a voxel field with the vertex mesh generated from it.
+    Manages all the sub-parts of a Matter Object.
+    Including:
+        - The Voxel Field
+        - The Rigid Body
+        - The Vertex Shell
 */
 class Matter
 {
@@ -30,14 +34,19 @@ class Matter
         */
         void addVertex(GLfloat cX, GLfloat cY, GLfloat cZ, GLfloat nX, GLfloat nY, GLfloat nZ);
         void addVertex(Vector3f coordinates, Vector3f normal);
+
+        //Setup collision hulls for this Matter Object.
         void setupHulls();
 
-        void addHullVertex(unsigned int hullIndex, Vector3f vertex); //Add a hull point to be drawn in debug rendering
-        void addVoxelVertex(unsigned int hullIndex, Vector3f vertex); //Add a voxel point to be drawn in debug rendering
-        void addPressureVertex(float pressure, float stress, float strength, Vector3f vertex); //Add a pressure point to be drawn in debug rendering
-        void addEnergyBridge(Vector3i vertex, bool local);
+        void addHullVertex(unsigned int hullIndex, Vector3f vertex); //Add a hull point to be drawn in debug rendering.
+        void addVoxelVertex(unsigned int hullIndex, Vector3f vertex); //Add a voxel point to be drawn in debug rendering.
+        void addPressureVertex(float pressure, float stress, float strength, Vector3f vertex); //Add a pressure point to be drawn in debug rendering.
+        void addEnergyBridge(Vector3i vertex, bool local); //Add an energy bridge to be drawn in debug rendering.
 
+        //Signal that hulls have finished being processed.
         void hullsDone();
+
+        //Get the Bullet Physics convex hull.
         btConvexHullShape* getHull(int index);
 
         VoxelField* getVoxelField();
@@ -46,35 +55,47 @@ class Matter
 
         const GLfloat* getColorPtr() const;
 
+        //Import voxel field from a file.
         void import(const char* voxelFilename);
 
+        //Render voxels as dots.
         void debugRenderVoxels();
+
+        //Render convex hulls as dots.
         void debugRenderHulls();
 
-        void setupPressureRendering();
-        void clearPressureRendering();
-        void debugRenderPressure();
+        void setupPressureRendering(); //Initialise the buffers and other stuff needed to perform debug rendering.
+        void clearPressureRendering(); //Reset debug rendering data.
+        void debugRenderPressure(); //Render pressure data.
 
-        bool floats();
+        //bool floats();
 
-        void setCenterOfMass(Vector3 cOfM);
+        void setCenterOfMass(Vector3f cOfM);
 
-        void setStartingPosition(Vector3 offset);
+        //Set the starting position of the object once it starts being simulated.
+        //This must be called before creating the rigid body.
+        void setStartingPosition(Vector3f offset);
 
+        //Start feeding in vertices, for CPU processing.
         void beginProcessing();
+
+        //Stop feeding in vertices and create the rigidbody.
         void endProcessing(MatterNode* node, bool usingCPU);
 
         void setCollided(bool value);
         bool hasCollided();
 
+        //File used to create this object.
         std::string mFilename;
 
+        //Deprecated debug method
         void processCollision(const btVector3& point, const btVector3& normal, const btScalar force);
 
+        //Return unique ID of this matter object.
         unsigned int getID();
 
+        //Static method to get new unique ID's.
         static unsigned int gCurrentMatterID;
-
         static unsigned int getNewID();
 
         void setMaterial(MaterialPtr material);
@@ -82,6 +103,7 @@ class Matter
 
         float getMass();
 
+        //Check if the amount of energy can be considered trivial to this matter object.
         bool nonTrivial(float energy);
 
     protected:
@@ -92,10 +114,11 @@ class Matter
         VertexShell mVertexShell;
         RigidBody mRigidBody;
 
-        GLfloat mColor[3];
+        //GLfloat mColor[3];
 
         std::vector<btConvexHullShape*> mCollisionHulls;
 
+        //Debug rendering data
         std::vector<GLuint> m_debug_VoxelBufferIDs;
         std::vector<std::vector<GLfloat>> m_debug_VoxelVertexArrays;
 

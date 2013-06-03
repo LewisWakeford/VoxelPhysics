@@ -10,6 +10,10 @@
 class App;
 class MatterNode;
 
+/**
+    Class: RigidBody
+    Wraps a bullet physics rigid body.
+*/
 class RigidBody
 {
     public:
@@ -31,6 +35,8 @@ class RigidBody
 
         Matrix4D mTransform;
         Matrix4D mInvertedTransform;
+
+        //Starting transform and velocity.
         btTransform* mPreparedTransform;
         btVector3 mPreparedVelocity;
 

@@ -4,6 +4,12 @@
 #include "SceneNode.h"
 
 #include "Matter.h"
+
+/**
+    Class: MatterNode
+    A scenenode that manages a matter object.
+    TODO: Cleanup Matter and MatterNode classes, as the destinction betweeen them is blurry.
+*/
 class MatterNode : public SceneNode
 {
     public:
@@ -15,7 +21,7 @@ class MatterNode : public SceneNode
         void setOffset(Vector3 offset);
         void setLinearVelocity(btVector3 vel);
         void setMatrix(const Matrix4D& matrix);
-        void setInitialForce(const Vector3f& force);
+        void setInitialForce(const Vector3f& force); //Set the initial force the Matter Object will recieve when simulation begins.
         void setEnergy(const Vector3f& energyVector); //Convert energy back into velocity.
 
         btVector3 getLinearVelocity();

@@ -19,6 +19,9 @@ class ShaderProgram;
 
 const unsigned int MAX_CELLS = 29791;
 
+/**
+
+*/
 class RegularCellData
 {
     public:
@@ -137,9 +140,9 @@ class VoxelConverter
     /*
         The regularVertexData table gives the vertex locations for every one of the 256 possible
         cases in the modified Marching Cubes algorithm. Each 16-bit value also provides information
-        about whether a vertex can be reused from a neighboring cell. See Section 3.3 for details.
-        The low byte contains the indexes for the two endpoints of the edge on which the vertex lies,
-        as numbered in Figure 3.7. The high byte contains the vertex reuse data shown in Figure 3.8.
+        about whether a vertex can be reused from a neighboring cell.
+        The low byte contains the indexes for the two endpoints of the edge on which the vertex lies.
+        The high byte contains the vertex reuse data.
 
         We don't need the mapping code currently
     */

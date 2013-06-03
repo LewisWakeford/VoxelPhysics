@@ -3,6 +3,10 @@
 
 #include "Matter.h"
 
+/**
+    Class: MatterMotionState
+    MotionState that can rember if the world transform is outdated.
+*/
 class MatterMotionState : public btDefaultMotionState
 {
     public:

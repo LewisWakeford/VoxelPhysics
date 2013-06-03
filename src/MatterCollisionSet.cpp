@@ -12,8 +12,6 @@ MatterCollisionSet::~MatterCollisionSet()
     //dtor
 }
 
-
-//Return true if this collision belongs in this set.
 void MatterCollisionSet::offer(MatterCollision collision)
 {
     bool found = false;

@@ -1,7 +1,9 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-
+/**
+    Math helper classes.
+*/
 class Vector3f
 {
     public:

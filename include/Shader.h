@@ -7,6 +7,10 @@
 #include <fstream>
 #include <string>
 
+/**
+    Class: Shader
+    Wrapper class for an OpenGL shader.
+*/
 class Shader
 {
     public:

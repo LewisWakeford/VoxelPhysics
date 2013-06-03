@@ -31,13 +31,18 @@ class SubShape
 
         }
 
+        //Voxel field that represents this new shape.
         VoxelField mVoxelField;
-        Vector3f mEnergyProjectedCofM;
-        float mEnergyProjectedTotal;
-        Vector3f mEnergyRecievedCofM;
-        float mEnergyRecievedTotal;
+        Vector3f mEnergyProjectedCofM; //Unused currently
+        float mEnergyProjectedTotal; //Total amount of energy in the direction of the projecting Matter Object
+        Vector3f mEnergyRecievedCofM; //Unused currently
+        float mEnergyRecievedTotal; //Total amount of energy in the direction of the recieving Matter Object
 };
 
+/*
+    Class: EnergyGrid
+    Manages the stress, pressure and energy concentrations within a Matter Object.
+*/
 class EnergyGrid
 {
     public:
@@ -46,16 +51,18 @@ class EnergyGrid
 
         void setEnergyPerVoxel(float energy);
 
-        //Set the energy in each voxel
+        //Set the energy in each to energy/fullVoxels
         void setInitialEnergy(float energy);
+
+        //Return the Matter/MatterObject this energy represents
         Matter* getMatter();
         MatterNode* getMatterNode();
 
-        Vector3f getEnergyVector();
-        void setEnergy(const Vector3f& energyVector);
+        Vector3f getEnergyVector(); //Get the energy vector.
+        void setEnergyVector(const Vector3f& energyVector); //Set the energy vector.
         void setCollisionPartner(EnergyGrid* energyGrid);
 
-        Vector3f constructEnergyVector(float projectedEnergy, float recievingEnergy);
+        Vector3f constructEnergyVector(float projectedEnergy, float recievingEnergy); //Constuct an Energy Vector
 
         void setAsProjector();
         void setAsReciever();

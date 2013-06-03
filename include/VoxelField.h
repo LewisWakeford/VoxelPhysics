@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+//AABB to perform broadphase filtering when checking for bridges.
 class BoundingBox
 {
     public:
@@ -28,6 +29,7 @@ class BoundingBox
         float mMaxZ;
 };
 
+//
 class VoxelField
 {
     public:

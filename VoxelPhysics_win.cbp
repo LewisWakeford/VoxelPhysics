@@ -78,11 +78,8 @@
 		<Unit filename="include/MatterCollisionSet.h" />
 		<Unit filename="include/MatterMotionState.h" />
 		<Unit filename="include/MatterNode.h" />
-		<Unit filename="include/Mesh.h" />
-		<Unit filename="include/MeshNode.h" />
 		<Unit filename="include/PhysicsManager.h" />
 		<Unit filename="include/Renderer.h" />
-		<Unit filename="include/ResourceManager.h" />
 		<Unit filename="include/RigidBody.h" />
 		<Unit filename="include/SceneGraph.h" />
 		<Unit filename="include/SceneNode.h" />
@@ -101,7 +98,6 @@
 		<Unit filename="src/Buffer.cpp" />
 		<Unit filename="src/CameraNode.cpp" />
 		<Unit filename="src/DestructionEngine.cpp" />
-		<Unit filename="src/DrawCall.cpp" />
 		<Unit filename="src/EnergyGrid.cpp" />
 		<Unit filename="src/FloatingCamera.cpp" />
 		<Unit filename="src/Material.cpp" />

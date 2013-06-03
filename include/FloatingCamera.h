@@ -6,6 +6,10 @@
 const double RECHARGE_TIME = 1.0;
 const float BULLET_FORCE = -50000.0f;
 
+/*
+    Class: FloatingCamera
+    Subclass of CameraNode that moves due to the user's input and can shoot bullets.
+*/
 class FloatingCamera : public CameraNode
 {
     public:

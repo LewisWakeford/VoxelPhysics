@@ -15,7 +15,7 @@ class DestructionEngine;
 
 /*
     Class: App
-    Manages a lot of global... stuff.
+    Manages global state variables and core objects.
 */
 class App
 {
@@ -25,6 +25,7 @@ class App
 
         void init();
 
+        //Return subsystem objects.
         Renderer* getRenderer();
         PhysicsManager* getPhysicsManager();
         ResourceManager* getResourceManager();
@@ -37,12 +38,12 @@ class App
         void useCPUforVoxelConversion(GLboolean setting);
 
         //Set the frequnecy of ticks, in seconds.
-        void setTickFrequency(GLdouble tickFreq);
+        //void setTickFrequency(GLdouble tickFreq);
 
         //Set the frequency of frames, in seconds.
-        void setFrameFrequency(GLdouble frameFreq);
+        //void setFrameFrequency(GLdouble frameFreq);
 
-        //Register that simulation has started
+        //Register that a simulation tick has passed and update delta time.
         void clockTick();
 
         //Register that rendering has started
@@ -50,13 +51,13 @@ class App
         GLdouble deltaTime();
 
         //Returns true if it is time to render another frame.
-        GLboolean timeToRender();
+        //GLboolean timeToRender();
 
         //Returns true if it is time to simulate another tick.
-        GLboolean timeToSimulate();
+        //GLboolean timeToSimulate();
 
         //Get the amount of time the app can sleep.
-        GLdouble sleepTime();
+        //GLdouble sleepTime();
 
         //Input Control
         GLboolean gMoveLeft;
@@ -76,10 +77,16 @@ class App
         GLboolean gDestructionEnabled;
         GLboolean gPhysics;
 
+        //Voxel file to load "bullets" from.
         std::string gBulletFile;
+
+        //Force to shoot bullets out with.
         float gBulletForce;
 
+        //Material used for bullets.
         MaterialPtr gBulletMaterial;
+
+        //Material used for everything else.
         MaterialPtr gDefaultMaterial;
 
         static bool DEBUG_INTERAL_SIMULATION;
@@ -97,12 +104,15 @@ class App
 
     protected:
 
+        //Subsystem objects
+
         Renderer* mRenderer;
         ResourceManager* mResourceManager;
         PhysicsManager* mPhysicsManager;
         SceneGraph* mSceneGraph;
         VoxelConverter* mVoxelConverter;
         DestructionEngine* mDestructionEngine;
+
 
         GLdouble mLastFrameTime;
         GLdouble mLastTickTime;
@@ -113,6 +123,7 @@ class App
         GLint mTickCount;
         GLint mFrameCount;
 
+        //True if marching cubes should take place on CPU
         GLboolean mVoxelConversionCPU;
 
 

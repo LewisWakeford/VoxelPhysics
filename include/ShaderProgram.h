@@ -5,6 +5,10 @@
 
 #include "Shader.h"
 
+/**
+    Class: ShaderProgram
+    Wrapper Class for OpenGL shader program.
+*/
 class ShaderProgram
 {
     public:

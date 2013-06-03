@@ -8,11 +8,6 @@
 /*
     Class: MatterCollisionSet
     Stores a set of matter objects that have collided in the current physics tick.
-    Basically if A collides with B then they are put in a set (obviously) but if C also collides with B then it shares one set ABC instead of starting a new one.
-    The offer() function takes a matter node pair and returns true if one of them is already in the set, while adding the other.
-    If two or more of the physics manager's sets return true then they are merged with with the merge() function.
-    By storing a few of these collision sets the physics manager can quickly group the matter nodes into sets ready for processing by the destuction engine.
-    The destruction engine takes collision sets as input.
 */
 class MatterCollisionSet
 {
@@ -20,7 +15,8 @@ class MatterCollisionSet
         MatterCollisionSet();
         virtual ~MatterCollisionSet();
 
-        //Returns -1 if the collision should be discarded (IE duplicate exists), 0 if collision is not accepted and 1 if this set will accept the collision.
+        //Add a collision to the set if a duplicate does not exist.
+        //A duplicate is a collision with the participating matter objects.
         void offer(MatterCollision collision);
         void add(MatterCollision collision);
 

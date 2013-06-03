@@ -6,7 +6,7 @@
 
 /*
     Class: CameraNode
-    Posistions the camera.
+    Helps position the camera.
 */
 
 class CameraNode : public SceneNode
@@ -15,19 +15,23 @@ class CameraNode : public SceneNode
         CameraNode(App* app, GLenum renderPass, GLdouble fov, GLdouble zNear, GLdouble zFar);
         virtual ~CameraNode();
 
+        //Update the renderer with the this camera's posistion. If this is the current camera, that is.
         void renderSelf();
 
+        //Return camera settings
         GLdouble getFOV();
         GLdouble getZNear();
         GLdouble getZFar();
 
+        //Pitch, Yaw or Roll Camera around local axes.
         void pitch(GLfloat angle);
         void yaw(GLfloat angle);
         void roll(GLfloat angle);
 
-        void fly(GLfloat amount);
-        void strafe(GLfloat amount);
-        void walk(GLfloat amount);
+        //Move the camera along the local axes.
+        void fly(GLfloat amount); //Y axis
+        void strafe(GLfloat amount); //Z axis
+        void walk(GLfloat amount); //X axis
 
         GLfloat getPitch();
         GLfloat getYaw();
@@ -38,16 +42,14 @@ class CameraNode : public SceneNode
         Vector3f getRight();
         Vector3f getForward();
 
+        //Get the projection matrix
         Matrix4D getCameraMatrix();
 
     protected:
-        GLdouble mFOV;
-        GLdouble mZNear;
-        GLdouble mZFar;
 
-        GLfloat mPitch;
-        GLfloat mYaw;
-        GLfloat mRoll;
+        GLdouble mFOV; //Field of View
+        GLdouble mZNear; //Near Clipping Plane
+        GLdouble mZFar; //Far Clipping Plane
 
         Vector3f mPos;
         Vector3f mForward;
