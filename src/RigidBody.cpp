@@ -29,7 +29,7 @@ RigidBody::~RigidBody()
     }
 }
 
-void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHullShape*>& hulls, float mass, Vector3 offset, Vector3 cOfM)
+void RigidBody::setProperties(MatterNode* matter, const std::vector<btConvexHullShape*>& hulls, float mass, Vector3f offset, Vector3f cOfM)
 {
     if(mRigidBody)
     {

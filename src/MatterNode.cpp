@@ -57,11 +57,11 @@ Matter* MatterNode::getMatter()
 
 void MatterNode::setOffset(GLfloat x, GLfloat y, GLfloat z)
 {
-    Vector3 offset = {x, y, z};
+    Vector3f offset = {x, y, z};
     setOffset(offset);
 }
 
-void MatterNode::setOffset(Vector3 offset)
+void MatterNode::setOffset(Vector3f offset)
 {
     mOffset = offset;
     mMatter.setStartingPosition(offset);

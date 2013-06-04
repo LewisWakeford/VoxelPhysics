@@ -9,10 +9,6 @@ CameraNode::CameraNode(App* app, GLenum renderPass, GLdouble fov, GLdouble zNear
     mZNear = zNear;
     mZFar = zFar;
 
-    mPitch = 0;
-    mYaw = 0;
-    mRoll = 0;
-
     mPos.set(0,0,0);
     mForward.set(0,0,1);
     mUp.set(0,1,0);
@@ -44,21 +40,6 @@ GLdouble CameraNode::getZNear()
 GLdouble CameraNode::getZFar()
 {
     return mZFar;
-}
-
-GLfloat CameraNode::getPitch()
-{
-    return mPitch;
-}
-
-GLfloat CameraNode::getYaw()
-{
-    return mYaw;
-}
-
-GLfloat CameraNode::getRoll()
-{
-    return mRoll;
 }
 
 Vector3f CameraNode::getPos()

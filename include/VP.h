@@ -44,19 +44,4 @@ enum
     VP_MESH_COLORED
 };
 
-//---DATA STRUCTS---
-struct xyz
-{
-    float x, y, z;
-};
-
-typedef xyz Vertex3, Point3, Vector3;
-
-struct xy
-{
-    float x, y;
-};
-
-typedef xy Vertex2, Point2, Vector2;
-
 #endif // VP_H_INCLUDED

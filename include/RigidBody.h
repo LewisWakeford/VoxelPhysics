@@ -21,7 +21,7 @@ class RigidBody
         virtual ~RigidBody();
 
         //Create a new collision shape for this RB.
-        void setProperties(MatterNode* matter, const std::vector<btConvexHullShape*>& hulls, float mass, Vector3 startingWorldPos, Vector3 centerOfMass);
+        void setProperties(MatterNode* matter, const std::vector<btConvexHullShape*>& hulls, float mass, Vector3f startingWorldPos, Vector3f centerOfMass);
 
         void setTransform(Matrix4D transform);
         const Matrix4D& getTransform();

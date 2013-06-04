@@ -74,8 +74,8 @@ void DestructionEngine::processCollision(const MatterCollision& collision)
         Vector3f myEnergyFirst(energyFirst.x(), energyFirst.y(), energyFirst.z());
         Vector3f myEnergySecond(energySecond.x(), energySecond.y(), energySecond.z());
 
-        mEnergyGrids[firstIndex].setEnergy(myEnergyFirst);
-        mEnergyGrids[secondIndex].setEnergy(myEnergySecond);
+        mEnergyGrids[firstIndex].setEnergyVector(myEnergyFirst);
+        mEnergyGrids[secondIndex].setEnergyVector(myEnergySecond);
 
         if(firstSpeed >= secondSpeed)
         {

@@ -56,11 +56,9 @@ class Matrix4D
         Matrix4D inverted() const;
 
         //Transform a vertex through the matrix. Does not modify original data.
-        Vertex3 transformVertex(Vertex3 vertex) const;
-
         Vector3f transformVertex(Vector3f vector) const;
 
-        Vertex3 translateVertex(Vertex3 vertex);
+        Vector3f translateVertex(Vector3f vertex);
         //Rotate a vector through the matrix, but do not translate it. Useful for normals as they should always be relative to their vertex.
         Vector3f rotateVector(Vector3f vector) const;
 

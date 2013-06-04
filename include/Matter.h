@@ -129,8 +129,8 @@ class Matter
         std::vector<GLfloat> m_debug_PressureVertexArray; //Interleaved, 3 coords then 3 colors.
 
         int mRigidBodyMass;
-        Vector3 mRigidBodyCenterOfMass;
-        Vector3 mStartingWorldPosition;
+        Vector3f mRigidBodyCenterOfMass;
+        Vector3f mStartingWorldPosition;
 
         bool mCollided;
 

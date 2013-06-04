@@ -379,8 +379,6 @@ int main(int numArgs, char* args[])
         glfwSetKeyCallback(keyCallback);
 
         theApp.init();
-        theApp.setFrameFrequency(1.0/60.0);
-        theApp.setTickFrequency(1.0/120.0);
         VoxelConverter* voxConv = theApp.getVoxelConverter();
         PhysicsManager* physicsManager = theApp.getPhysicsManager();
         Renderer* renderer = theApp.getRenderer();
@@ -428,7 +426,6 @@ int main(int numArgs, char* args[])
 
         while(running)
         {
-            GLdouble timeToWait = theApp.sleepTime();
             GLdouble deltaTime = theApp.deltaTime();
 
            //consolePrint("", deltaTime);
@@ -450,7 +447,6 @@ int main(int numArgs, char* args[])
                 //theApp.clockFrame();
 
                 sceneGraph->onRender(VP_RENDER_GEOMETRY);
-                renderer->render();
                 glfwSwapBuffers();
 
                 theApp.clockFrame();

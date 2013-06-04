@@ -319,12 +319,7 @@ btConvexHullShape* Matter::getHull(int index)
     return mCollisionHulls[index];
 }
 
-bool Matter::floats()
-{
-    return mFloating;
-}
-
-void Matter::setStartingPosition(Vector3 startingPos)
+void Matter::setStartingPosition(Vector3f startingPos)
 {
     mStartingWorldPosition = startingPos;
 }
@@ -340,11 +335,9 @@ void Matter::endProcessing(MatterNode* node, bool usingCPU)
     {
         mVertexShell.endWrite();
     }
-    float mass = 0.0f;
-    if(!floats())
-    {
-        mass = mVoxelField.getNumVoxels() * mMaterial->getDensity();
-    }
+
+    float mass = mVoxelField.getNumVoxels() * mMaterial->getDensity();
+
     mRigidBody.setProperties(node, mCollisionHulls, mass, mStartingWorldPosition, mRigidBodyCenterOfMass);
 }
 

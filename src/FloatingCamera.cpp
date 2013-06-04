@@ -29,7 +29,7 @@ void FloatingCamera::simulateSelf(GLdouble deltaTime)
     Matrix4D newTransform = Matrix4D::createIdentity();
 
     //Create movement vector
-    Vector3 dVec = {0,0,0};
+    Vector3f dVec = {0,0,0};
     double dYaw = 0.0;
     double dPitch = 0.0;
     double dRoll = 0.0;

@@ -22,27 +22,6 @@ Matrix4D::~Matrix4D()
 
 }
 
-Vertex3 Matrix4D::transformVertex(Vertex3 vertex) const
-{
-    Vertex3 result;
-    result.x =  vertex.x*mValues[0] +
-                vertex.y*mValues[4] +
-                vertex.z*mValues[8] +
-                mValues[12];
-
-    result.y =  vertex.x*mValues[1] +
-                vertex.y*mValues[5] +
-                vertex.z*mValues[9] +
-                mValues[13];
-
-    result.z =  vertex.x*mValues[2] +
-                vertex.y*mValues[6] +
-                vertex.z*mValues[10] +
-                mValues[14];
-
-    return result;
-}
-
 Vector3f Matrix4D::transformVertex(Vector3f vertex) const
 {
     Vector3f result;

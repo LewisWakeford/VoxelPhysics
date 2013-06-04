@@ -14,3 +14,14 @@ A runnable demo can be found here:
 	https://www.dropbox.com/s/g1o0uwjetiikho2/VoxelPhysics_git.zip
 
 I apologise for the lack of documentation and support, I will be working on this over the next month or so.
+
+Demo Controls
+=============
+
+W/S - Move Camera Forward/Back
+A/D - Move Camera Left/Right
+Q/E - Roll Camera Counter-Clockwise/Clockwise
+Space/Ctrl - Move Camera Up/Down
+R - Fire Bullet
+T - Toggle Simulation
+P - Reset Demo (use this if you get slow down due to number of rigid bodies)

@@ -18,7 +18,7 @@ class MatterNode : public SceneNode
         virtual ~MatterNode();
 
         void setOffset(GLfloat x, GLfloat y, GLfloat z);
-        void setOffset(Vector3 offset);
+        void setOffset(Vector3f offset);
         void setLinearVelocity(btVector3 vel);
         void setMatrix(const Matrix4D& matrix);
         void setInitialForce(const Vector3f& force); //Set the initial force the Matter Object will recieve when simulation begins.
@@ -41,7 +41,7 @@ class MatterNode : public SceneNode
 
         GLboolean mUpToDate;
 
-        Vector3 mOffset;
+        Vector3f mOffset;
         btVector3 mLinearVelocity;
 
     private:

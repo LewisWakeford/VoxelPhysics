@@ -123,7 +123,7 @@ float EnergyGrid::getStrength(int x, int y, int z)
     return strength * (adjanctVoxels * getMatter()->getMaterial()->getBondStrength());
 }
 
-void EnergyGrid::setEnergy(const Vector3f& energy)
+void EnergyGrid::setEnergyVector(const Vector3f& energy)
 {
     mEnergyVector = energy;
     mEnergyVectorLocal = getMatter()->getRigidBody()->getInvertedTransform().rotateVector(energy);

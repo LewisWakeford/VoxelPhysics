@@ -90,65 +90,6 @@ VoxelConverter* App::getVoxelConverter()
     return mVoxelConverter;
 }
 
-void App::setFrameFrequency(GLdouble frameFreq)
-{
-    mFrameFreq = frameFreq;
-}
-
-void App::setTickFrequency(GLdouble tickFreq)
-{
-    mTickFreq = tickFreq;
-}
-
-GLboolean App::timeToRender()
-{
-    if(mFrameCount < 1)
-    {
-        return true;
-    }
-    GLdouble currentTime = glfwGetTime();
-    GLboolean render = (currentTime - mLastFrameTime) > mFrameFreq;
-    if(render)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-GLboolean App::timeToSimulate()
-{
-    if(mTickCount < 1)
-    {
-        return true;
-    }
-    GLdouble currentTime = glfwGetTime();
-    return (currentTime - mLastTickTime > mTickFreq);
-}
-
-GLdouble App::sleepTime()
-{
-    if(mTickCount < 1 || mFrameCount < 1)
-    {
-        return 0;
-    }
-
-    GLdouble currentTime = glfwGetTime();
-    GLdouble timeToNextFrame = (mFrameFreq + mLastFrameTime) - currentTime;
-    GLdouble timeToNextSim = (mTickFreq + mLastTickTime) - currentTime;
-
-    if(timeToNextFrame < timeToNextSim)
-    {
-        return timeToNextFrame;
-    }
-    else
-    {
-        return timeToNextSim;
-    }
-}
-
 GLdouble App::deltaTime()
 {
     if(mTickCount < 1)

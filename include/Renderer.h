@@ -47,7 +47,7 @@ class Renderer
         GLfloat mCameraPitch;
         GLfloat mCameraYaw;
         GLfloat mCameraRoll;
-        Vector3 mCameraPos;
+        Vector3f mCameraPos;
         Matrix4D mCameraMatrix; //Inverse of mCamera's tranform.
 
         GLdouble mViewportWidth;

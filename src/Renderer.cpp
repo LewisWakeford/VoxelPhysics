@@ -150,24 +150,6 @@ GLboolean Renderer::renderMatter(Matter& matter)
     if(!mApp->gDestructionEnabled)matter.debugRenderPressure();
 }
 
-void Renderer::render()
-{
-    //Camera setup
-    if(mCamera)
-    {
-        GLfloat* values = mCameraMatrix.getValues();
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        glMultMatrixf(values);
-    }
-
-    glDisable(GL_TEXTURE_3D);
-    glColor3f(0.0f, 1.0f, 0.0f);
-
-}
-
 void Renderer::setCamera(CameraNode* camera)
 {
     mCamera = camera;
